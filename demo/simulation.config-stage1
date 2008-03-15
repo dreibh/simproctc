@@ -32,4 +32,3 @@
 #          simulation binary here!
 
 # SIMULATION_PROGRAM=<Path>/<New Name>
-SIMULATION_PROGRAM=/home/dreibh/src/omnet-trunk/demo/demo
