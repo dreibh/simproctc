@@ -1,0 +1,82 @@
+#!/bin/sh
+# $Id$
+# ###########################################################################
+#             Thomas Dreibholz's R Simulation Scripts Collection
+#                  Copyright (C) 2005-2008 Thomas Dreibholz
+#
+#           Author: Thomas Dreibholz, dreibh@exp-math.uni-essen.de
+# ###########################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Contact: dreibh@iem.uni-due.de
+
+
+# ====== Check parameters ===================================================
+if [ $# -lt 1 ] ; then
+   echo "Usage: ssrun [Output]"
+   exit 1
+fi
+OUTPUT_ARCHIVE="$1"
+
+
+# ====== Prepare simulation environment =====================================
+if [ -e simulation-environment.tar.bz2 ] ; then
+   tar xjf simulation-environment.tar.bz2 || exit 2
+fi
+
+# ------ Load configurations ------------------------------
+CONFIG_STAGES=`find . -name "simulation.config-stage?"`
+for stage in $CONFIG_STAGES ; do
+   . $stage
+done
+# ---------------------------------------------------------
+
+if [ ! -e "$SIMULATION_PROGRAM" ] ; then
+   echo "ERROR: Simulation program $SIMULATION_PROGRAM not found!" >&2
+   exit 3
+fi
+chmod 700 "$SIMULATION_PROGRAM" || exit 4
+
+
+# ====== Execute simulation runs ============================================
+RESULT=0
+INI_FILES="`ls *.ini`"
+for INI_FILE in $INI_FILES ; do
+   OUTPUT_FILE="`echo $INI_FILE | sed -e "s/-parameters.ini$/-output.txt/g"`"
+   SCALAR_FILE="`echo $INI_FILE | sed -e "s/-parameters.ini$/-scalars.sca/g"`"
+   VECTOR_FILE="`echo $INI_FILE | sed -e "s/-parameters.ini$/-vectors.vec/g"`"
+   STATUS_FILE="`echo $INI_FILE | sed -e "s/-parameters.ini$/-status.txt/g"`"
+
+   # ====== Run simulation ==================================================
+   ( startTime=`date` && \
+     echo "   => Running simulation: $SIMULATION_PROGRAM -f $INI_FILE" && \
+     if [ -e "$SIMULATION_LIBS" ] ; then \
+        sh -v -c "$SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS $SIMULATION_PROGRAM -f $INI_FILE" </dev/null 2>$OUTPUT_FILE 1>&2 ; \
+     else \
+        sh -c "$SIMULATION_PROGRAM -f $INI_FILE" </dev/null 2>$OUTPUT_FILE 1>&2 ; \
+     fi && \
+     endTime=`date` && \
+     echo -e "Start: $$startTime\nEnd:   $$endTime" >$STATUS_FILE && echo "      --- Success! ---" ) || \
+   ( RESULT=10 && rm -f $STATUS_FILE && echo "      --- Failed! ---" )
+
+   # ====== Compress results ================================================
+   find . -name $SCALAR_FILE -or -name $VECTOR_FILE -or -name "*.txt" | xargs -n1 --no-run-if-empty bzip2 -9 || RESULT=11
+done
+
+
+# ====== Archive results to output file =====================================
+find . -name "*-status.txt" -or -name "*.txt.bz2" -or -name "*-scalars.sca.bz2" -or -name "*-vectors.vec.bz2" -or -name "core*" | xargs --no-run-if-empty tar czf $OUTPUT_ARCHIVE || RESULT=20
+
+exit $RESULT

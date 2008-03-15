@@ -1,0 +1,11 @@
+run 1 "configurableScenario"
+scalar "configurableScenario.tsb[0].nameServerArray[0].enrpServer" 	"Total Registrations"	200
+scalar "configurableScenario.tsb[0].nameServerArray[1].enrpServer" 	"Total Registrations"	250
+scalar "configurableScenario.tsb[1].nameServerArray[0].enrpServer" 	"Total Registrations"	2000
+scalar "configurableScenario.tsb[1].nameServerArray[1].enrpServer" 	"Total Registrations"	2500
+
+run 2 "configurableScenario"
+scalar "configurableScenario.tsb[0].nameServerArray[0].enrpServer" 	"Total Registrations"	300
+scalar "configurableScenario.tsb[0].nameServerArray[1].enrpServer" 	"Total Registrations"	400
+scalar "configurableScenario.tsb[1].nameServerArray[0].enrpServer" 	"Total Registrations"	3000
+scalar "configurableScenario.tsb[1].nameServerArray[1].enrpServer" 	"Total Registrations"	4000
