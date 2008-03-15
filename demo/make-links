@@ -1,0 +1,8 @@
+#!/bin/sh
+
+for file in ssrun ssdistribute plotter.R hashfunctions.R simulation.R tools ; do
+   if [ -e $file ] ; then
+      rm -f $file
+   fi
+   ln -s ../$file .
+done

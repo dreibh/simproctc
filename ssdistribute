@@ -1,0 +1,82 @@
+#!/bin/sh
+# $Id$
+# ###########################################################################
+#             Thomas Dreibholz's R Simulation Scripts Collection
+#                  Copyright (C) 2005-2008 Thomas Dreibholz
+#
+#           Author: Thomas Dreibholz, dreibh@exp-math.uni-essen.de
+# ###########################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Contact: dreibh@iem.uni-due.de
+
+
+# ====== Check parameters ===================================================
+if [ $# -lt 4 ] ; then
+   echo "Usage: ssdistribute [Simulation Directory] [Run Directory] [.ini File Name] [Pool Handle]"
+   exit 1
+fi
+SIM_DIRECTORY="`pwd`/$1"   # e.g.: <path>/test1
+RUN_DIRECTORY="`pwd`/$2"   # e.g.: <path>/test1/Simulations/Set-XXXX
+INI_NAME="$3"              # e.g.: run1-parameters.ini
+POOLHANDLE="$4"            # e.g.: ScriptingPool
+MAX_RETRY=10               # After a remote-side error, retry how many times?
+
+
+# ###########################################################################
+# Settings for running the simulation:
+#  - SIMULATION_ENVIRONMENT sets tar.bz2 file containing environment
+#       (this file should contain simulation.config-stage0)
+#  - SIMULATION_CONFIGS sets simulation.config-stageX files to be included
+#       (ssrun will execute them in alphabetical order, beginning with stage 0)
+#  - SIMULATION_POOLUSER sets the Scripting PU program (including path)
+#
+SIMULATION_ENVIRONMENT="simulation-environment.tar.bz2"
+SIMULATION_CONFIGS=""   # "simulation.config-stage1"
+SIMULATION_POOLUSER=~/src/rsplib2/rsplib/scriptingclient
+# ###########################################################################
+
+
+
+# ====== Prepare temporary file names =======================================
+if [ ! -e "$SIMULATION_POOLUSER" ] ; then
+   echo "ERROR: Unable to find PU program at $SIMULATION_POOLUSER!" >&2
+   exit 1
+fi
+INPUT_ARCHIVE="`mktemp -t input-XXXXXXXXXX`"
+OUTPUT_ARCHIVE="`mktemp -t output-XXXXXXXXXX`"
+
+
+# ====== Create input archive ===============================================
+echo "Preparing input ..."
+tar czhf $INPUT_ARCHIVE -C. ssrun -C$SIM_DIRECTORY $SIMULATION_ENVIRONMENT $SIMULATION_CONFIGS -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME || exit 1
+
+
+# ====== Start PU for job distribution ======================================
+echo "Distributing and processing ..."
+$SIMULATION_POOLUSER -quiet -maxretry=$MAX_RETRY -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE || exit 1
+
+
+# ====== Extract results archive ============================================
+echo "Extracting ..."
+cd $RUN_DIRECTORY || exit 1
+if [ -s "$OUTPUT_ARCHIVE" ] ; then
+   ( tar xzhvf "$OUTPUT_ARCHIVE" | xargs touch ) || exit 1   # This will also update the time stamp!
+   rm -f $INPUT_ARCHIVE $OUTPUT_ARCHIVE
+   exit 0
+else
+   echo "ERROR: No results have been created in directory $RUN_DIRECTORY!"
+   exit 1
+fi
