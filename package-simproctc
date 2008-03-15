@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ $# -lt 1 ] ; then
+   echo "Usage: package-simproctc [version]" >&2
+   exit 1
+fi
+VERSION=$1
+
+svn co https://132.252.152.132/svn/omnetpp/trunk/simproctc simproctc-$VERSION && \
+cd simproctc-$VERSION/demo && \
+./make-links && \
+cd .. && \
+rm -f package-simproctc && \
+cd .. && \
+find simproctc-$VERSION -name ".svn" | xargs rm -rf && \
+tar czvf simproctc-$VERSION simproctc-$VERSION
