@@ -36,7 +36,8 @@ simulationSummaryCompressionLevel <- 5
 simulationSummarySkipList <- c()
 # -------------------------------------
 distributionPool  <- "ScriptingPool"
-distributionProcs <- 1   # Set to 0 for to disable distribution!
+distributionProcs <- 1    # Set to 0 for to disable distribution!
+distributionPUOpt <- ""   # Add misc options for ScriptingPU here. 
 # -------------------------------------
 
 # ###########################################################################
