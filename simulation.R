@@ -285,7 +285,7 @@ beginSummary <- function()
 
 
 # ====== Add run to summary file ============================================
-addRunToSummary <- function(summary, scalarName, varValues)
+addRunToSummary <- function(summary, scalarName, iniName, varValues)
 {
    varValuesString <- ""
    for(value in varValues) {
@@ -304,7 +304,7 @@ addRunToSummary <- function(summary, scalarName, varValues)
       }
    }
 
-   cat(sep="", "--values=\"", varValuesString, "\"\n", file=summary)
+   cat(sep="", "--values=\"", varValuesString, " ", iniName, "\"\n", file=summary)
    cat(sep="", "--input=", scalarName, ".bz2\n", file=summary)
 }
 
@@ -331,7 +331,7 @@ finishSummary <- function(summary)
    summaryCommand <- paste(sep="",
                            "rm -f ", getGlobalVariable("gResultsDirectoryName"), "/* && ",
                            "tools/createsummary ",
-                           "\"", activeVariablesString, "\" ",
+                           "\"", activeVariablesString, " SourceINI\" ",
                            "-batch ",
                            "-compress=", simulationSummaryCompressionLevel, " ",
                            "<", getGlobalVariable("gSummaryName"))
@@ -573,7 +573,7 @@ createAllSimulationRuns <- function(simulationConfigurations,
                simCreatorWriteParameterSection(filePrefix, ini, simulationRun, duration)
                close(ini)
 
-               addRunToSummary(summary, scalarName, varValues)
+               addRunToSummary(summary, scalarName, iniName, varValues)
                addRunToMakefile(makefile, simulationRun, runDirectoryName, statusName, iniName, outputName, scalarName, vectorName)
 
                setGlobalVariable("gRunNumber", getGlobalVariable("gRunNumber") + 1)

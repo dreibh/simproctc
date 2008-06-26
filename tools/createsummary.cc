@@ -31,7 +31,7 @@ using namespace std;
 
 
 #define MAX_NAME_SIZE   128
-#define MAX_VALUES_SIZE 512
+#define MAX_VALUES_SIZE 640
 
 
 struct SkipListNode
@@ -126,6 +126,18 @@ static struct SimpleRedBlackTree StatisticsStorage;
 static ScalarNode*                   NextScalarNode = NULL;
 static SkipListNode*                 SkipList       = NULL;
 
+
+
+// ###### Remove slashes ####################################################
+static void replaceSlashes(char* str)
+{
+   const size_t length = strlen(str);
+   for(size_t i = 0;i < length;i++) {
+      if(str[i] == '/') {
+         str[i] = ':';
+      }
+   }
+}
 
 
 // ###### Remove spaces #####################################################
@@ -257,17 +269,23 @@ static unsigned int getAggregate(char*        str,
 // ###### Get text word #####################################################
 static char* getWord(char* str, char* word)
 {
-   size_t n = 0;
-   while(str[n] != '\"') {
-      if(str[n] == 0x00) {
-         return(NULL);
-      }
+   size_t n      = 0;
+   bool   quoted = false;
+
+   while( (str[n] == ' ') || (str[n] == '\t') ) {
       n++;
    }
-   n++;
+   if(str[n] == 0x00) {
+      return(NULL);
+   }
+   if(str[n] == '\"') {
+      quoted = true;
+      n++;
+   }
 
    size_t i = 0;
-   while(str[n] != '\"') {
+   while( ((quoted) && (str[n] != '\"')) ||
+          ((!quoted) && (str[n] != ' ') && (str[n] != '\t')) ) {
       if(str[n] == 0x00) {
          return(NULL);
       }
@@ -367,7 +385,6 @@ static void handleScalarFile(const char* varNames,
 
    unsigned int line;
    unsigned int run;
-   unsigned int dummy;
    double       value;
    size_t       i;
    size_t       bytesRead;
@@ -411,8 +428,11 @@ static void handleScalarFile(const char* varNames,
 
       if(buffer[0] == '#') {
       }
-      else if(sscanf(buffer, "run %u", &dummy) == 1) {
+      else if(!(strncmp(buffer, "run ", 4))) {
          run++;
+      }
+      else if(!(strncmp(buffer, "attr ", 5))) {
+         // Skip this item
       }
       else if(!(strncmp(buffer, "scalar ", 7))) {
          char* s = getWord((char*)&buffer[7], (char*)&objectName);
@@ -425,12 +445,12 @@ static void handleScalarFile(const char* varNames,
                }
             }
             else {
-               cerr << "ERROR: File \"" << fileName << "\", line " << line << " - Statistics scalarName expected!" << endl;
+               cerr << "ERROR: File \"" << fileName << "\", line " << line << " - Statistics name expected!" << endl;
                exit(1);
             }
          }
          else {
-            cerr << "ERROR: File \"" << fileName << "\", line " << line << " - Object scalarName expected!" << endl;
+            cerr << "ERROR: File \"" << fileName << "\", line " << line << " - Object name expected!" << endl;
             exit(1);
          }
          removeScenarioName((char*)&objectName);
@@ -442,6 +462,7 @@ static void handleScalarFile(const char* varNames,
 */
 
          removeSpaces((char*)&statName);
+         replaceSlashes((char*)&statName);
          removeBrackets((char*)&objectName);
 
          char scalarName[4096];
