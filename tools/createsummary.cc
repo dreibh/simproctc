@@ -30,8 +30,8 @@
 using namespace std;
 
 
-#define MAX_NAME_SIZE   128
-#define MAX_VALUES_SIZE 640
+#define MAX_NAME_SIZE    256
+#define MAX_VALUES_SIZE 8192
 
 
 struct SkipListNode
@@ -45,13 +45,14 @@ class ScalarNode
 {
    public:
    ScalarNode();
+   ~ScalarNode();
 
    struct SimpleRedBlackTreeNode Node;
 
-   char                          ScalarName[MAX_NAME_SIZE];
-   char                          AggNames[MAX_NAME_SIZE];
-   char                          AggValues[MAX_VALUES_SIZE];
-   char                          VarValues[MAX_VALUES_SIZE];
+   char*                         ScalarName;
+   char*                         AggNames;
+   char*                         AggValues;
+   char*                         VarValues;
    size_t                        Run;
    size_t                        Entries;
    vector<double>                ValueSet;
@@ -61,15 +62,35 @@ class ScalarNode
 // ###### Constructor #######################################################
 ScalarNode::ScalarNode()
 {
-   Run           = 0;
-   Entries       = 0;
-   ScalarName[0] = 0x00;
-   VarValues[0]  = 0x00;
+   Run        = 0;
+   Entries    = 0;
+   ScalarName = NULL;
+   VarValues  = NULL;
+   AggNames   = NULL;
+   AggValues  = NULL;
    simpleRedBlackTreeNodeNew(&Node);
 }
 
 
-// ###### Get ScalarNode object from storage node #######################
+// ###### Destructor ########################################################
+ScalarNode::~ScalarNode()
+{
+   if(ScalarName) {
+      free(ScalarName);
+   }
+   if(VarValues) {
+      free(VarValues);
+   }
+   if(AggNames) {
+      free(AggNames);
+   }
+   if(AggValues) {
+      free(AggValues);
+   }
+}
+
+
+// ###### Get ScalarNode object from storage node ###########################
 static inline ScalarNode* getScalarNodeFromStorageNode(struct SimpleRedBlackTreeNode* node)
 {
    const long offset = (long)(&((struct ScalarNode*)node)->Node) - (long)node;
@@ -310,7 +331,6 @@ static void addScalar(const char*  scalarName,
    // printf("addScalar: statName=<%s> aggN=<%s> aggV=<%s> varN=<%s> varV=<%s> run=%d val=%f\n",
    //        scalarName, aggNames, aggValues, varNames, varValues, runNumber, value);
 
-
    if(NextScalarNode == NULL) {
       NextScalarNode = new ScalarNode;
       if(NextScalarNode == NULL) {
@@ -318,32 +338,19 @@ static void addScalar(const char*  scalarName,
          exit(1);
       }
    }
-   if(strlen(scalarName) >= MAX_NAME_SIZE) {
-      cerr << "ERROR: StatisticsName <" << scalarName << "> is too long!" << endl
-           << "length=" << strlen(scalarName) << "; MAX_NAME_SIZE=" << MAX_NAME_SIZE << endl;
-      exit(1);
-   }
-   if(strlen(varValues) >= MAX_VALUES_SIZE) {
-      cerr << "ERROR: VarValues string <" << varValues << "> is too long!" << endl
-           << "length=" << strlen(varValues) << "; MAX_VALUES_SIZE=" << MAX_VALUES_SIZE << endl;
-      exit(1);
-   }
-   if(strlen(aggNames) >= MAX_NAME_SIZE) {
-      cerr << "ERROR: AggNames string <" << aggNames << "> is too long!" << endl
-           << "length=" << strlen(aggNames) << "; MAX_NAME_SIZE=" << MAX_NAME_SIZE << endl;
-      exit(1);
-   }
-   if(strlen(aggValues) >= MAX_VALUES_SIZE) {
-      cerr << "ERROR: AggValues string <" << aggValues << "> is too long!" << endl
-           << "length=" << strlen(aggValues) << "; MAX_VALUES_SIZE=" << MAX_VALUES_SIZE << endl;
-      exit(1);
-   }
 
    NextScalarNode->Run = runNumber;
-   strcpy((char*)&NextScalarNode->ScalarName,  scalarName);
-   strcpy((char*)&NextScalarNode->AggNames,  aggNames);
-   strcpy((char*)&NextScalarNode->AggValues, aggValues);
-   strcpy((char*)&NextScalarNode->VarValues, varValues);
+   NextScalarNode->ScalarName = strdup(scalarName);
+   NextScalarNode->AggNames   = strdup(aggNames);
+   NextScalarNode->AggValues  = strdup(aggValues);
+   NextScalarNode->VarValues  = strdup(varValues);
+   if( (NextScalarNode->ScalarName == NULL) ||
+       (NextScalarNode->AggNames == NULL) ||
+       (NextScalarNode->AggValues == NULL) ||
+       (NextScalarNode->VarValues == NULL) ) {
+      cerr << "ERROR: Out of memory!" << endl;
+      exit(1);
+   }
 
    ScalarNode* scalarNode = (ScalarNode*)
       simpleRedBlackTreeInsert(&StatisticsStorage, &NextScalarNode->Node);
