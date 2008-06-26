@@ -33,6 +33,10 @@ simulationSummaryCompressionLevel <- 9
 simulationSummarySkipList <- c()
 simulationMiscFiles <- ""
 
+distributionPool  <- "ScriptingPool"
+distributionProcs <- 0   # Set to 0 for to disable distribution!
+distributionPUOpt <- ""
+
 
 # IMPORTANT NOTICE:
 # In order to add new simulation parameters, look for the comments marked
@@ -252,10 +256,9 @@ addRunToMakefile <- function(makefile, runNumber, runDirectoryName, statusName, 
    cat(sep="", "\t@if [ ", iniName, " -nt ", statusName, " -o ! -e ", statusName, " ] ; then \\\n", file=makefile)
    cat(sep="", "   startTime=`date` && \\\n", file=makefile)
    cat(sep="", "   rm -f ", scalarName, ".bz2 \\\n      ", vectorName, ".bz2 \\\n      ", outputName, ".bz2 && \\\n", file=makefile)
-   if(exists("distributionPool") && (distributionPool != "") &&
-      exists("distributionProcs") && (distributionProcs > 0)) {
-      cat(sep="", "   echo 'Running distributor: ./ssdistribute ", simulationDirectory, " ", runDirectoryName, " run", runNumber, "-parameters.ini", " \"", distributionPool, "\"' && \\\n", file=makefile)
-      cat(sep="", "   ./ssdistribute ", simulationDirectory, " ", runDirectoryName, " run", runNumber, "-parameters.ini", " \"", distributionPool, "\" && \\\n", file=makefile)
+   if((distributionPool != "") && (distributionProcs > 0)) {
+      cat(sep="", "   echo 'Running distributor: ./ssdistribute ", simulationDirectory, " ", runDirectoryName, " run", runNumber, "-parameters.ini", " \"", distributionPool, "\" \"", distributionPUOpt ,"\"' && \\\n", file=makefile)
+      cat(sep="", "   ./ssdistribute ", simulationDirectory, " ", runDirectoryName, " run", runNumber, "-parameters.ini", " \"", distributionPool, "\" \"", distributionPUOpt ,"\" && \\\n", file=makefile)
    }
    else {
       cat(sep="", "   echo \"Running simulation: ./", simCreatorSimulationBinary, " -f ", iniName, "\" && \\\n", file=makefile)
