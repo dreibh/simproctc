@@ -25,15 +25,15 @@
 
 # ====== Check parameters ===================================================
 if [ $# -lt 4 ] ; then
-   echo "Usage: ssdistribute [Simulation Directory] [Run Directory] [.ini File Name] [Pool Handle]"
+   echo "Usage: ssdistribute [Simulation Directory] [Run Directory] [.ini File Name] [Pool Handle] {Misc Options to PU}"
    exit 1
 fi
 SIM_DIRECTORY="`pwd`/$1"   # e.g.: <path>/test1
 RUN_DIRECTORY="`pwd`/$2"   # e.g.: <path>/test1/Simulations/Set-XXXX
 INI_NAME="$3"              # e.g.: run1-parameters.ini
 POOLHANDLE="$4"            # e.g.: ScriptingPool
+PU_MISCOPT="$5"            # e.g.: "-cspserver=... ..."
 MAX_RETRY=10               # After a remote-side error, retry how many times?
-
 
 # ###########################################################################
 # Settings for running the simulation:
@@ -44,7 +44,7 @@ MAX_RETRY=10               # After a remote-side error, retry how many times?
 #  - SIMULATION_POOLUSER sets the Scripting PU program (including path)
 #
 SIMULATION_ENVIRONMENT="simulation-environment.tar.bz2"
-SIMULATION_CONFIGS=""   # "simulation.config-stage1"
+SIMULATION_CONFIGS="simulation.config-stage1"
 SIMULATION_POOLUSER=~/src/rsplib2/rsplib/scriptingclient
 # ###########################################################################
 
@@ -61,12 +61,12 @@ OUTPUT_ARCHIVE="`mktemp -t output-XXXXXXXXXX`"
 
 # ====== Create input archive ===============================================
 echo "Preparing input ..."
-tar czhf $INPUT_ARCHIVE -C. ssrun -C$SIM_DIRECTORY $SIMULATION_ENVIRONMENT $SIMULATION_CONFIGS -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME || exit 1
+tar czhf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY $SIMULATION_ENVIRONMENT -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME || exit 1
 
 
 # ====== Start PU for job distribution ======================================
 echo "Distributing and processing ..."
-$SIMULATION_POOLUSER -quiet -maxretry=$MAX_RETRY -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE || exit 1
+$SIMULATION_POOLUSER -quiet -maxretry=$MAX_RETRY -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT || exit 1
 
 
 # ====== Extract results archive ============================================
