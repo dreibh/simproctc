@@ -304,7 +304,7 @@ addRunToSummary <- function(summary, scalarName, iniName, varValues)
       }
    }
 
-   cat(sep="", "--values=\"", varValuesString, " ", iniName, "\"\n", file=summary)
+   cat(sep="", "--values=\"", varValuesString, " \"", iniName, "\"\"\n", file=summary)
    cat(sep="", "--input=", scalarName, ".bz2\n", file=summary)
 }
 
@@ -329,7 +329,8 @@ finishSummary <- function(summary)
    # ------ Create summary command string -----------------------------------
    summaryName <- paste(sep="", getGlobalVariable("gSummaryName"))
    summaryCommand <- paste(sep="",
-                           "rm -f ", getGlobalVariable("gResultsDirectoryName"), "/* && ",
+                           "rm -rf ", getGlobalVariable("gResultsDirectoryName"), " && ",
+                           "mkdir ", getGlobalVariable("gResultsDirectoryName"), " && ",
                            "tools/createsummary ",
                            "\"", activeVariablesString, " SourceINI\" ",
                            "-batch ",
