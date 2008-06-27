@@ -252,7 +252,6 @@ beginMakefile <- function()
 addRunToMakefile <- function(makefile, runNumber, runDirectoryName, statusName, iniName, outputName, scalarName, vectorName)
 {
    cat(sep="", statusName, ":\t", simulationDirectory, "/simulation-environment.tar.bz2 ", getGlobalVariable("gRuntimeName"), "\n", file=makefile)
-   # cat(sep="", "\t@echo Verifying ", statusName," ...\n",file=makefile)
    cat(sep="", "\t@if [ ", iniName, " -nt ", statusName, " -o ! -e ", statusName, " ] ; then \\\n", file=makefile)
    cat(sep="", "   startTime=`date` && \\\n", file=makefile)
    cat(sep="", "   rm -f ", scalarName, ".bz2 \\\n      ", vectorName, ".bz2 \\\n      ", outputName, ".bz2 && \\\n", file=makefile)
@@ -266,7 +265,8 @@ addRunToMakefile <- function(makefile, runNumber, runDirectoryName, statusName, 
       cat(sep="", "   find ", runDirectoryName, " \\\n      -name \"run", runNumber, "-output.txt\" -or \\\n      -name \"run", runNumber, "-vectors.vec\" -or \\\n      -name \"run", runNumber, "-scalars.sca\" | xargs -n1 bzip2 -f && \\\n", file=makefile)
    }
    cat(sep="", "   endTime=`date`   &&   ", file=makefile)
-   cat(sep="", "   echo -e \"Start: $$startTime\\nEnd:   $$endTime\" \\\n         >", statusName, " ; \\\n", file=makefile)
+   cat(sep="", "   echo \"Start: $$startTime\" \\\n       >", statusName, " ; \\\n", file=makefile)
+   cat(sep="", "   echo \"End:   $$endTime\" \\\n         >>", statusName, " ; \\\n", file=makefile)
    cat(sep="", "   tools/runtimeestimator ", getGlobalVariable("gRuntimeName"), " ", getGlobalVariable("gTotalSimulationRuns"), " ", getGlobalVariable("gRunNumber"), " ; \\\n", file=makefile)
    cat(sep="", "fi\n\n", file=makefile)
 }
@@ -386,7 +386,8 @@ finishMakefile <- function(makefile, summaryCommand)
    cat(sep="", "\tstartTime=`date`      &&      ", file=makefile)
    cat(sep="", summaryCommand, "      &&      ", file=makefile)
    cat(sep="", "endTime=`date`      &&      ", file=makefile)
-   cat(sep="", "echo -e \"Start: $$startTime\\nEnd:   $$endTime\" >", getGlobalVariable("gSimulationsCompletedName"), "\n", file=makefile)
+   cat(sep="", "echo \"Start: $$startTime\" >", getGlobalVariable("gSimulationsCompletedName"), " && ", file=makefile)
+   cat(sep="", "echo \"End:   $$endTime\" >>", getGlobalVariable("gSimulationsCompletedName"), "\n", file=makefile)
    cat(sep="", "\t@echo \"Summary completed!\"\n\n", file=makefile)
 
    # ------ Archival of results ---------------------------------------------

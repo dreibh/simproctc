@@ -44,9 +44,13 @@ MAX_RETRY=10               # After a remote-side error, retry how many times?
 #  - SIMULATION_POOLUSER sets the Scripting PU program (including path)
 #
 SIMULATION_ENVIRONMENT="simulation-environment.tar.bz2"
-SIMULATION_CONFIGS="simulation.config-stage1"
+SIMULATION_CONFIGS=""   # "simulation.config-stage1"
 SIMULATION_POOLUSER=~/src/rsplib2/rsplib/scriptingclient
 # ###########################################################################
+
+UNIQUE_ID="$2/$INI_NAME"
+PU_LOGFILE="$RUN_DIRECTORY/$INI_NAME.log"
+PU_LOGLEVEL=7
 
 
 
@@ -60,17 +64,20 @@ OUTPUT_ARCHIVE="`mktemp -t output-XXXXXXXXXX`"
 
 
 # ====== Create input archive ===============================================
-echo "Preparing input ..."
+echo "Preparing input [$UNIQUE_ID] ..."
 tar czhf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY $SIMULATION_ENVIRONMENT -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME || exit 1
 
 
 # ====== Start PU for job distribution ======================================
-echo "Distributing and processing ..."
-$SIMULATION_POOLUSER -quiet -maxretry=$MAX_RETRY -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT || exit 1
+echo "Distributing and processing [$UNIQUE_ID] ..."
+$SIMULATION_POOLUSER -runid=$UNIQUE_ID -quiet -maxretry=$MAX_RETRY -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT -logfile=$PU_LOGFILE -loglevel=$PU_LOGLEVEL || exit 1
+if [ -e $PU_LOGFILE ] ; then
+   bzip2 $PU_LOGFILE
+fi
 
 
 # ====== Extract results archive ============================================
-echo "Extracting ..."
+echo "Extracting [$UNIQUE_ID] ..."
 cd $RUN_DIRECTORY || exit 1
 if [ -s "$OUTPUT_ARCHIVE" ] ; then
    ( tar xzhvf "$OUTPUT_ARCHIVE" | xargs touch ) || exit 1   # This will also update the time stamp!
