@@ -364,14 +364,14 @@ static void addScalar(const char*  scalarName,
 
 
 // ###### Read and process scalar file ######################################
-static void handleScalarFile(const char* varNames,
+static bool handleScalarFile(const char* varNames,
                              const char* varValues,
                              const char* fileName)
 {
    FILE* inFile = fopen(fileName, "r");
    if(inFile == NULL) {
       cerr << "ERROR: Unable to open scalar file \"" << fileName << "\"!" << endl;
-      exit(1);
+      return(false);
    }
 
    size_t fileNameLength = strlen(fileName);
@@ -385,8 +385,8 @@ static void handleScalarFile(const char* varNames,
       inBZFile = BZ2_bzReadOpen(&bzerror, inFile, 0, 0, NULL, 0);
       if(bzerror != BZ_OK) {
          cerr << "ERROR: Unable to initialize BZip2 decompression on file <" << fileName << ">!" << endl;
-         BZ2_bzReadClose(&bzerror, inBZFile);
-         inBZFile = NULL;
+         fclose(inFile);
+         return(false);
       }
    }
 
@@ -403,6 +403,7 @@ static void handleScalarFile(const char* varNames,
 
    run  = 0;
    line = 0;
+   bool success = true;
    for(;;) {
       memcpy((char*)&buffer, storage, storageSize);
       if(inBZFile) {
@@ -438,9 +439,6 @@ static void handleScalarFile(const char* varNames,
       else if(!(strncmp(buffer, "run ", 4))) {
          run++;
       }
-      else if(!(strncmp(buffer, "version ", 8))) {
-         // Skip this item
-      }
       else if(!(strncmp(buffer, "attr ", 5))) {
          // Skip this item
       }
@@ -451,17 +449,20 @@ static void handleScalarFile(const char* varNames,
             if(s) {
                if(sscanf(s, "%lf", &value) != 1) {
                   cerr << "ERROR: File \"" << fileName << "\", line " << line << " - Value expected!" << endl;
-                  exit(1);
+                  success = false;
+                  break;
                }
             }
             else {
                cerr << "ERROR: File \"" << fileName << "\", line " << line << " - Statistics name expected!" << endl;
-               exit(1);
+               success = false;
+               break;
             }
          }
          else {
             cerr << "ERROR: File \"" << fileName << "\", line " << line << " - Object name expected!" << endl;
-            exit(1);
+            success = false;
+            break;
          }
          removeScenarioName((char*)&objectName);
 
@@ -489,7 +490,8 @@ static void handleScalarFile(const char* varNames,
       }
       else {
          cerr << "ERROR: File \"" << fileName << "\", line " << line << " - Expected values, got crap!" << endl;
-         exit(1);
+         success = false;
+         break;
       }
    }
 
@@ -497,6 +499,7 @@ static void handleScalarFile(const char* varNames,
       BZ2_bzReadClose(&bzerror, inBZFile);
    }
    fclose(inFile);
+   return(success);
 }
 
 
@@ -808,6 +811,7 @@ int main(int argc, char** argv)
    else {
       cout << "Processing input ..." << endl;
    }
+   bool scalarFileError = false;
    while((command = fgets((char*)&buffer, sizeof(buffer), stdin))) {
       command[strlen(command) - 1] = 0x00;
       if(command[0] == 0x00) {
@@ -849,7 +853,9 @@ int main(int argc, char** argv)
             cerr << "ERROR: No values given (parameter --values=...)!" << endl;
             exit(1);
          }
-         handleScalarFile(varNames, varValues, (char*)&command[8]);
+         if(!handleScalarFile(varNames, varValues, (char*)&command[8])) {
+            scalarFileError = true;
+         }
          varValues[0] = 0x00;
       }
       else if(!(strncmp(command, "--skip=", 7))) {
@@ -898,8 +904,14 @@ int main(int argc, char** argv)
    if(interactive) {
       cout << endl << endl;
    }
-   cout << "Writing scalar files..." << endl;
-   dumpScalars(simulationsDirectory, resultsDirectory, varNames, compressionLevel, interactive);
+   if(!scalarFileError) {
+      cout << "Writing scalar files..." << endl;
+      dumpScalars(simulationsDirectory, resultsDirectory, varNames, compressionLevel, interactive);
+   }
+   else {
+      cerr << "Not all scalar files have been read -> aborting!" << endl;
+      exit(1);
+   }
 
 
    simpleRedBlackTreeDelete(&StatisticsStorage);

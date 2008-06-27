@@ -72,6 +72,7 @@ tar czhf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY $SIMULATI
 echo "Distributing and processing [$UNIQUE_ID] ..."
 $VALGRIND $SIMULATION_POOLUSER -runid=$UNIQUE_ID -quiet -maxretry=$MAX_RETRY -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT -logfile=$PU_LOGFILE -loglevel=$PU_LOGLEVEL || exit 1
 if [ -e $PU_LOGFILE ] ; then
+   rm -f $PU_LOGFILE.bz2
    bzip2 $PU_LOGFILE
 fi
 
