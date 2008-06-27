@@ -51,7 +51,7 @@ SIMULATION_POOLUSER=~/src/rsplib2/rsplib/scriptingclient
 UNIQUE_ID="$2/$INI_NAME"
 PU_LOGFILE="$RUN_DIRECTORY/$INI_NAME.log"
 PU_LOGLEVEL=7
-
+VALGRIND="" # "valgrind  -v --tool=memcheck --leak-check=yes --show-reachable=no --leak-resolution=high --num-callers=40 --freelist-vol=4000000"
 
 
 # ====== Prepare temporary file names =======================================
@@ -70,7 +70,7 @@ tar czhf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY $SIMULATI
 
 # ====== Start PU for job distribution ======================================
 echo "Distributing and processing [$UNIQUE_ID] ..."
-$SIMULATION_POOLUSER -runid=$UNIQUE_ID -quiet -maxretry=$MAX_RETRY -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT -logfile=$PU_LOGFILE -loglevel=$PU_LOGLEVEL || exit 1
+$VALGRIND $SIMULATION_POOLUSER -runid=$UNIQUE_ID -quiet -maxretry=$MAX_RETRY -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT -logfile=$PU_LOGFILE -loglevel=$PU_LOGLEVEL || exit 1
 if [ -e $PU_LOGFILE ] ; then
    bzip2 $PU_LOGFILE
 fi
