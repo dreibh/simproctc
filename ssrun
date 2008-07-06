@@ -49,6 +49,10 @@ if [ ! -e "$SIMULATION_PROGRAM" ] ; then
 fi
 chmod 700 "$SIMULATION_PROGRAM" || exit 4
 
+ENVCMD=""
+if [ "$SIMULATION_LIBS" != "" ] ; then
+   ENVCMD="env LD_LIBRARY_PATH=$SIMULATION_LIBS"
+fi
 
 # ====== Execute simulation runs ============================================
 RESULT=0
@@ -68,7 +72,7 @@ for INI_FILE in $INI_FILES ; do
      echo " `uname -a`" >>$OUTPUT_FILE && \
      echo "=============================================================================" >>$OUTPUT_FILE && \
      echo "" >>$OUTPUT_FILE && \
-     sh -c "$SIMULATION_PROGRAM -u Cmdenv -f $INI_FILE" </dev/null 2>>$OUTPUT_FILE 1>&2 && \
+     sh -c "$ENVCMD $SIMULATION_PROGRAM -u Cmdenv -f $INI_FILE" </dev/null 2>>$OUTPUT_FILE 1>&2 && \
      endTime=`date` && \
      echo -e "Start: $$startTime\nEnd:   $$endTime" >$STATUS_FILE && echo "      --- Success! ---" ) || \
    ( RESULT=10 && rm -f $STATUS_FILE && echo "      --- Failed! ---" )

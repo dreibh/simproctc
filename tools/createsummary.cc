@@ -442,6 +442,9 @@ static bool handleScalarFile(const char* varNames,
       else if(!(strncmp(buffer, "attr ", 5))) {
          // Skip this item
       }
+      else if(!(strncmp(buffer, "version ", 8))) {
+         // Skip this item
+      }
       else if(!(strncmp(buffer, "scalar ", 7))) {
          char* s = getWord((char*)&buffer[7], (char*)&objectName);
          if(s) {
