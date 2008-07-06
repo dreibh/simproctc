@@ -106,9 +106,19 @@ simCreatorAdditionalActiveVariables <- c(
    "sourcePayloadSize",
    "sourceHeaderSize"
 )
+
+# Here, you can provide .ned files or directories containing .ned files. All
+# these files will be copied into a new directory and transfered to the remote
+# processing PEs. A corresponding nedfiles.lst will be written and also
+# transferred to the PE.
+# Examples: simCreatorNEDFiles  <- "."
+#           simCreatorNEDFiles  <- "../alpha/nedfiles ../beta/nedfiles"
+simCreatorNEDFiles  <- ""
+
 # Here, you can provide additional files for packaging, e.g. "my-nedfile.ned".
 # You may even use a pattern, e.g. "Test*.ned".
 simulationMiscFiles <- ""
+
 
 
 # NewParam: Finally, add the new parameter to your simulation configuration.

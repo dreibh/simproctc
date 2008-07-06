@@ -26,11 +26,15 @@ source("hashfunctions.R")
 source("plotter.R")
 
 
+simulationDirectory <- "GiveAUsefulName"
+simulationRuns <- 1
+simulationDuration <- 60
 simulationStoreVectors <- FALSE
 simulationExecuteMake <- TRUE
 simulationScriptOutputVerbosity <- 8
 simulationSummaryCompressionLevel <- 9
 simulationSummarySkipList <- c()
+simCreatorNEDFiles  <- ""
 simulationMiscFiles <- ""
 
 distributionPool  <- "ScriptingPool"
@@ -361,8 +365,20 @@ finishMakefile <- function(makefile, summaryCommand)
    cat(sep="","\techo \"#!/bin/sh\" >simulation.config-stage0 && ", file=makefile)
    cat(sep="","echo \"SIMULATION_PROGRAM=./", simCreatorSimulationBinary, "\" >>simulation.config-stage0 && ", file=makefile)
    cat(sep="","echo \"SIMULATION_LIBS=lib.", simCreatorSimulationBinary, "\" >>simulation.config-stage0 && ", file=makefile)
+
+   cat(sep="","./get-neds ", simulationDirectory, "/ned.", simCreatorSimulationBinary, " ", simCreatorNEDFiles, " && ", file=makefile)
+   cat(sep="", "echo \"ned.", simCreatorSimulationBinary, "/*.ned\" >", simulationDirectory, "/nedfile.lst && ", file=makefile)
+
    cat(sep="","./get-libs ", simCreatorSimulationBinary, " ", simulationDirectory, "/lib.", simCreatorSimulationBinary, " && ", file=makefile)
-   cat(sep="","tar chjf ", simulationDirectory, "/simulation-environment.tar.bz2 simulation.config-stage0 ", simCreatorSimulationBinary, " ", simulationMiscFiles, " -C ", simulationDirectory, " lib.", simCreatorSimulationBinary, " && ", file=makefile)
+
+   cat(sep="","tar chjf ", simulationDirectory, "/simulation-environment.tar.bz2 simulation.config-stage0 ",
+              simCreatorSimulationBinary, " ", simulationMiscFiles,
+              " -C ", simulationDirectory,
+                 " lib.", simCreatorSimulationBinary, " ",
+                 " ned.", simCreatorSimulationBinary, " ",
+                 " nedfile.lst ",
+              "&& ", file=makefile)
+
    cat(sep="","rm -f simulation.config-stage0\n\n", file=makefile)
 
    # ------ runtimeestimator ------------------------------------------------
