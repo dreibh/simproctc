@@ -366,7 +366,8 @@ static void addScalar(const char*  scalarName,
 // ###### Read and process scalar file ######################################
 static bool handleScalarFile(const char* varNames,
                              const char* varValues,
-                             const char* fileName)
+                             const char* fileName,
+                             const bool  interactive)
 {
    FILE* inFile = fopen(fileName, "r");
    if(inFile == NULL) {
@@ -446,6 +447,7 @@ static bool handleScalarFile(const char* varNames,
          // Skip this item
       }
       else if(!(strncmp(buffer, "scalar ", 7))) {
+         // ====== Parse scalar line ========================================
          char* s = getWord((char*)&buffer[7], (char*)&objectName);
          if(s) {
             s = getWord(s, (char*)&statName);
@@ -475,6 +477,7 @@ static bool handleScalarFile(const char* varNames,
          cout << "Value=" << value << endl;
 */
 
+         // ====== Get scalar name ==========================================
          removeSpaces((char*)&statName);
          replaceSlashes((char*)&statName);
          removeBrackets((char*)&objectName);
@@ -487,7 +490,23 @@ static bool handleScalarFile(const char* varNames,
                                   (char*)&aggValues, sizeof(aggValues));
          safestrcat((char*)&scalarName, "-", sizeof(scalarName));
          safestrcat((char*)&scalarName, statName, sizeof(scalarName));
-         addScalar(scalarName, aggNames, aggValues, varNames, varValues, run, value);
+
+         // ====== Reconciliate with skip list ==============================
+         SkipListNode* skipListNode = SkipList;
+         while(skipListNode != NULL) {
+            if(strncmp(scalarName, skipListNode->Prefix, strlen(skipListNode->Prefix)) == 0) {
+               break;
+            }
+            skipListNode = skipListNode->Next;;
+         }
+         if(skipListNode == NULL) {
+            addScalar(scalarName, aggNames, aggValues, varNames, varValues, run, value);
+         }
+         else {
+            if(interactive) {
+               cout << "Skipping entry " << scalarName << endl;
+            }
+         }
       }
       else if(buffer[0] == 0x00) {
       }
@@ -515,7 +534,6 @@ static void dumpScalars(const char*        simulationsDirectory,
 {
    // simpleRedBlackTreePrint(&StatisticsStorage, stdout);
 
-   SkipListNode*      skipListNode;
    FILE*              outFile   = NULL;
    BZFILE*            outBZFile = NULL;
    size_t             line      = 0;
@@ -588,45 +606,30 @@ static void dumpScalars(const char*        simulationsDirectory,
          if(interactive) {
             cout << "Statistics \"" << scalarNode->ScalarName << "\" ...";
          }
-         skipListNode = SkipList;
-         while(skipListNode != NULL) {
-            if(strncmp(scalarNode->ScalarName, skipListNode->Prefix, strlen(skipListNode->Prefix)) == 0) {
-               break;
-            }
-            skipListNode = skipListNode->Next;;
+         cout.flush();
+         outFile = fopen(fileName, "w");
+         if(outFile == NULL) {
+            cerr << endl
+                 << "ERROR: Unable to create file <" << fileName << ">!" << endl;
+            exit(1);
          }
-         if(skipListNode != NULL) {
-            if(interactive) {
-               cout << " (skipping, entry \"" << skipListNode->Prefix << "\")" << endl;
+         if(compressionLevel > 0) {
+            outBZFile = BZ2_bzWriteOpen(&bzerror, outFile, compressionLevel, 0, 30);
+            if(bzerror != BZ_OK) {
+               cerr << endl
+                    << "ERROR: Unable to initialize BZip2 compression on file <" << fileName << ">!" << endl
+                    << "Reason: " << BZ2_bzerror(outBZFile, &bzerror) << endl;
+               BZ2_bzWriteClose(&bzerror, outBZFile, 0, NULL, NULL);
+               fclose(outFile);
+               unlink(fileName);
+               outBZFile = NULL;
+               outFile   = NULL;
             }
-            unlink(fileName);
          }
          else {
-            cout.flush();
-            outFile = fopen(fileName, "w");
-            if(outFile == NULL) {
-               cerr << endl
-                    << "ERROR: Unable to create file <" << fileName << ">!" << endl;
-               exit(1);
-            }
-            if(compressionLevel > 0) {
-               outBZFile = BZ2_bzWriteOpen(&bzerror, outFile, compressionLevel, 0, 30);
-               if(bzerror != BZ_OK) {
-                  cerr << endl
-                       << "ERROR: Unable to initialize BZip2 compression on file <" << fileName << ">!" << endl
-                       << "Reason: " << BZ2_bzerror(outBZFile, &bzerror) << endl;
-                  BZ2_bzWriteClose(&bzerror, outBZFile, 0, NULL, NULL);
-                  fclose(outFile);
-                  unlink(fileName);
-                  outBZFile = NULL;
-                  outFile   = NULL;
-               }
-            }
-            else {
-               outBZFile = NULL;
-            }
-            line = 1;
+            outBZFile = NULL;
          }
+         line = 1;
 
 
          // ====== Write table header =======================================
@@ -856,7 +859,7 @@ int main(int argc, char** argv)
             cerr << "ERROR: No values given (parameter --values=...)!" << endl;
             exit(1);
          }
-         if(!handleScalarFile(varNames, varValues, (char*)&command[8])) {
+         if(!handleScalarFile(varNames, varValues, (char*)&command[8], interactive)) {
             scalarFileError = true;
          }
          varValues[0] = 0x00;

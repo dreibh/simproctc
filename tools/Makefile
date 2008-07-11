@@ -49,7 +49,7 @@ doublelinkedringlist.o:	doublelinkedringlist.c doublelinkedringlist.h
 
 
 t1:	test1.sca test2.sca createsummary
-	( echo "--simulationsdirectory=." && echo "--resultsdirectory=/tmp" && echo "--values=One" && echo "--input=test1.sca" && echo "--values=Two" && echo "--input=test2.sca" && echo "--skip=KeepAlive" ) | ./createsummary MyVarName
+	( echo "--skip=tsb.nameServerArray.enrpServer" && echo "--simulationsdirectory=." && echo "--resultsdirectory=/tmp" && echo "--values=One" && echo "--input=test1.sca" && echo "--values=Two" && echo "--input=test2.sca" && echo "--skip=KeepAlive" ) | ./createsummary MyVarName
 
 t1u:	test1.sca test2.sca createsummary
 	( echo "--simulationsdirectory=." && echo "--resultsdirectory=/tmp" && echo "--values=One" && echo "--input=test1.sca" && echo "--values=Two" && echo "--input=test2.sca" ) | ./createsummary MyVarName -compress=0
