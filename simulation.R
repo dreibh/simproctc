@@ -460,7 +460,7 @@ executeMake <- function()
       cat(sep="", "   - To view logfile: tail -f ", getGlobalVariable("gLogfileName"), "\n")
       cat(paste(sep="", "   - Sim. Start = ", startTime, "\n"))
    }
-   cmd <- paste(sep="", " if [ -e Makefile ] ; then make ", simCreatorSimulationBinary, " ; fi && cd tools && make runtimeestimator && cd .. && make -j" ,
+   cmd <- paste(sep="", " if [ -e Makefile ] ; then make MODE=release ", simCreatorSimulationBinary, " ; fi && cd tools && make runtimeestimator && cd .. && make -j" ,
                 CPUs,
                 " -f ", getGlobalVariable("gMakefileName"),
                 " all >", getGlobalVariable("gLogfileName"))
@@ -612,9 +612,58 @@ createAllSimulationRuns <- function(simulationConfigurations,
 }
 
 
-# ====== Create simulation ==================================================
-createSimulation <- function(simulationDirectory, simulationConfigurations)
+# ====== Reronciliate configuration and default settings ====================
+makeSimulations <- function(configuration, defaults)
 {
+   results <- list()
+
+   # ====== Replace all defaults by new configurations ======================
+   for(i in 1:length(defaults)) {
+      defaultConfigItem <- unlist(defaults[i], recursive=FALSE)
+      override <- FALSE
+      for(j in 1:length(configuration)) {
+         configItem <- unlist(configuration[j], recursive=FALSE)
+         # ====== Replace default setting ===================================
+         if(as.character(configItem[1]) == as.character(defaultConfigItem[1])) {
+            # cat("Override default: ",as.character(defaultConfigItem[1]),"\n")
+            results <- append(results, configuration[j])
+            override <- TRUE
+            break
+         }
+      }
+      # ====== Keep default setting, since no new value has been set ========
+      if(!override) {
+         results <- append(results, defaults[i])
+      }
+   }
+
+   # ====== Cross-check: for each value, there should be a default value ====
+   for(j in 1:length(configuration)) {
+      configItem <- unlist(configuration[j], recursive=FALSE)
+      found <- FALSE
+      for(i in 1:length(defaults)) {
+         defaultConfigItem <- unlist(defaults[i], recursive=FALSE)
+         if(as.character(configItem[1]) == as.character(defaultConfigItem[1])) {
+            found <- TRUE
+            break
+         }
+      }
+      if(!found) {
+         stop(paste(sep="", "ERROR: There is no default setting for parameter ",
+                     as.character(configItem[1]), "!\n         ",
+                     "This is either a typo or the simulation generator script has to be updated!"))
+      }
+   }
+
+   return(results)
+}
+
+
+# ====== Create simulation ==================================================
+createSimulation <- function(simulationDirectory, simulationConfigurations, simulationDefaults)
+{
+   simulationConfigurations <- makeSimulations(simulationConfigurations, simulationDefaults)
+
    # ------ Initialize ------------------------------------------------------
    setGlobalVariable("gRunNumber", 1)
    setGlobalVariable("gTotalSimulationRuns",

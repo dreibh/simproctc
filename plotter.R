@@ -443,6 +443,18 @@ plotstd3 <- function(mainTitle,
                   legendDots <- append(legendDots, legendDot)
                }
 
+               # ----- Lines plot without confidence intervals --------------
+               else if((type == "lx") || (type=="linesx")) {
+                  xSubset <- subset(xSet, (zSet == z) & (vSet == v) & (wSet == w))
+                  ySubset <- subset(ySet, (zSet == z) & (vSet == v) & (wSet == w))
+                  lines(xSubset, ySubset, col=legendColor, cex=par("cex"), pch=legendDot)
+
+                  legendTexts <- append(legendTexts, legendText)
+                  legendColors <- append(legendColors, legendColor)
+                  legendStyles <- append(legendStyles, legendStyle)
+                  legendDots <- append(legendDots, legendDot)
+               }
+
                # ----- Horizontal bars plot ---------------------------------
                else if((type == "h") || (type=="hbars")) {
                   xSubset <- subset(xSet, (zSet == z) & (vSet == v) & (wSet == w))
@@ -717,6 +729,7 @@ plotstd4 <- function(mainTitle, aTitle, xTitle, yTitle, zTitle,
                      rangeColors        = c(),
                      type               = "lines",
                      hideLegend         = FALSE,
+                     legendSizeFactor   = 0.8,
                      legendPos          = c(0,1),
                      colorMode          = cmColor,
                      frameColor         = par("fg"))
@@ -836,6 +849,7 @@ plotstd4 <- function(mainTitle, aTitle, xTitle, yTitle, zTitle,
                rangeSet=rangeSet, rangeColors=rangeColors,
                type = type,
                hideLegend = hideLegend,
+               legendSizeFactor = legendSizeFactor,
                legendPos = legendPos,
                colorMode = colorMode,
                frameColor=frameColor)
@@ -872,6 +886,7 @@ plotstd5 <- function(mainTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                      rangeColors       = c(),
                      type              = "lines",
                      hideLegend        = FALSE,
+                     legendSizeFactor  = 0.8,
                      legendPos         = c(0,1),
                      colorMode         = cmColor,
                      frameColor        = par("fg"))
@@ -1040,6 +1055,7 @@ plotstd5 <- function(mainTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                   rangeSet=rangeSet, rangeColors=rangeColors,
                   type = type,
                   hideLegend=hideLegend,
+                  legendSizeFactor = legendSizeFactor,
                   legendPos=legendPos,
                   colorMode = colorMode,
                   frameColor=frameColor)
@@ -1087,6 +1103,7 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                      pStart            = 0,
                      hideLegend        = FALSE,
                      legendPos         = c(0,1),
+                     legendSizeFactor  = 0.8,
                      colorMode         = cmColor,
                      frameColor        = par("fg"),
                      simulationName    = "")
@@ -1160,6 +1177,7 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                      type = type,
                      hideLegend = hideLegend,
                      legendPos = legendPos,
+                     legendSizeFactor = legendSizeFactor,
                      colorMode = colorMode,
                      frameColor = frameColor)
             par(oldPar2)
@@ -1183,6 +1201,7 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                   type = type,
                   hideLegend = hideLegend,
                   legendPos = legendPos,
+                  legendSizeFactor = legendSizeFactor,
                   colorMode = colorMode,
                   frameColor = frameColor)
          par(oldPar2)
