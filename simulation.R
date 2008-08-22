@@ -264,8 +264,8 @@ addRunToMakefile <- function(makefile, runNumber, runDirectoryName, statusName, 
       cat(sep="", "   ./ssdistribute ", simulationDirectory, " ", runDirectoryName, " run", runNumber, "-parameters.ini", " \"", distributionPool, "\" \"", distributionPUOpt ,"\" && \\\n", file=makefile)
    }
    else {
-      cat(sep="", "   echo \"Running simulation: ./", simCreatorSimulationBinary, " -u Cmdenv -f ", iniName, "\" && \\\n", file=makefile)
-      cat(sep="", "   ./", simCreatorSimulationBinary, " -u Cmdenv -f ", iniName, " \\\n      >", outputName, " && \\\n", file=makefile)
+      cat(sep="", "   echo \"Running simulation: ./", simCreatorSimulationBinary, " ", simCreatorSimulationBinaryParams, " -u Cmdenv -f ", iniName, "\" && \\\n", file=makefile)
+      cat(sep="", "   ./", simCreatorSimulationBinary, " ", simCreatorSimulationBinaryParams, " -u Cmdenv -f ", iniName, " \\\n      >", outputName, " && \\\n", file=makefile)
       cat(sep="", "   find ", runDirectoryName, " \\\n      -name \"run", runNumber, "-output.txt\" -or \\\n      -name \"run", runNumber, "-vectors.vec\" -or \\\n      -name \"run", runNumber, "-scalars.sca\" | xargs -n1 bzip2 -f && \\\n", file=makefile)
    }
    cat(sep="", "   endTime=`date`   &&   ", file=makefile)
@@ -358,7 +358,7 @@ finishMakefile <- function(makefile, summaryCommand)
    # ------ Simulation environment archive ----------------------------------
    cat(sep="", toupper(simCreatorSimulationBinary), "_SRCS=$(wildcard *.cc) $(wildcard *.c) $(wildcard *.h) $(wildcard *.msg) $(wildcard *.ned)\n", file=makefile)
    cat(sep="", simCreatorSimulationBinary, ":\t$(", toupper(simCreatorSimulationBinary), "_SRCS)\n", file=makefile)
-   cat(sep="","\t$(MAKE) ", simCreatorSimulationBinary, "\n\n", file=makefile)
+   cat(sep="","\t$(MAKE) MODE=release ", simCreatorSimulationBinary, "\n\n", file=makefile)
 
    # ------ Simulation environment archive ----------------------------------
    cat(sep="", simulationDirectory, "/simulation-environment.tar.bz2:\t", simCreatorSimulationBinary, "\n", file=makefile)
