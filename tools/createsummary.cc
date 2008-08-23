@@ -765,6 +765,8 @@ int main(int argc, char** argv)
    char         varValues[4096];
    char         simulationsDirectory[4096];
    char         resultsDirectory[4096];
+   char         logFileName[4096];
+   char         statusFileName[4096];
    unsigned int compressionLevel = 9;
    bool         interactive      = true;
    char         buffer[4096];
@@ -807,7 +809,9 @@ int main(int argc, char** argv)
         << endl;
 
 
-   varValues[0] = 0x00;
+   varValues[0]      = 0x00;
+   logFileName[0]    = 0x00;
+   statusFileName[0] = 0x00;
    strcpy((char*)&simulationsDirectory, ".");
    strcpy((char*)&resultsDirectory, ".");
    if(interactive) {
@@ -854,6 +858,12 @@ int main(int argc, char** argv)
             }
          }
       }
+      else if(!(strncmp(command, "--logfile=", 10))) {
+         snprintf((char*)&logFileName, sizeof(logFileName), "%s", (char*)&command[10]);
+      }
+      else if(!(strncmp(command, "--statusfile=", 13))) {
+         snprintf((char*)&statusFileName, sizeof(statusFileName), "%s", (char*)&command[13]);
+      }
       else if(!(strncmp(command, "--input=", 8))) {
          if(varValues[0] == 0x00) {
             cerr << "ERROR: No values given (parameter --values=...)!" << endl;
@@ -861,8 +871,17 @@ int main(int argc, char** argv)
          }
          if(!handleScalarFile(varNames, varValues, (char*)&command[8], interactive)) {
             scalarFileError = true;
+            if(logFileName[0] != 0x00) {
+               fprintf(stderr, " => see logfile %s\n", logFileName);
+            }
+            if(statusFileName[0] != 0x00) {
+               fputs(" Removing status file; restart simulation to re-create this run!\n", stderr);
+               unlink(statusFileName);
+            }
          }
-         varValues[0] = 0x00;
+         varValues[0]      = 0x00;
+         logFileName[0]    = 0x00;
+         statusFileName[0] = 0x00;
       }
       else if(!(strncmp(command, "--skip=", 7))) {
          SkipListNode* skipListNode = new SkipListNode;

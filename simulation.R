@@ -34,8 +34,10 @@ simulationExecuteMake <- TRUE
 simulationScriptOutputVerbosity <- 8
 simulationSummaryCompressionLevel <- 9
 simulationSummarySkipList <- c()
-simCreatorNEDFiles  <- ""
 simulationMiscFiles <- ""
+
+simCreatorNEDFiles <- ""
+simCreatorSimulationBinaryParams <- ""
 
 distributionPool  <- "ScriptingPool"
 distributionProcs <- 0   # Set to 0 for to disable distribution!
@@ -292,7 +294,7 @@ beginSummary <- function()
 
 
 # ====== Add run to summary file ============================================
-addRunToSummary <- function(summary, scalarName, iniName, varValues)
+addRunToSummary <- function(summary, scalarName, iniName, logName, statusName, varValues)
 {
    varValuesString <- ""
    for(value in varValues) {
@@ -312,6 +314,8 @@ addRunToSummary <- function(summary, scalarName, iniName, varValues)
    }
 
    cat(sep="", "--values=\"", varValuesString, " \"", iniName, "\"\"\n", file=summary)
+   cat(sep="", "--statusfile=", statusName, "\n", file=summary)
+   cat(sep="", "--logfile=", logName, "\n", file=summary)
    cat(sep="", "--input=", scalarName, ".bz2\n", file=summary)
 }
 
@@ -594,7 +598,7 @@ createAllSimulationRuns <- function(simulationConfigurations,
                simCreatorWriteParameterSection(filePrefix, ini, simulationRun, duration)
                close(ini)
 
-               addRunToSummary(summary, scalarName, iniName, varValues)
+               addRunToSummary(summary, scalarName, iniName, outputName, statusName, varValues)
                addRunToMakefile(makefile, simulationRun, runDirectoryName, statusName, iniName, outputName, scalarName, vectorName)
 
                setGlobalVariable("gRunNumber", getGlobalVariable("gRunNumber") + 1)
