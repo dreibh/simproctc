@@ -37,27 +37,18 @@ demoWriteHeader <- function(iniFile, simulationRun, scalarName, vectorName, dura
    cat(sep="", "rng-class = cMersenneTwister\n", file=iniFile)
    cat(sep="", "seed-0-mt = ", simulationRun, "\n", file=iniFile)
    cat(sep="", "output-scalar-file = ", "run", simulationRun, "-scalars.sca\n", file=iniFile)
-   cat(sep="", "output-vectors-file = ", "run", simulationRun, "-vectors.vec\n", file=iniFile)
-   cat(sep="", "# --- Note: Set sim-time-limit larger than Controller::statisticsWriteTimeStamp! ---\n", file=iniFile)
+   cat(sep="", "output-vector-file = ", "run", simulationRun, "-vectors.vec\n", file=iniFile)
+   cat(sep="", "cmdenv-express-mode = false\n", file=iniFile)
    cat(sep="", "sim-time-limit = ", simCreatorSimulationStartup, " ", duration, "s 1ms\n", file=iniFile)
    cat(sep="", "\n\n", file=iniFile)
 
-   cat(sep="", "[Cmdenv]\n", file=iniFile)
-   cat(sep="", "express-mode = yes\n", file=iniFile)
-   cat(sep="", "\n", file=iniFile)
-
-   cat(sep="", "[Tkenv]\n", file=iniFile)
-   cat(sep="", "default-run = 1\n", file=iniFile)
-   cat(sep="", "\n", file=iniFile)
-
-   cat(sep="", "[OutVectors]\n", file=iniFile)
    if(simulationStoreVectors) {
-      cat(sep="", "**.enabled = yes\n", file=iniFile)
+      cat(sep="", "**.vector-recording = true\n", file=iniFile)
    }
    else {
-      cat(sep="", "**.enabled = no\n", file=iniFile)
+      cat(sep="", "**.vector-recording = false\n", file=iniFile)
    }
-   cat(sep="", "**.interval = ", simCreatorSimulationStartup, "..", simCreatorSimulationStartup, " ", duration, "\n", file=iniFile)
+   cat(sep="", "**.vector-recording-interval = ", simCreatorSimulationStartup, "..", simCreatorSimulationStartup, " ", duration, "\n", file=iniFile)
    cat(sep="", "\n", file=iniFile)
    cat(sep="", "\n", file=iniFile)
 }
@@ -75,8 +66,6 @@ demoWriteParameterSection <- function(filePrefix, iniFile, simulationRun, durati
 {
    # NewParam: Add appropriate lines to the .ini file in this function.
 
-   cat(sep="", "[Parameters]\n", file=iniFile)
-
    # ------ Scenario settings -----------------------------------------------
    cat(sep="", "# ----- Scenario settings --------------------------------\n", file=iniFile)
    cat(sep="", "fragmenterScenario.fragmenter.cellPayloadSize = ", cellPayloadSize, "\n", file=iniFile)
@@ -89,7 +78,7 @@ demoWriteParameterSection <- function(filePrefix, iniFile, simulationRun, durati
 }
 
 
-simCreatorSimulationBinary      <- "demo"
+simCreatorSimulationBinary      <- "demo4"
 simCreatorSimulationNetwork     <- "fragmenterScenario"
 simCreatorSimulationStartup     <- "5s"
 simCreatorWriteHeader           <- demoWriteHeader
@@ -118,6 +107,7 @@ simCreatorNEDFiles  <- ""
 # Here, you can provide additional files for packaging, e.g. "my-nedfile.ned".
 # You may even use a pattern, e.g. "Test*.ned".
 simulationMiscFiles <- ""
+
 
 
 demoPlotVariables <- list(
@@ -169,7 +159,6 @@ demoPlotVariables <- list(
            "blue4",
            list("sink-AverageDelay"))
 )
-
 
 
 # NewParam: Finally, add the new parameter to your default simulation configuration.
