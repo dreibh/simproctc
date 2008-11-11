@@ -208,14 +208,14 @@ module FragmenterScenario
     connections:
         source.outputGate --> Link10M --> duplicator.inputGate;
         duplicator.outputGate[0] --> fragmenter.inputGate;
-        fragmenter.outputGate --> Link10M --> nodeArray1[0].inputGate;
+        fragmenter.outputGate --> nodeArray1[0].inputGate;
         for i=0..2 {
             nodeArray1[i].outputGate --> Link10M --> nodeArray1[i+1].inputGate;
         }
         nodeArray1[3].outputGate --> Link10M --> defragmenter.inputGate;
         defragmenter.outputGate --> sink1.inputGate;
 
-        duplicator.outputGate[1] --> Link10M --> nodeArray2[0].inputGate;
+        duplicator.outputGate[1] --> nodeArray2[0].inputGate;
         for i=0..2 {
             nodeArray2[i].outputGate --> Link10M --> nodeArray2[i+1].inputGate;
         }

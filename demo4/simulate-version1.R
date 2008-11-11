@@ -48,7 +48,7 @@ demoWriteHeader <- function(iniFile, simulationRun, scalarName, vectorName, dura
    else {
       cat(sep="", "**.vector-recording = false\n", file=iniFile)
    }
-   cat(sep="", "**.vector-recording-interval = ", simCreatorSimulationStartup, "..", simCreatorSimulationStartup, " ", duration, "\n", file=iniFile)
+   cat(sep="", "**.vector-recording-interval = ", simCreatorSimulationStartup, "..", simCreatorSimulationStartup, " ", duration, "s\n", file=iniFile)
    cat(sep="", "\n", file=iniFile)
    cat(sep="", "\n", file=iniFile)
 }
@@ -71,7 +71,7 @@ demoWriteParameterSection <- function(filePrefix, iniFile, simulationRun, durati
    cat(sep="", "fragmenterScenario.fragmenter.cellPayloadSize = ", cellPayloadSize, "\n", file=iniFile)
    cat(sep="", "fragmenterScenario.fragmenter.cellHeaderSize = ", cellHeaderSize, "\n", file=iniFile)
    cat(sep="", "fragmenterScenario.intermediateNodeOutputRate = ", intermediateNodeOutputRate, "\n", file=iniFile)
-   cat(sep="", "fragmenterScenario.sourceInterarrivalTime = exponential(", sourceInterarrivalTime, ")\n", file=iniFile)
+   cat(sep="", "fragmenterScenario.sourceInterarrivalTime = exponential(", sourceInterarrivalTime, "s)\n", file=iniFile)
    cat(sep="", "fragmenterScenario.sourcePayloadSize = exponential(", sourcePayloadSize, ")\n", file=iniFile)
    cat(sep="", "fragmenterScenario.sourceHeaderSize = ", sourceHeaderSize, "\n", file=iniFile)
    cat(sep="", "\n", file=iniFile)

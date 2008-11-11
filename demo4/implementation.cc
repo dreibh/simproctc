@@ -33,25 +33,42 @@ class Source : public cSimpleModule
    Source();
    virtual void initialize();
    virtual void finish();
-   virtual void activity();
+   virtual void handleMessage(cMessage* msg);
 
    private:
-   cDoubleHistogram* InterarrivalStat;
-   cOutVector*       InterarrivalVector;
+   cGate*              OutputGate;
+   cQueue              OutputQueue;
+   cNewMessageEvent*   NewMessageEvent;
+   cChannelReadyEvent* ChannelReadyEvent;
+   cDoubleHistogram*   InterarrivalStat;
+   cOutVector*         InterarrivalVector;
+   unsigned long int   ID;
+   unsigned long int   SeqNumber;
+   simtime_t           LastMessageTimeStamp;
 };
 
 Define_Module(Source);
 
 
-Source::Source() : cSimpleModule(16384)
+Source::Source() : cSimpleModule()
 {
 }
 
 void Source::initialize()
 {
+   ID                   = par("id");
+   SeqNumber            = 0;
+   LastMessageTimeStamp = -1.0;
+
+   OutputGate           = gate(findGate("outputGate"));
+
    InterarrivalStat = new cDoubleHistogram("Interarrival Time Statistics", 100);
    InterarrivalStat->setRange(0.005,1.005);
    InterarrivalVector = new cOutVector("Interarrival Time");
+
+   ChannelReadyEvent = NULL;
+   NewMessageEvent   = new cNewMessageEvent("NewMessageEvent");
+   scheduleAt((simtime_t)par("startupDelay") + (simtime_t)par("interarrivalTime"), NewMessageEvent);
 }
 
 void Source::finish()
@@ -60,38 +77,55 @@ void Source::finish()
    delete InterarrivalVector;
 }
 
-void Source::activity()
+void Source::handleMessage(cMessage* msg)
 {
-   unsigned long int id                   = par("id");
-   unsigned long int seqNumber            = 0;
-   simtime_t         lastMessageTimeStamp = -1.0;
-
-   wait(par("startupDelay"));
-   for(;;) {
+   if(msg == NewMessageEvent) {
       const unsigned long int packetSize =
          (unsigned long int)par("headerSize") +
          (unsigned long int)par("payloadSize");
 
-      cDataPacket* packet = new cDataPacket("Data Packet");
-      packet->setSource(id);
+      cDataPacket* packet = new cDataPacket("DataPacket");
+      packet->setSource(ID);
       packet->setDestination(par("destination"));
-      packet->setMsgSeqNumber(seqNumber++);
+      packet->setMsgSeqNumber(SeqNumber++);
       packet->setTimestamp(simTime());
       packet->setBitLength(8 * packetSize);
-      packet->setContextPointer((void*)id);
-      packet->setKind(id);
-      send(packet, "outputGate");
+      packet->setContextPointer((void*)ID);
+      packet->setKind(ID);
+      OutputQueue.insert(packet);
 
-      if(lastMessageTimeStamp >= 0.0) {
-         const simtime_t interarrivalTime = simTime() - lastMessageTimeStamp;
+      if(LastMessageTimeStamp >= 0.0) {
+         const simtime_t interarrivalTime = simTime() - LastMessageTimeStamp;
          InterarrivalStat->collect(interarrivalTime);
          InterarrivalVector->record(interarrivalTime);
       }
-      lastMessageTimeStamp = simTime();
+      LastMessageTimeStamp = simTime();
 
-      simtime_t next = par("interarrivalTime");
-      wait(next);
+      if(ChannelReadyEvent == NULL) {
+         ChannelReadyEvent = new cChannelReadyEvent("ChannelReadyEvent");
+         scheduleAt(simTime(), ChannelReadyEvent);
+      }
+
+      NewMessageEvent = new cNewMessageEvent("NewMessageEvent");
+      scheduleAt(simTime() + (simtime_t)par("interarrivalTime"), NewMessageEvent);
    }
+
+   else if(msg == ChannelReadyEvent) {
+      if(OutputQueue.empty()) {
+         ChannelReadyEvent = NULL;
+      }
+      else {
+         send(static_cast<cMessage*>(OutputQueue.pop()), "outputGate");
+         ChannelReadyEvent = new cChannelReadyEvent("NewMessageEvent");
+         scheduleAt(OutputGate->getTransmissionFinishTime(), ChannelReadyEvent);
+      }
+   }
+
+   else {
+      error("Unknown message type!");
+   }
+
+   delete msg;
 }
 
 
@@ -201,15 +235,16 @@ class Multiplexer : public cSimpleModule
    virtual void handleMessage(cMessage* msg);
 
    private:
-   double            OutputRate;
-   unsigned int      MaxQueueLength;
-   unsigned int      QueueLength;
-   cQueue            Queue;
+   cQueue            OutputQueue;
+   cGate*            OutputGate;
    cTimerEvent*      TimerEvent;
    cDoubleHistogram* QueueLengthStat;
    cOutVector*       QueueLengthVector;
    cOutVector*       BytesDroppedVector;
    cOutVector*       PacketsDroppedVector;
+   double            OutputRate;
+   unsigned int      MaxQueueLength;
+   unsigned int      QueueLength;
 };
 
 Define_Module(Multiplexer);
@@ -218,6 +253,7 @@ Define_Module(Multiplexer);
 void Multiplexer::initialize()
 {
    OutputRate     = par("outputRate");
+   OutputGate     = gate(findGate("outputGate"));
    MaxQueueLength = par("maxQueueLength");
    QueueLength    = 0;
    TimerEvent     = NULL;
@@ -244,7 +280,7 @@ void Multiplexer::handleMessage(cMessage* msg)
       const unsigned int packetLength = packet->getBitLength() / 8;
 
       if(QueueLength + packetLength <= MaxQueueLength) {
-         Queue.insert((cMessage*)packet->dup());
+         OutputQueue.insert(packet);
          QueueLength += packetLength;
          QueueLengthStat->collect(QueueLength);
          QueueLengthVector->record(QueueLength);
@@ -261,7 +297,7 @@ void Multiplexer::handleMessage(cMessage* msg)
    else if(msg == TimerEvent) {
       TimerEvent = NULL;
 
-      cDataPacket* packet = (cDataPacket*)Queue.pop();
+      cDataPacket* packet = (cDataPacket*)OutputQueue.pop();
       const unsigned int packetLength = packet->getBitLength() / 8;
       QueueLength -= packetLength;
       QueueLengthStat->collect(QueueLength);
@@ -271,6 +307,7 @@ void Multiplexer::handleMessage(cMessage* msg)
          << " from " << packet->getSource() << endl;
 
       send(packet, "outputGate");
+      delete msg;
    }
 
    // ====== Unexpected message type ========================================
@@ -280,10 +317,11 @@ void Multiplexer::handleMessage(cMessage* msg)
 
 
    // ====== Finally, check if new timer can be scheduled ====================
-   if((Queue.front() != NULL) && (TimerEvent == NULL)) {
-      cDataPacket* packet = (cDataPacket*)Queue.front();
+   if((OutputQueue.front() != NULL) && (TimerEvent == NULL)) {
+      cDataPacket* packet = (cDataPacket*)OutputQueue.front();
       const unsigned int packetLength = packet->getBitLength() / 8;
-      const double       transmitTime = (double)packetLength / OutputRate;
+      const simtime_t    transmitTime = std::max(OutputGate->getTransmissionFinishTime(),
+                                                 simTime() + (double)packetLength / OutputRate);
       ev << "Scheduling timer for message #" << packet->getMsgSeqNumber()
          << " from " << packet->getSource()
          << ", transmit time: "
@@ -292,13 +330,9 @@ void Multiplexer::handleMessage(cMessage* msg)
       // We schedule a timer for the last bit of the packet being transmitted.
       // Then, we really send out the packet.
       TimerEvent = new cTimerEvent;
-      scheduleAt(simTime() + transmitTime, TimerEvent);
+      scheduleAt(transmitTime, TimerEvent);
    }
-
-   delete msg;
 }
-
-
 
 
 class Demultiplexer : public cSimpleModule
@@ -321,13 +355,11 @@ void Demultiplexer::handleMessage(cMessage* msg)
 {
    cDataPacket* packet = dynamic_cast<cDataPacket*>(msg);
    if(packet) {
-      cDataPacket* copy = (cDataPacket*)packet->dup();
-      send(copy, "outputGate", copy->getDestination() - 1);
+      send(packet, "outputGate", packet->getDestination() - 1);
    }
    else {
       error("Unexpected message type");
    }
-   delete msg;
 }
 
 
@@ -426,8 +458,7 @@ Define_Module(Dummy);
 
 void Dummy::handleMessage(cMessage* msg)
 {
-   send((cMessage*)msg->dup(), "outputGate");
-   delete msg;
+   send(msg, "outputGate");
 }
 
 
@@ -513,7 +544,7 @@ void Defragmenter::handleMessage(cMessage* msg)
             LastCellSeqNumber = cell->getCellSeqNumber();
             PacketLength += cell->getCellPayloadLength();
             if(cell->getIsMessageEnd()) {
-               cDataPacket* packet = new cDataPacket("Data Packet");
+               cDataPacket* packet = new cDataPacket("DataPacket");
                packet->setSource(cell->getSource());
                packet->setDestination(cell->getDestination());
                packet->setMsgSeqNumber(cell->getMsgSeqNumber());

@@ -39,6 +39,14 @@ message cCell extends cDataPacket
 }
 
 
+message cNewMessageEvent
+{
+}
+
+message cChannelReadyEvent
+{
+}
+
 message cTimerEvent
 {
 }
