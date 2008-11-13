@@ -38,7 +38,7 @@ demoWriteHeader <- function(iniFile, simulationRun, scalarName, vectorName, dura
    cat(sep="", "seed-0-mt = ", simulationRun, "\n", file=iniFile)
    cat(sep="", "output-scalar-file = ", "run", simulationRun, "-scalars.sca\n", file=iniFile)
    cat(sep="", "output-vector-file = ", "run", simulationRun, "-vectors.vec\n", file=iniFile)
-   cat(sep="", "cmdenv-express-mode = false\n", file=iniFile)
+   cat(sep="", "cmdenv-express-mode = true\n", file=iniFile)
    cat(sep="", "sim-time-limit = ", simCreatorSimulationStartup, " ", duration, "s 1ms\n", file=iniFile)
    cat(sep="", "\n\n", file=iniFile)
 
