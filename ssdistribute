@@ -50,7 +50,7 @@ SIMULATION_POOLUSER=~/src/rsplib2/rsplib/scriptingclient
 
 UNIQUE_ID="$2/$INI_NAME"
 PU_LOGFILE="$RUN_DIRECTORY/$INI_NAME.log"
-PU_LOGLEVEL=7
+PU_LOGLEVEL=2
 VALGRIND="" # "valgrind  -v --tool=memcheck --leak-check=yes --show-reachable=no --leak-resolution=high --num-callers=40 --freelist-vol=4000000"
 
 
