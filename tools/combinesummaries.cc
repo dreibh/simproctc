@@ -1,9 +1,9 @@
 // $Id$
 // ###########################################################################
 //             Thomas Dreibholz's R Simulation Scripts Collection
-//                  Copyright (C) 2004-2008 Thomas Dreibholz
+//                  Copyright (C) 2004-2009 Thomas Dreibholz
 //
-//           Author: Thomas Dreibholz, dreibh@exp-math.uni-essen.de
+//           Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 // ###########################################################################
 //
 // This program is free software: you can redistribute it and/or modify
@@ -21,21 +21,26 @@
 //
 // Contact: dreibh@iem.uni-due.de
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <bzlib.h>
+
 #include <iostream>
 #include <fstream>
-#include <bzlib.h>
 
 
 using namespace std;
 
 
 // ###### Read and process data file ########################################
-static void addDataFile(const char*   varNames,
-                        const char*   varValues,
-                        const char*   inputFileName,
-                        FILE*         outFile,
-                        BZFILE*       outBZFile,
-                        unsigned int& outPos)
+void addDataFile(const char*   varNames,
+                 const char*   varValues,
+                 const char*   inputFileName,
+                 FILE*         outFile,
+                 BZFILE*       outBZFile,
+                 unsigned int& outPos)
 {
    unsigned int line;
    char         outBuffer[16384 + 4096];
@@ -133,6 +138,7 @@ static void addDataFile(const char*   varNames,
    }
    fclose(inFile);
 }
+
 
 
 
