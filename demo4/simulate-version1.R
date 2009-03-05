@@ -102,7 +102,7 @@ simCreatorAdditionalActiveVariables <- c(
 # transferred to the PE.
 # Examples: simCreatorNEDFiles  <- "."
 #           simCreatorNEDFiles  <- "../alpha/nedfiles ../beta/nedfiles"
-simCreatorNEDFiles  <- ""
+simCreatorNEDFiles  <- "."
 
 # Here, you can provide additional files for packaging, e.g. "my-nedfile.ned".
 # You may even use a pattern, e.g. "Test*.ned".

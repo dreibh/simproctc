@@ -61,18 +61,18 @@ for INI_FILE in $INI_FILES ; do
 
    # ====== Run simulation ==================================================
    ( startTime=`date` && \
-     echo "   => Running simulation: $SIMULATION_PROGRAM -u Cmdenv -f $INI_FILE" && \
+     echo "   => Running simulation: $SIMULATION_PROGRAM -u Cmdenv -f $INI_FILE -n $SIMULATION_NEDS" && \
      echo "=============================================================================" >$OUTPUT_FILE && \
      echo "Date:    `date`" >>$OUTPUT_FILE && \
      echo "Host:    " >>$OUTPUT_FILE && \
      echo " `uname -a`" >>$OUTPUT_FILE && \
-     echo "Program: $SIMULATION_PROGRAM -u Cmdenv -f $INI_FILE" >>$OUTPUT_FILE && \
+     echo "Program: $SIMULATION_PROGRAM -u Cmdenv -f $INI_FILE -n $SIMULATION_NEDS" >>$OUTPUT_FILE && \
      echo "=============================================================================" >>$OUTPUT_FILE && \
      echo "" >>$OUTPUT_FILE && \
      if [ -e "$SIMULATION_LIBS" ] ; then \
-        sh -v -c "$SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS $SIMULATION_PROGRAM -u Cmdenv -f $INI_FILE" </dev/null 2>$OUTPUT_FILE 1>&2 ; \
+        sh -v -c "$SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS $SIMULATION_PROGRAM -u Cmdenv -f $INI_FILE -n $SIMULATION_NEDS" </dev/null 2>$OUTPUT_FILE 1>&2 ; \
      else \
-        sh -c "$SIMULATION_PROGRAM -u Cmdenv -f $INI_FILE" </dev/null 2>$OUTPUT_FILE 1>&2 ; \
+        sh -c "$SIMULATION_PROGRAM -u Cmdenv -f $INI_FILE -n $SIMULATION_NEDS" </dev/null 2>$OUTPUT_FILE 1>&2 ; \
      fi && \
      endTime=`date` && \
      echo -e "Start: $$startTime\nEnd:   $$endTime" >$STATUS_FILE && echo "      --- Success! ---" ) || \

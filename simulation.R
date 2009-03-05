@@ -369,6 +369,7 @@ finishMakefile <- function(makefile, summaryCommand)
    cat(sep="","\techo \"#!/bin/sh\" >simulation.config-stage0 && ", file=makefile)
    cat(sep="","echo \"SIMULATION_PROGRAM=./", simCreatorSimulationBinary, "\" >>simulation.config-stage0 && ", file=makefile)
    cat(sep="","echo \"SIMULATION_LIBS=lib.", simCreatorSimulationBinary, "\" >>simulation.config-stage0 && ", file=makefile)
+   cat(sep="","echo \"SIMULATION_NEDS=ned.", simCreatorSimulationBinary, "\" >>simulation.config-stage0 && ", file=makefile)
 
    cat(sep="","./get-neds ", simulationDirectory, "/ned.", simCreatorSimulationBinary, " ", simCreatorNEDFiles, " && ", file=makefile)
    cat(sep="", "echo \"ned.", simCreatorSimulationBinary, "/*.ned\" >", simulationDirectory, "/nedfile.lst && ", file=makefile)
