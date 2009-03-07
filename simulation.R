@@ -266,8 +266,8 @@ addRunToMakefile <- function(makefile, runNumber, runDirectoryName, statusName, 
       cat(sep="", "   ./ssdistribute ", simulationDirectory, " ", runDirectoryName, " run", runNumber, "-parameters.ini", " \"", distributionPool, "\" \"", distributionPUOpt ,"\" && \\\n", file=makefile)
    }
    else {
-      cat(sep="", "   echo \"Running simulation: ./", simCreatorSimulationBinary, " ", simCreatorSimulationBinaryParams, " -u Cmdenv -f ", iniName, "\" && \\\n", file=makefile)
-      cat(sep="", "   ./", simCreatorSimulationBinary, " ", simCreatorSimulationBinaryParams, " -u Cmdenv -f ", iniName, " \\\n      >", outputName, " && \\\n", file=makefile)
+      cat(sep="", "   echo \"Running simulation: ./", simCreatorSimulationBinary, " ", simCreatorSimulationBinaryParams, " -u Cmdenv -f ", iniName, "  -n ", simulationDirectory, "/ned.", simCreatorSimulationBinary, "\" && \\\n", file=makefile)
+      cat(sep="", "   ./", simCreatorSimulationBinary, " ", simCreatorSimulationBinaryParams, " -u Cmdenv -f ", iniName, " -n ", simulationDirectory, "/ned.", simCreatorSimulationBinary, "\\\n      >", outputName, " && \\\n", file=makefile)
       cat(sep="", "   find ", runDirectoryName, " \\\n      -name \"run", runNumber, "-output.txt\" -or \\\n      -name \"run", runNumber, "-vectors.vec\" -or \\\n      -name \"run", runNumber, "-scalars.sca\" | xargs -n1 bzip2 -f && \\\n", file=makefile)
    }
    cat(sep="", "   endTime=`date`   &&   ", file=makefile)
