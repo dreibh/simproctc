@@ -2,7 +2,7 @@
 # $Id$
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
-#                  Copyright (C) 2005-2008 Thomas Dreibholz
+#                  Copyright (C) 2005-2009 Thomas Dreibholz
 #
 #               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 # ###########################################################################
@@ -50,11 +50,11 @@ mkdir $LIBSDIR || exit 1
 # ====== Copy libraries =====================================================
 for LIB in $LIBS ; do
    if [ -e $LIB ] ; then
-      echo "+ `wc -c $LIB`"
+      echo "   - `wc -c $LIB`"
       cp $LIB $LIBSDIR || exit 1
    fi
 done
 if [ -e $LOADER ] ; then
    cp $LOADER $LIBSDIR/ld-loader.so || exit 1
-   echo "+ `wc -c $LOADER` (loader)"
+   echo "   - `wc -c $LOADER` (loader)"
 fi

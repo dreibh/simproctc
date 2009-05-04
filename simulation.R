@@ -1,7 +1,7 @@
 # $Id$
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
-#                  Copyright (C) 2005-2008 Thomas Dreibholz
+#                  Copyright (C) 2005-2009 Thomas Dreibholz
 #
 #               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 # ###########################################################################
@@ -34,10 +34,32 @@ simulationExecuteMake <- TRUE
 simulationScriptOutputVerbosity <- 8
 simulationSummaryCompressionLevel <- 9
 simulationSummarySkipList <- c()
-simulationMiscFiles <- ""
 
-simCreatorNEDFiles <- ""
-simCreatorSimulationBinaryParams <- ""
+# The sources directory of the simulation.
+simCreatorSourcesDirectory <- "GiveAUsefulName"
+
+# The simulation binary.
+# NOTE: The path here is relative to the directory set in sourcesDirectory!
+simCreatorSimulationBinary <- "GiveAUsefulName"
+
+# The directory where the binary should be executed.
+# NOTE: The path here is relative to the directory set in sourcesDirectory!
+simCreatorSimulationBaseDir <- "GiveAUsefulName"
+
+# A list of directories to be recursively searched for NED files. These NED
+# files will be copied into the environment directory.
+# NOTE: The paths here are relative to the directory set in sourcesDirectory!
+# Example: list("src", "examples/sctp")
+simCreatorNEDFiles <- list("")
+
+# A list of directories to be recursively searched for misc files. These misc
+# files will be copied into the environment directory.
+# NOTE: The paths here are relative to the directory set in sourcesDirectory!
+# Example: list(c("*.mrt", "examples/sctp/cmttest1"))
+simCreatorMiscFiles <- list()
+
+# The simulation network to be loaded.
+simCreatorSimulationNetwork <- "giveANetworkName"
 
 distributionPool  <- "ScriptingPool"
 distributionProcs <- 0   # Set to 0 for to disable distribution!
@@ -255,26 +277,17 @@ beginMakefile <- function()
 
 
 # ====== Add run to makefile ================================================
-addRunToMakefile <- function(makefile, runNumber, runDirectoryName, statusName, iniName, outputName, scalarName, vectorName)
+addRunToMakefile <- function(makefile, runNumber, runDirectoryName, statusName)
 {
    cat(sep="", statusName, ":\t", simulationDirectory, "/simulation-environment.tar.bz2 ", getGlobalVariable("gRuntimeName"), "\n", file=makefile)
-   cat(sep="", "\t@if [ ", iniName, " -nt ", statusName, " -o ! -e ", statusName, " ] ; then \\\n", file=makefile)
-   cat(sep="", "   startTime=`date` && \\\n", file=makefile)
-   cat(sep="", "   rm -f ", scalarName, ".bz2 \\\n      ", vectorName, ".bz2 \\\n      ", outputName, ".bz2 && \\\n", file=makefile)
-   if((distributionPool != "") && (distributionProcs > 0)) {
-      cat(sep="", "   echo 'Running distributor: ./ssdistribute ", simulationDirectory, " ", runDirectoryName, " run", runNumber, "-parameters.ini", " \"", distributionPool, "\" \"", distributionPUOpt ,"\"' && \\\n", file=makefile)
-      cat(sep="", "   ./ssdistribute ", simulationDirectory, " ", runDirectoryName, " run", runNumber, "-parameters.ini", " \"", distributionPool, "\" \"", distributionPUOpt ,"\" && \\\n", file=makefile)
+   if(distributionProcs < 1) {
+      cat(sep="", "\t./perform-run ", simulationDirectory, " ", runDirectoryName, " ", runNumber, "\n", file=makefile)
    }
    else {
-      cat(sep="", "   echo \"Running simulation: ./", simCreatorSimulationBinary, " ", simCreatorSimulationBinaryParams, " -u Cmdenv -f ", iniName, "  -n ", simulationDirectory, "/ned.", simCreatorSimulationBinary, "\" && \\\n", file=makefile)
-      cat(sep="", "   ./", simCreatorSimulationBinary, " ", simCreatorSimulationBinaryParams, " -u Cmdenv -f ", iniName, " -n ", simulationDirectory, "/ned.", simCreatorSimulationBinary, "\\\n      >", outputName, " && \\\n", file=makefile)
-      cat(sep="", "   find ", runDirectoryName, " \\\n      -name \"run", runNumber, "-output.txt\" -or \\\n      -name \"run", runNumber, "-vectors.vec\" -or \\\n      -name \"run", runNumber, "-scalars.sca\" | xargs -n1 bzip2 -f && \\\n", file=makefile)
+      cat(sep="", "\t./perform-run ", simulationDirectory, " ", runDirectoryName, " ", runNumber, " \"", distributionPool, "\" \"", distributionPUOpt, "\"\n", file=makefile)
    }
-   cat(sep="", "   endTime=`date`   &&   ", file=makefile)
-   cat(sep="", "   echo \"Start: $$startTime\" \\\n       >", statusName, " ; \\\n", file=makefile)
-   cat(sep="", "   echo \"End:   $$endTime\" \\\n         >>", statusName, " ; \\\n", file=makefile)
-   cat(sep="", "   tools/runtimeestimator ", getGlobalVariable("gRuntimeName"), " ", getGlobalVariable("gTotalSimulationRuns"), " ", getGlobalVariable("gRunNumber"), " ; \\\n", file=makefile)
-   cat(sep="", "fi\n\n", file=makefile)
+   cat(sep="", "\ttools/runtimeestimator ", getGlobalVariable("gRuntimeName"), " ", getGlobalVariable("gTotalSimulationRuns"), " ", getGlobalVariable("gRunNumber"), "\n", file=makefile)
+   cat(sep="", "\n", file=makefile)
 }
 
 
@@ -362,33 +375,30 @@ finishMakefile <- function(makefile, summaryCommand)
    # ------ Simulation environment archive ----------------------------------
    cat(sep="", toupper(simCreatorSimulationBinary), "_SRCS=$(wildcard *.cc) $(wildcard *.c) $(wildcard *.h) $(wildcard *.msg) $(wildcard *.ned)\n", file=makefile)
    cat(sep="", simCreatorSimulationBinary, ":\t$(", toupper(simCreatorSimulationBinary), "_SRCS)\n", file=makefile)
-   cat(sep="","\t$(MAKE) MODE=release ", simCreatorSimulationBinary, "\n\n", file=makefile)
+   # cat(sep="", "\t( cd ", simCreatorSourcesDirectory, " && $(MAKE) MODE=release )\n\n", file=makefile)
+   cat(sep="", "\t( cd ", simCreatorSourcesDirectory, " && $(MAKE) )\n\n", file=makefile)
 
    # ------ Simulation environment archive ----------------------------------
    cat(sep="", simulationDirectory, "/simulation-environment.tar.bz2:\t", simCreatorSimulationBinary, "\n", file=makefile)
-   cat(sep="","\techo \"#!/bin/sh\" >simulation.config-stage0 && ", file=makefile)
-   cat(sep="","echo \"SIMULATION_PROGRAM=./", simCreatorSimulationBinary, "\" >>simulation.config-stage0 && ", file=makefile)
-   cat(sep="","echo \"SIMULATION_LIBS=lib.", simCreatorSimulationBinary, "\" >>simulation.config-stage0 && ", file=makefile)
-   cat(sep="","echo \"SIMULATION_NEDS=ned.", simCreatorSimulationBinary, "\" >>simulation.config-stage0 && ", file=makefile)
 
-   cat(sep="","./get-neds ", simulationDirectory, "/ned.", simCreatorSimulationBinary, " ", simCreatorNEDFiles, " && ", file=makefile)
-   cat(sep="", "echo \"ned.", simCreatorSimulationBinary, "/*.ned\" >", simulationDirectory, "/nedfile.lst && ", file=makefile)
+   makeEnvParams <- ""
+   for(n in simCreatorNEDFiles) {
+      makeEnvParams <- paste(sep="", makeEnvParams, " -n ", n)
+   }
+   for(m in simCreatorMiscFiles) {
+      makeEnvParams <- paste(sep="", makeEnvParams, " -misc \"", m[1], "\" ", m[2])
+   }
 
-   cat(sep="","./get-libs ", simCreatorSimulationBinary, " ", simulationDirectory, "/lib.", simCreatorSimulationBinary, " && ", file=makefile)
-
-   cat(sep="","tar chjf ", simulationDirectory, "/simulation-environment.tar.bz2 simulation.config-stage0 ",
-              simCreatorSimulationBinary, " ", simulationMiscFiles,
-              " -C ", simulationDirectory,
-                 " lib.", simCreatorSimulationBinary, " ",
-                 " ned.", simCreatorSimulationBinary, " ",
-                 " nedfile.lst ",
-              "&& ", file=makefile)
-
-   cat(sep="","rm -f simulation.config-stage0\n\n", file=makefile)
+   cat(sep="","\t./make-environment ", simulationDirectory, " ", simCreatorSourcesDirectory, " ", simCreatorSimulationBinary, " ", simCreatorSimulationBaseDir, " ", makeEnvParams, "\n", file=makefile)
+   cat(sep="","\n", file=makefile)
 
    # ------ runtimeestimator ------------------------------------------------
    cat(sep="","tools/runtimeestimator:\n", file=makefile)
    cat(sep="", "\tcd tools && $(MAKE) runtimeestimator && cd ..\n\n", file=makefile)
+
+   # ------ getrelativepath -------------------------------------------------
+   cat(sep="","tools/getrelativepath:\n", file=makefile)
+   cat(sep="", "\tcd tools && $(MAKE) getrelativepath && cd ..\n\n", file=makefile)
 
    # ------ First run of runtimeestimator -----------------------------------
    cat(sep="", getGlobalVariable("gRuntimeName"), ":\n", file=makefile)
@@ -398,7 +408,7 @@ finishMakefile <- function(makefile, summaryCommand)
                " 0\n\n", file=makefile)
 
    # ------ Completion of simulation runs -----------------------------------
-   cat(sep="", getGlobalVariable("gSimulationsCompletedName"), ":\t", simCreatorSimulationBinary, " ", simulationDirectory, "/simulation-environment.tar.bz2 tools/runtimeestimator ", getGlobalVariable("gRuntimeName"), "   ", getGlobalVariable("gSimulationDependencies"), "\n", file=makefile)
+   cat(sep="", getGlobalVariable("gSimulationsCompletedName"), ":\t", simCreatorSimulationBinary, " ", simulationDirectory, "/simulation-environment.tar.bz2 tools/runtimeestimator tools/getrelativepath ", getGlobalVariable("gRuntimeName"), "   ", getGlobalVariable("gSimulationDependencies"), "\n", file=makefile)
    cat(sep="", "\tdate >", getGlobalVariable("gSimulationsCompletedName"), "\n", file=makefile)
    cat(sep="", "\techo \"Simulation completed!\"\n\n", file=makefile)
 
@@ -600,7 +610,7 @@ createAllSimulationRuns <- function(simulationConfigurations,
                close(ini)
 
                addRunToSummary(summary, scalarName, iniName, outputName, statusName, varValues)
-               addRunToMakefile(makefile, simulationRun, runDirectoryName, statusName, iniName, outputName, scalarName, vectorName)
+               addRunToMakefile(makefile, simulationRun, runDirectoryName, statusName)
 
                setGlobalVariable("gRunNumber", getGlobalVariable("gRunNumber") + 1)
                setGlobalVariable("gSimulationDependencies",

@@ -1,0 +1,192 @@
+#!/bin/sh
+# $Id$
+# ###########################################################################
+#             Thomas Dreibholz's R Simulation Scripts Collection
+#                  Copyright (C) 2005-2009 Thomas Dreibholz
+#
+#               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
+# ###########################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Contact: dreibh@iem.uni-due.de
+
+
+# ====== Recursively collect files in $2 matching pattern given in $1 =======
+collectFiles() {
+   if [ ! -e $SOURCES_DIRECTORY/$2 ] ; then
+      echo >&2 "ERROR: $SOURCES_DIRECTORY/$2 does not exit!"
+      exit 1
+   fi
+
+   # ------ Add single file -------------------------------------------------
+   if [ -f $SOURCES_DIRECTORY/$2 ] ; then
+      echo "   -> Adding $2 ..."
+      (
+         FULL="$2" && \
+         FILE=`find $SOURCES_DIRECTORY -wholename $SOURCES_DIRECTORY/$2 -printf "%f\n" | grep --invert-match "tdtoolchain/"` && \
+         DIR=`echo $FULL | sed -e "s/\/$FILE\$//g"` && \
+         mkdir -p $DIR && cp $SOURCES_DIRECTORY/$2 $DIR
+         if [ "x$3" != "x" ] ; then
+            echo $DIR >>$3
+         fi
+      ) || exit 1
+   # ------ Recursive lookup ------------------------------------------------
+   else
+      echo "   -> Collecting $1 in $2 recursively ..."
+      (
+         rm -f collect.tar && \
+         find $SOURCES_DIRECTORY/$2 -name $1 -printf "%P\n" | grep --invert-match "tdtoolchain/" | tar cf collect.tar -C $SOURCES_DIRECTORY/$2 -T - && \
+         mkdir -p $2 && \
+         echo -n "      Files: " && \
+         tar xvf collect.tar -C $2 | wc --lines && \
+         rm -f collect.tar
+         if [ "x$3" != "x" ] ; then
+            echo $2 >>$3
+         fi
+      ) || exit 1
+   fi
+}
+
+
+
+if [ $# -lt 3 ] ; then
+   echo >&2 "Usage: make-environment [Simulation Directory] [Sources Directory] [Simulation Binary] [Simulation Base Directory] {-n [NED directory (relative to base)]} ..."
+   echo >&2 "Example: make-environment test1 ~/src/INET6 src/inet -n src -n examples/sctp -misc \"*.mrt\" examples/sctp"
+   exit 1
+fi
+
+SIMULATION_DIRECTORY=$1
+SOURCES_DIRECTORY=$2
+SIMULATION_BINARY=$3
+SIMULATION_BASEDIR=$4
+shift ; shift ; shift ; shift
+
+TOOLCHAINDIR=`pwd`
+
+
+# ====== Check configuration ================================================
+echo "Creating simulation environment:"
+echo "Configuration:"
+echo "   - Simulation Directory      = $SIMULATION_DIRECTORY"
+echo "   - Sources Directory         = $SOURCES_DIRECTORY"
+echo "   - Simulation Binary         = $SIMULATION_BINARY (in $SOURCES_DIRECTORY)"
+echo "   - Simulation Base Directory = $SIMULATION_BASEDIR (in $SOURCES_DIRECTORY)"
+
+if [ ! -e $SIMULATION_DIRECTORY ] ; then
+   echo >&2 "ERROR: Simulation directory $SIMULATION_DIRECTORY not found!"
+   exit 1
+fi
+if [ ! -e $SOURCES_DIRECTORY ] ; then
+   echo >&2 "ERROR: Sources base directory $SOURCES_DIRECTORY not found!"
+   exit 1
+fi
+if [ ! -e $SOURCES_DIRECTORY/$SIMULATION_BASEDIR ] ; then
+   echo >&2 "ERROR: Sources base directory $SOURCES_DIRECTORY/$SIMULATION_BASEDIR not found!"
+   exit 1
+fi
+
+
+# ====== Create environment directory =======================================
+echo "+ `date` Environment directory"
+if [ -e $SIMULATION_DIRECTORY/Environment ] ; then
+   rm -rf $SIMULATION_DIRECTORY/Environment
+fi
+mkdir $SIMULATION_DIRECTORY/Environment || exit 1
+cd $SIMULATION_DIRECTORY/Environment || exit 1
+
+
+# ====== Copy simulation binary =============================================
+echo "+ `date` Copying simulation binary $SOURCES_DIRECTORY/$SIMULATION_BINARY ..."
+cp $SOURCES_DIRECTORY/$SIMULATION_BINARY simulation-binary || exit 1
+
+
+# ====== Collect libraries for simulation binary ============================
+echo "+ `date` Collecting libraries ..."
+$TOOLCHAINDIR/get-libs simulation-binary lib || exit 1
+
+
+# ====== Copy other files ===================================================
+while [ "x$1" != "x" ] ; do
+   # ====== Collect NED files ===============================================
+   if [ "$1" = "-n" ] ; then
+      echo "+ `date` Collecting NED files in $SOURCES_DIRECTORY/$2 ..."
+      collectFiles "*.ned" $2 "nedpaths.lst" || exit 1
+      if [ -d $SOURCES_DIRECTORY/$2 ] ; then
+         if [ "x$NED_PATHS" != "x" ] ; then
+            NED_PATHS="$NED_PATHS $2"
+         else
+            NED_PATHS="$2"
+         fi
+      else
+         if [ "x$NED_PATHS" != "x" ] ; then
+            NED_PATHS="$NED_PATHS $DIR"
+         else
+            NED_PATHS="$DIR"
+         fi
+      fi
+      shift ; shift
+
+   # ====== Collect NED files ===============================================
+   elif [ "$1" = "-misc" ] ; then
+      echo "+ `date` Collecting misc files (pattern $2) in $SOURCES_DIRECTORY/$3 ..."
+      collectFiles $2 $3 "" || exit 1
+      shift ; shift ; shift
+
+   # ====== Collect NED files ===============================================
+   else
+      echo >&2 "ERROR: Bad parameter $1."
+      exit 1
+   fi
+done
+
+
+# ====== Get NED paths for "-n" parameter ===================================
+# We need relative paths from the view of the directory the simulation binary
+# is executed in!
+echo "+ `date` Getting relative NED paths for simulation execution ..."
+OLD_NED_PATHS=`cat nedpaths.lst | xargs echo`
+NEW_NED_PATHS=""
+echo "   -> Absolute paths: $OLD_NED_PATHS"
+
+for n in $OLD_NED_PATHS ; do
+   echo "      + $TOOLCHAINDIR/tools/getrelativepath ./Environment/$SIMULATION_BASEDIR ./Environment/$n"
+   nnew=`$TOOLCHAINDIR/tools/getrelativepath ./Environment/$SIMULATION_BASEDIR ./Environment/$n`
+   if [ "x$NEW_NED_PATHS" = "x" ] ; then
+      NEW_NED_PATHS="$nnew"
+   else
+      NEW_NED_PATHS="$NEW_NED_PATHS $nnew"
+   fi
+done
+echo "   -> Relative paths: $NEW_NED_PATHS"
+
+
+# ====== Write configuration ================================================
+echo "+ `date` Writing configuration ..."
+(
+   echo "#!/bin/sh"
+   echo "SIMULATION_PROGRAM=simulation-binary"
+   echo "SIMULATION_LIBS=lib"
+   echo "SIMULATION_NEDS=\"$NEW_NED_PATHS\""
+   echo "SIMULATION_BASEDIR=$SIMULATION_BASEDIR"
+) >simulation.config-stage0
+
+
+# ====== Archive environment ================================================
+echo "+ `date` Archiving environment ..."
+cd $TOOLCHAINDIR/$SIMULATION_DIRECTORY
+echo "   -> $TOOLCHAINDIR/$SIMULATION_DIRECTORY/simulation-environment.tar.bz2"
+tar chjf simulation-environment.tar.bz2 Environment || exit 1
+echo -n "      "
+wc --bytes simulation-environment.tar.bz2

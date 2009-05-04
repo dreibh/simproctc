@@ -2,7 +2,7 @@
 # ###########################################################################
 #                   A Very Simple Example Simulation for
 #             Thomas Dreibholz's R Simulation Scripts Collection
-#                  Copyright (C) 2005-2008 Thomas Dreibholz
+#                  Copyright (C) 2005-2009 Thomas Dreibholz
 #
 #           Author: Thomas Dreibholz, dreibh@exp-math.uni-essen.de
 # ###########################################################################
@@ -36,7 +36,7 @@ simulationSummaryCompressionLevel <- 5
 simulationSummarySkipList <- c()
 # -------------------------------------
 distributionPool  <- "ScriptingPool"
-distributionProcs <- 0    # Set to 0 for to disable distribution!
+distributionProcs <- 2    # Set to 0 for to disable distribution!
 distributionPUOpt <- ""   # Add misc options for ScriptingPU here.
 # -------------------------------------
 

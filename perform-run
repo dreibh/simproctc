@@ -2,7 +2,7 @@
 # $Id$
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
-#                  Copyright (C) 2005-2008 Thomas Dreibholz
+#                  Copyright (C) 2005-2009 Thomas Dreibholz
 #
 #               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 # ###########################################################################
@@ -18,36 +18,51 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <http:/www.gnu.org/licenses/>.
 #
 # Contact: dreibh@iem.uni-due.de
 
-
-# ====== Check parameters ===================================================
-if [ $# -lt 1 ] ; then
-   echo "Usage: ssrun [Output File Name"
+if [ $# -lt 3 ] ; then
+   echo >&2 "Usage: perform-run [Simulation Directory] [Run Directory] [Run Number] {Pool Handle} {PU Misc Options}"
+   echo >&2 "Example: perform-run   test1 test1/Simulations/Set-1234 1   ScriptingPool \"-cspserver=127.0.0.1\""
    exit 1
 fi
-OUTPUT_ARCHIVE="$1"
+
+SIMULATION_DIRECTORY=`pwd`/$1   # e.g.: `pwd`/test1
+RUN_DIRECTORY=$2                # e.g.: test1/Simulations/Set-1234
+RUN_NUMBER=$3                   # e.g.: 1
+POOLHANDLE="$4"                 # e.g.: ScriptingPool
+PU_MISCOPT="$5"                 # e.g.: "-cspserver=... ..."
 
 
-# ====== Prepare simulation environment =====================================
-echo "+ `date` Unpacking environment ..."
-if [ -e simulation-environment.tar.bz2 ] ; then
-   tar xjf simulation-environment.tar.bz2 || exit 2
+RUN_PREFIX=run$RUN_NUMBER
+STATUS_FILE=$RUN_PREFIX-status.txt
+INI_FILE=$RUN_PREFIX-parameters.ini
+
+
+# ====== Check whether run still has to be performed ========================
+if [ $RUN_DIRECTORY/$INI_FILE -ot $RUN_DIRECTORY/$STATUS_FILE -o -e $RUN_DIRECTORY/$STATUS_FILE ] ; then
+   exit 0   # Run has already been processed
 fi
 
 
-# ====== Execute simulation runs ============================================
-INI_FILES="`ls *.ini`"
-for INI_FILE in $INI_FILES ; do
-   OUTPUT_FILE="`echo $INI_FILE | sed -e "s/-parameters.ini$/-output.txt/g"`"
-   SCALAR_FILE="`echo $INI_FILE | sed -e "s/-parameters.ini$/-scalars.sca/g"`"
-   VECTOR_FILE="`echo $INI_FILE | sed -e "s/-parameters.ini$/-vectors.vec/g"`"
-   STATUS_FILE="`echo $INI_FILE | sed -e "s/-parameters.ini$/-status.txt/g"`"
-   RUN_DIRECTORY="."
-   SIMULATION_DIRECTORY=$RUN_DIRECTORY
-   RUN_ENVIRONMENT="Environment"
+echo "Performing run $RUN_PREFIX ..."
+
+# ====== Perform run locally ================================================
+if [ "x$POOLHANDLE" = "x" ] ; then
+
+   # ====== Clone environment ===============================================
+   RUN_ENVIRONMENT=$RUN_PREFIX-Environment
+   VECTOR_FILE=$RUN_PREFIX-vectors.vec
+   SCALAR_FILE=$RUN_PREFIX-scalars.sca
+   OUTPUT_FILE=$RUN_PREFIX-output.txt
+   (
+      echo "+ `date` Cloning environment ..." && \
+      rm -rf $RUN_DIRECTORY/$RUN_ENVIRONMENT && \
+      mkdir $RUN_DIRECTORY/$RUN_ENVIRONMENT && \
+      find $SIMULATION_DIRECTORY/Environment -type d -printf "%P\n" | xargs -i§ mkdir $RUN_DIRECTORY/$RUN_ENVIRONMENT/§ && \
+      find $SIMULATION_DIRECTORY/Environment -type f -printf "%P\n" | xargs -i§ ln $SIMULATION_DIRECTORY/Environment/§ $RUN_DIRECTORY/$RUN_ENVIRONMENT/§
+   ) || exit 1
 
 
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,13 +118,15 @@ for INI_FILE in $INI_FILES ; do
       ( echo "Start: $startTime" && echo "End:   $endTime" ) >$STATUS_FILE
    ) || exit 15
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
-done
 
 
-# ====== Archive results to output file =====================================
-echo "+ `date` Archiving results ..."
-(
-   cd $RUN_DIRECTORY/Environment/$SIMULATION_BASEDIR && \
-   find . -name "*-status.txt" -or -name "*.txt.bz2" -or -name "*-scalars.sca.bz2" -or -name "*-vectors.vec.bz2" -or -name "core*" | xargs --no-run-if-empty tar czf output.tar.gz
-) || exit 20
-mv $RUN_DIRECTORY/Environment/$SIMULATION_BASEDIR/output.tar.gz $OUTPUT_ARCHIVE || exit 25
+   # ====== Save results and clean up =======================================
+   echo "+ `date` Cleaning up ..."
+   find $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR -maxdepth 1 -type f -name "*.bz2" -or -name "*.txt" | xargs --no-run-if-empty -i§ mv § $RUN_DIRECTORY || exit 1
+   rm -rf $RUN_DIRECTORY/$RUN_ENVIRONMENT || exit 20
+
+
+# ====== Distribute run into pool ===========================================
+else
+   ./ssdistribute $1 $2 $INI_FILE $POOLHANDLE "$PU_MISCOPT"
+fi

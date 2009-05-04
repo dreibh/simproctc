@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for file in get-libs get-neds ssrun ssdistribute plotter.R hashfunctions.R simulation.R tools ; do
+for file in make-environment perform-run get-libs ssrun ssdistribute plotter.R hashfunctions.R simulation.R tools ; do
    if [ -e $file ] ; then
       rm -f $file
    fi

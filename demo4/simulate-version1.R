@@ -78,8 +78,35 @@ demoWriteParameterSection <- function(filePrefix, iniFile, simulationRun, durati
 }
 
 
-simCreatorSimulationBinary      <- "demo4"
-simCreatorSimulationNetwork     <- "fragmenterScenario"
+# The sources directory of the simulation.
+simCreatorSourcesDirectory <- getwd()   # i.e. the current directory
+
+# The simulation binary.
+# NOTE: The path here is relative to the directory set in sourcesDirectory!
+simCreatorSimulationBinary <- "demo4"
+
+# The directory where the binary should be executed.
+# NOTE: The path here is relative to the directory set in sourcesDirectory!
+simCreatorSimulationBaseDir <- "."
+
+# A list of directories to be recursively searched for NED files. These NED
+# files will be copied into the environment directory.
+# NOTE: The paths here are relative to the directory set in sourcesDirectory!
+# Example: list("src", "examples/sctp")
+simCreatorNEDFiles <- list(".")
+# NOTE: Before examples/sctp can be used, examples/package.ned must be read.
+#       It contains the package name. Without this, there will be an error
+#       about wrong package name when the simulation is run!
+
+# A list of directories to be recursively searched for misc files. These misc
+# files will be copied into the environment directory.
+# NOTE: The paths here are relative to the directory set in sourcesDirectory!
+# Example: list(c("*.mrt", "examples/sctp/cmttest1"))
+simCreatorMiscFiles <- list()
+
+# The simulation network to be loaded.
+simCreatorSimulationNetwork <- "fragmenterScenario"
+
 simCreatorSimulationStartup     <- "5s"
 simCreatorWriteHeader           <- demoWriteHeader
 simCreatorWriteParameterSection <- demoWriteParameterSection
