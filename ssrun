@@ -39,15 +39,16 @@ fi
 
 
 # ====== Execute simulation runs ============================================
+RUN_DIRECTORY="."
+SIMULATION_DIRECTORY="`pwd`"   # Must be absolute path!
+RUN_ENVIRONMENT="Environment"
+RESULT=0
 INI_FILES="`ls *.ini`"
 for INI_FILE in $INI_FILES ; do
    OUTPUT_FILE="`echo $INI_FILE | sed -e "s/-parameters.ini$/-output.txt/g"`"
    SCALAR_FILE="`echo $INI_FILE | sed -e "s/-parameters.ini$/-scalars.sca/g"`"
    VECTOR_FILE="`echo $INI_FILE | sed -e "s/-parameters.ini$/-vectors.vec/g"`"
    STATUS_FILE="`echo $INI_FILE | sed -e "s/-parameters.ini$/-status.txt/g"`"
-   RUN_DIRECTORY="."
-   SIMULATION_DIRECTORY=$RUN_DIRECTORY
-   RUN_ENVIRONMENT="Environment"
 
 
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,10 +86,10 @@ for INI_FILE in $INI_FILES ; do
       ln $RUN_DIRECTORY/$INI_FILE $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$INI_FILE || exit 11
    fi
    if [ ! -e $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_PROGRAM ] ; then
-      ln $RUN_DIRECTORY/Environment/$SIMULATION_PROGRAM $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_PROGRAM || exit 12
+      ln $SIMULATION_DIRECTORY/Environment/$SIMULATION_PROGRAM $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_PROGRAM || exit 12
    fi
    if [ ! -e $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_LIBS ] ; then
-      ln $RUN_DIRECTORY/Environment/$SIMULATION_LIBS $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_LIBS || exit 13
+      ln -s $SIMULATION_DIRECTORY/Environment/$SIMULATION_LIBS $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_LIBS || exit 13
    fi
 
    (
@@ -101,8 +102,25 @@ for INI_FILE in $INI_FILES ; do
       find . -name $OUTPUT_FILE -or -name $VECTOR_FILE -or -name $SCALAR_FILE | xargs --no-run-if-empty bzip2 -f && \
       endTime=`date` && \
       ( echo "Start: $startTime" && echo "End:   $endTime" ) >$STATUS_FILE
-   ) || exit 15
+   ) || RESULT=15
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
+
+
+   # ====== If run has failed: print output for debugging ===================
+   if [ $RESULT -ne 0 ] ; then
+      echo ""
+      echo "----- SIMULATION RUN FAILED -----"
+      echo ""
+ls -l $RUN_DIRECTORY
+      if [ -e $RUN_DIRECTORY/$OUTPUT_FILE.bz2 ] ; then
+         echo "#########################################################"
+         bzcat $RUN_DIRECTORY/$OUTPUT_FILE.bz2
+         echo "#########################################################"
+         echo "Output file: $RUN_DIRECTORY/$OUTPUT_FILE.bz2"
+         echo "INI file:    $RUN_DIRECTORY/$INI_FILE"
+         echo "----- SIMULATION RUN FAILED -----"
+      fi
+   fi
 done
 
 
@@ -113,3 +131,6 @@ echo "+ `date` Archiving results ..."
    find . -name "*-status.txt" -or -name "*.txt.bz2" -or -name "*-scalars.sca.bz2" -or -name "*-vectors.vec.bz2" -or -name "core*" | xargs --no-run-if-empty tar czf output.tar.gz
 ) || exit 20
 mv $RUN_DIRECTORY/Environment/$SIMULATION_BASEDIR/output.tar.gz $OUTPUT_ARCHIVE || exit 25
+
+
+exit $RESULT

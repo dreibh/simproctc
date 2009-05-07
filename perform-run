@@ -52,6 +52,7 @@ echo "Performing run $RUN_PREFIX ..."
 if [ "x$POOLHANDLE" = "x" ] ; then
 
    # ====== Clone environment ===============================================
+   RESULT=0
    RUN_ENVIRONMENT=$RUN_PREFIX-Environment
    VECTOR_FILE=$RUN_PREFIX-vectors.vec
    SCALAR_FILE=$RUN_PREFIX-scalars.sca
@@ -100,10 +101,10 @@ if [ "x$POOLHANDLE" = "x" ] ; then
       ln $RUN_DIRECTORY/$INI_FILE $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$INI_FILE || exit 11
    fi
    if [ ! -e $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_PROGRAM ] ; then
-      ln $RUN_DIRECTORY/Environment/$SIMULATION_PROGRAM $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_PROGRAM || exit 12
+      ln $SIMULATION_DIRECTORY/Environment/$SIMULATION_PROGRAM $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_PROGRAM || exit 12
    fi
    if [ ! -e $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_LIBS ] ; then
-      ln $RUN_DIRECTORY/Environment/$SIMULATION_LIBS $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_LIBS || exit 13
+      ln -s $SIMULATION_DIRECTORY/Environment/$SIMULATION_LIBS $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_LIBS || exit 13
    fi
 
    (
@@ -116,7 +117,7 @@ if [ "x$POOLHANDLE" = "x" ] ; then
       find . -name $OUTPUT_FILE -or -name $VECTOR_FILE -or -name $SCALAR_FILE | xargs --no-run-if-empty bzip2 -f && \
       endTime=`date` && \
       ( echo "Start: $startTime" && echo "End:   $endTime" ) >$STATUS_FILE
-   ) || exit 15
+   ) || RESULT=15
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -125,6 +126,22 @@ if [ "x$POOLHANDLE" = "x" ] ; then
    find $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR -maxdepth 1 -type f -name "*.bz2" -or -name "*.txt" | xargs --no-run-if-empty -i§ mv § $RUN_DIRECTORY || exit 1
    rm -rf $RUN_DIRECTORY/$RUN_ENVIRONMENT || exit 20
 
+
+   # ====== If run has failed: print output for debugging ===================
+   if [ $RESULT -ne 0 ] ; then
+      echo ""
+      echo "----- SIMULATION RUN FAILED -----"
+      echo ""
+
+      echo "#########################################################"
+      tail -n250 $RUN_DIRECTORY/$OUTPUT_FILE
+      echo "#########################################################"
+      echo "Output file: $RUN_DIRECTORY/$OUTPUT_FILE"
+      echo "INI file:    $RUN_DIRECTORY/$INI_FILE"
+      echo "----- SIMULATION RUN FAILED -----"
+   fi
+
+   exit $RESULT
 
 # ====== Distribute run into pool ===========================================
 else
