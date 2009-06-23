@@ -1,7 +1,7 @@
 # $Id$
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
-#                  Copyright (C) 2005-2008 Thomas Dreibholz
+#                  Copyright (C) 2005-2009 Thomas Dreibholz
 #
 #               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 # ###########################################################################
@@ -279,7 +279,7 @@ plotstd3 <- function(mainTitle,
                      colorMode         = cmColor,
                      zColorArray       = c(),
                      frameColor        = par("fg"),
-                     legendSize  = 0.8,
+                     legendSize        = 0.8,
                      xValueFilter      = "%s",
                      yValueFilter      = "%s",
                      zValueFilter      = "%s",
@@ -459,9 +459,14 @@ plotstd3 <- function(mainTitle,
 
                # ----- Lines plot without confidence intervals --------------
                else if((type == "lx") || (type=="linesx")) {
+                  lineWidth <- 5
+                  if((length(vLevels) > 1) || (length(wLevels) > 1)) {
+                     lineWidth <- 5
+                  }
                   xSubset <- subset(xSet, (zSet == z) & (vSet == v) & (wSet == w))
                   ySubset <- subset(ySet, (zSet == z) & (vSet == v) & (wSet == w))
-                  lines(xSubset, ySubset, col=legendColor, cex=par("cex"), pch=legendDot)
+                  lines(xSubset, ySubset, col=legendColor, lty=legendStyle,
+                        lwd=lineWidth*par("cex"), pch=legendDot)
 
                   legendTexts <- append(legendTexts, legendText)
                   legendColors <- append(legendColors, legendColor)
@@ -877,7 +882,8 @@ makeLayout <- function(aSet, bSet, aTitle, bTitle, pTitle, pSubLabel, pColor, co
 
    plot.new()   # Title
    plot.window(c(0, 1), c(0, 1))
-   text(0.5, 0.5, parse(text=getLabel(pTitle)), adj=0.5, font=par("font.main"), cex=1.5*par("cex.main"))
+   text(0.5, 0.5, parse(text=getLabel(pTitle)),
+        adj=0.5, font=par("font.main"), cex=1.5*par("cex.main"))
 
    plot.new()   # Sub-title
    plot.window(c(0, 1), c(0, 1))
@@ -943,8 +949,11 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
       # oldPar1 <- par(bg=getBackgroundColor(page, colorMode, pStart))
 
       pColor <- getBackgroundColor(page, colorMode, pStart)
-      makeLayout(aSet, bSet, aTitle, bTitle, mainTitle, pSubLabel, pColor, colorMode)
-
+      if( (aLevels > 1) || (bLevels > 1) ) {
+         # For aLevels==1 and bLevels==1, there is no need to create the layout here!
+         # Otherwise, it would reduce cex => too small fonts!
+         makeLayout(aSet, bSet, aTitle, bTitle, mainTitle, pSubLabel, pColor, colorMode)
+      }
 
       # ------ Plot page ----------------------------------------------
       i<-1
@@ -1014,20 +1023,20 @@ plothist <- function(mainTitle,
                      xTitle, yTitle, zTitle,
                      xSet, ySet, zSet,
                      cSet,
-                     xAxisTicks       = getUsefulTicks(xSet),
-                     yAxisTicks       = c(),
-                     breakSpace       = 0.2,
-                     freq             = TRUE,
-                     hideLegend       = FALSE,
-                     legendPos        = c(1,1),
-                     colorMode        = cmColor,
-                     zColorArray      = c(),
-                     frameColor       = par("fg"),
-                     legendSize = 0.8,
-                     showMinMax       = FALSE,
-                     showConfidence   = TRUE,
-                     confidence       = 0.95,
-                     valueFilter      = plothist.valuefilter)
+                     xAxisTicks     = getUsefulTicks(xSet),
+                     yAxisTicks     = c(),
+                     breakSpace     = 0.2,
+                     freq           = TRUE,
+                     hideLegend     = FALSE,
+                     legendPos      = c(1,1),
+                     colorMode      = cmColor,
+                     zColorArray    = c(),
+                     frameColor     = par("fg"),
+                     legendSize     = 0.8,
+                     showMinMax     = FALSE,
+                     showConfidence = TRUE,
+                     confidence     = 0.95,
+                     valueFilter    = plothist.valuefilter)
 {
    # ------ Initialize variables --------------------------------------------
    cLevels <- levels(factor(cSet))
@@ -1518,30 +1527,16 @@ createPlots <- function(simulationDirectory, plotConfigurations, customFilter=""
             width=plotWidth, height=plotHeight, onefile=FALSE,
             family=plotFontFamily, pointsize=plotFontPointsize)
       }
-      if( (length(aSet) > 0) || (length(bSet) > 0) || (length(pSet) > 0)) {
-         plotstd6(title,
-                  pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
-                  pSet, aSet, bSet, xSet, ySet, zSet,
-                  vSet, wSet, vTitle, wTitle,
-                  xAxisTicks=xAxisTicks,yAxisTicks=yAxisTicks,
-                  rangeSet=rangeSet, rangeColors=rangeColors,
-                  type="l",
-                  frameColor=frameColor,
-                  legendSize=plotLegendSizeFactor, confidence=plotConfidence,
-                  colorMode=plotColorMode, hideLegend=plotHideLegend, legendPos=legendPos)
-      }
-      else {
-         plotstd3(title,
-                  xTitle, yTitle, zTitle,
-                  xSet, ySet, zSet,
-                  vSet, wSet, vTitle, wTitle,
-                  xAxisTicks=xAxisTicks,yAxisTicks=yAxisTicks,
-                  rangeSet=rangeSet, rangeColors=rangeColors,
-                  type="l",
-                  frameColor=frameColor,
-                  legendSize=plotLegendSizeFactor, confidence=plotConfidence,
-                  colorMode=plotColorMode, hideLegend=plotHideLegend, legendPos=legendPos)
-      }
+      plotstd6(title,
+               pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
+               pSet, aSet, bSet, xSet, ySet, zSet,
+               vSet, wSet, vTitle, wTitle,
+               xAxisTicks=xAxisTicks,yAxisTicks=yAxisTicks,
+               rangeSet=rangeSet, rangeColors=rangeColors,
+               type="l",
+               frameColor=frameColor,
+               legendSize=plotLegendSizeFactor, confidence=plotConfidence,
+               colorMode=plotColorMode, hideLegend=plotHideLegend, legendPos=legendPos)
       if(plotOwnOutput) {
          dev.off()
       }
@@ -1612,4 +1607,24 @@ analyseCounterResults <- function(data, lowerLimit, upperLimit,
       }
    }
    return(resultsSet)
+}
+
+
+# ====== Process PDF file with GhostScript (embed fonts and compression) ====
+processPDFbyGhostscript <- function(file)
+{
+   tempFile <- paste(sep="", tempfile("embedFontsIntoPDF"), ".eps")
+   cmd1 <- paste(sep="", "pdf2ps -dPDFSETTINGS=/prepress ", file, " ", tempFile)
+   cmd2 <- paste(sep="", "ps2pdf -dPDFSETTINGS=/prepress ", tempFile, " ", file)
+   ret1 <- system(cmd1)
+   cat(cmd1,"\n")
+   cat(cmd2,"\n")
+   if(ret1 != 0) {
+      stop(gettextf("status %d in running command '%s'", ret1, cmd1))
+   }
+   ret2 <- system(cmd2)
+   if(ret2 != 0) {
+      stop(gettextf("status %d in running command '%s'", ret2, cmd2))
+   }
+   file.remove(tempFile)
 }
