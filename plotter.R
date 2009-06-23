@@ -347,7 +347,6 @@ plotstd3 <- function(mainTitle,
 
 
    # ------ Create plot window ----------------------------------------------
-cat("Y1",inPlotStd6,"\n")
    if(!inPlotStd6) {
       margins <- c(3.25,3.25,3,0.25) + 0.0   # Margins as c(bottom, left, top, right)
                                              # Default is c(5, 4, 4, 2) + 0.1
