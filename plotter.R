@@ -953,6 +953,10 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
          # For aLevels==1 and bLevels==1, there is no need to create the layout here!
          # Otherwise, it would reduce cex => too small fonts!
          makeLayout(aSet, bSet, aTitle, bTitle, mainTitle, pSubLabel, pColor, colorMode)
+         plotTitle <- ""
+      }
+      else {
+         plotTitle <- mainTitle
       }
 
       # ------ Plot page ----------------------------------------------
@@ -971,7 +975,7 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
             oldPar2 <- par(cex=cexScaleFactor*par("cex"),
                            cex.main=cexScaleFactor*par("cex.main"),
                            cex.lab=cexScaleFactor*par("cex.lab"))
-            if(plotstd3("",
+            if(plotstd3(plotTitle,
                         xTitle, yTitle, zTitle,
                         xSubset, ySubset, zSubset,
                         vSubset, wSubset, vTitle, wTitle,
