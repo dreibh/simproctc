@@ -471,13 +471,13 @@ executeMake <- function()
          exists("distributionProcs") && (distributionProcs > 0)) {
          cat(sep="", "   - Distribution to pool \"", distributionPool, "\", ", CPUs , " processes\n")
       }
-      cat(sep="", "   - To start make:   make -j" , CPUs, " -f ", getGlobalVariable("gMakefileName"), "\n")
+      cat(sep="", "   - To start make:   make -j" , CPUs, " -l -f ", getGlobalVariable("gMakefileName"), "\n")
       cat(sep="", "   - To view logfile: tail -f ", getGlobalVariable("gLogfileName"), "\n")
       cat(paste(sep="", "   - Sim. Start = ", startTime, "\n"))
    }
    cmd <- paste(sep="", " if [ -e Makefile ] ; then make MODE=release ", simCreatorSimulationBinary, " ; fi && cd tools && make runtimeestimator && cd .. && make -j" ,
                 CPUs,
-                " -f ", getGlobalVariable("gMakefileName"),
+                " -l -f ", getGlobalVariable("gMakefileName"),
                 " all >", getGlobalVariable("gLogfileName"))
 
    # ------ Execute make ----------------------------------------------------
