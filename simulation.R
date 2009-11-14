@@ -240,6 +240,14 @@ checkVariableType <- function(simulationConfigurations, variable, type)
 }
 
 
+# ====== Decide whether to include or skip run (can be replaced by user) ====
+simulationIncludeOrSkip <- function(simulationConfigurations)
+{
+   # Default: include all
+   return(TRUE)
+}
+
+
 # ====== Prepare simulation directory =======================================
 prepareDirectory <- function(simulationDirectory)
 {
@@ -307,7 +315,7 @@ beginSummary <- function()
 
 
 # ====== Add run to summary file ============================================
-addRunToSummary <- function(summary, scalarName, iniName, logName, statusName, varValues)
+addRunToSummary <- function(summary, scalarName, vectorName, iniName, logName, statusName, varValues)
 {
    varValuesString <- ""
    for(value in varValues) {
@@ -326,7 +334,7 @@ addRunToSummary <- function(summary, scalarName, iniName, logName, statusName, v
       }
    }
 
-   cat(sep="", "--values=\"", varValuesString, " \"", iniName, "\"\"\n", file=summary)
+   cat(sep="", "--values=\"", varValuesString, " \"", iniName, "\" \"", vectorName, ".bz2\"\"\n", file=summary)
    cat(sep="", "--statusfile=", statusName, "\n", file=summary)
    cat(sep="", "--logfile=", logName, "\n", file=summary)
    cat(sep="", "--input=", scalarName, ".bz2\n", file=summary)
@@ -356,7 +364,7 @@ finishSummary <- function(summary)
                            "rm -rf ", getGlobalVariable("gResultsDirectoryName"), " && ",
                            "mkdir ", getGlobalVariable("gResultsDirectoryName"), " && ",
                            "tools/createsummary ",
-                           "\"", activeVariablesString, " SourceINI\" ",
+                           "\"", activeVariablesString, " SourceINI SourceVec\" ",
                            "-batch ",
                            "-compress=", simulationSummaryCompressionLevel, " ",
                            "<", getGlobalVariable("gSummaryName"))
@@ -475,7 +483,7 @@ executeMake <- function()
       cat(sep="", "   - To view logfile: tail -f ", getGlobalVariable("gLogfileName"), "\n")
       cat(paste(sep="", "   - Sim. Start = ", startTime, "\n"))
    }
-   cmd <- paste(sep="", " if [ -e Makefile ] ; then make MODE=release ", simCreatorSimulationBinary, " ; fi && cd tools && make runtimeestimator && cd .. && make -j" ,
+   cmd <- paste(sep="", " if [ -e Makefile ] ; then make MODE=release ", simCreatorSimulationBinary, " ; fi && cd tools && make runtimeestimator && cd .. && make -i -j" ,
                 CPUs,
                 " -l -f ", getGlobalVariable("gMakefileName"),
                 " all >", getGlobalVariable("gLogfileName"))
@@ -552,7 +560,7 @@ createAllSimulationRuns <- function(simulationConfigurations,
          origVarValues <- getActiveVariables(originalSimulationConfigurations, GAVType_VariableValues, duration)
 
          # ------ Compute auto-parameters -----------------------------------
-         if(simCreatorAutoParameters(originalSimulationConfigurations)) {
+         if(simCreatorAutoParameters(originalSimulationConfigurations) & simulationIncludeOrSkip(originalSimulationConfigurations) ) {
 
             # ------ Get *updated* values and hash --------------------------
             varValues <- getActiveVariables(originalSimulationConfigurations, GAVType_VariableValues, duration)
@@ -609,7 +617,7 @@ createAllSimulationRuns <- function(simulationConfigurations,
                simCreatorWriteParameterSection(filePrefix, ini, simulationRun, duration)
                close(ini)
 
-               addRunToSummary(summary, scalarName, iniName, outputName, statusName, varValues)
+               addRunToSummary(summary, scalarName, vectorName, iniName, outputName, statusName, varValues)
                addRunToMakefile(makefile, simulationRun, runDirectoryName, statusName)
 
                setGlobalVariable("gRunNumber", getGlobalVariable("gRunNumber") + 1)
@@ -620,6 +628,15 @@ createAllSimulationRuns <- function(simulationConfigurations,
          else {
             if(simulationScriptOutputVerbosity > 4) {
                cat(sep="","SKIPPING!\n")
+               if(is.list(simulationRuns)) {
+                  runsSet <- unique(unlist(simulationRuns))
+               }
+               else {
+                  runsSet <- seq(1, simulationRuns)
+               }
+               for(simulationRun in runsSet) {
+                  setGlobalVariable("gRunNumber", getGlobalVariable("gRunNumber") + 1)
+               }
             }
          }
       }
