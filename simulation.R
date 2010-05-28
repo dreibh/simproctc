@@ -1,7 +1,7 @@
 # $Id$
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
-#                  Copyright (C) 2005-2009 Thomas Dreibholz
+#                  Copyright (C) 2005-2010 Thomas Dreibholz
 #
 #               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 # ###########################################################################
@@ -65,6 +65,8 @@ distributionPool  <- "ScriptingPool"
 distributionProcs <- 0   # Set to 0 for to disable distribution!
 distributionPUOpt <- ""
 
+reportTo <- ""   # Jabber addess to report simulation startup/completion to
+                 # NOTE: sendxmpp is needed to send Jabber messages!
 
 # IMPORTANT NOTICE:
 # In order to add new simulation parameters, look for the comments marked
@@ -265,6 +267,7 @@ prepareDirectory <- function(simulationDirectory)
    setGlobalVariable("gResultsArchiveName", paste(sep="", simulationDirectory, "/", simulationDirectory, ".tar.bz2"))
    setGlobalVariable("gRuntimeName", paste(sep="", simulationDirectory, "/", "runtime.dat"))
    setGlobalVariable("gLogfileName", paste(sep="", simulationDirectory, "/", "make.log"))
+   setGlobalVariable("gErrorName",   paste(sep="", simulationDirectory, "/", "error.out"))
 }
 
 
@@ -378,16 +381,21 @@ finishMakefile <- function(makefile, summaryCommand)
    cat(sep="", "# ===========================================================================\n\n", file=makefile)
 
    cat(sep="","tools/createsummary:\ttools/createsummary.cc\n", file=makefile)
-   cat(sep="", "\tcd tools && $(MAKE) createsummary && cd ..\n\n", file=makefile)
+   cat(sep="", "\tcd tools && $(MAKE) -j2 createsummary && cd ..\n\n", file=makefile)
 
    # ------ Simulation environment archive ----------------------------------
-   cat(sep="", toupper(simCreatorSimulationBinary), "_SRCS=$(wildcard *.cc) $(wildcard *.c) $(wildcard *.h) $(wildcard *.msg) $(wildcard *.ned)\n", file=makefile)
-   cat(sep="", simCreatorSimulationBinary, ":\t$(", toupper(simCreatorSimulationBinary), "_SRCS)\n", file=makefile)
-   # cat(sep="", "\t( cd ", simCreatorSourcesDirectory, " && $(MAKE) MODE=release )\n\n", file=makefile)
-   cat(sep="", "\t( cd ", simCreatorSourcesDirectory, " && $(MAKE) )\n\n", file=makefile)
+   cat(sep="", "simulation-binary:\n", file=makefile)
+   if(reportTo != "") {
+      poolingInfo <- " "
+      if(distributionProcs > 0) {
+         poolingInfo <- paste(sep="", ", distributing ", distributionProcs, " processes to pool \"", distributionPool, "\"")
+      }
+      cat(sep="", "\t( echo \"Starting simulation ", simulationDirectory, " on `hostname`", poolingInfo, " ...\" | sendxmpp -i ", reportTo, " || true )\n", file=makefile)
+   }
+   cat(sep="", "\t( cd ", simCreatorSourcesDirectory, " && $(MAKE) -j2 )\n\n", file=makefile)
 
    # ------ Simulation environment archive ----------------------------------
-   cat(sep="", simulationDirectory, "/simulation-environment.tar.bz2:\t", simCreatorSimulationBinary, "\n", file=makefile)
+   cat(sep="", simulationDirectory, "/simulation-environment.tar.bz2:\t", simCreatorSourcesDirectory, "/", simCreatorSimulationBinary, "\n", file=makefile)
 
    makeEnvParams <- ""
    for(n in simCreatorNEDFiles) {
@@ -402,11 +410,11 @@ finishMakefile <- function(makefile, summaryCommand)
 
    # ------ runtimeestimator ------------------------------------------------
    cat(sep="","tools/runtimeestimator:\n", file=makefile)
-   cat(sep="", "\tcd tools && $(MAKE) runtimeestimator && cd ..\n\n", file=makefile)
+   cat(sep="", "\tcd tools && $(MAKE) -j2 runtimeestimator && cd ..\n\n", file=makefile)
 
    # ------ getrelativepath -------------------------------------------------
    cat(sep="","tools/getrelativepath:\n", file=makefile)
-   cat(sep="", "\tcd tools && $(MAKE) getrelativepath && cd ..\n\n", file=makefile)
+   cat(sep="", "\tcd tools && $(MAKE) -j2 getrelativepath && cd ..\n\n", file=makefile)
 
    # ------ First run of runtimeestimator -----------------------------------
    cat(sep="", getGlobalVariable("gRuntimeName"), ":\n", file=makefile)
@@ -416,8 +424,11 @@ finishMakefile <- function(makefile, summaryCommand)
                " 0\n\n", file=makefile)
 
    # ------ Completion of simulation runs -----------------------------------
-   cat(sep="", getGlobalVariable("gSimulationsCompletedName"), ":\t", simCreatorSimulationBinary, " ", simulationDirectory, "/simulation-environment.tar.bz2 tools/runtimeestimator tools/getrelativepath ", getGlobalVariable("gRuntimeName"), "   ", getGlobalVariable("gSimulationDependencies"), "\n", file=makefile)
+   cat(sep="", getGlobalVariable("gSimulationsCompletedName"), ":\tsimulation-binary ", simulationDirectory, "/simulation-environment.tar.bz2 tools/runtimeestimator tools/getrelativepath ", getGlobalVariable("gRuntimeName"), "   ", getGlobalVariable("gSimulationDependencies"), "\n", file=makefile)
    cat(sep="", "\tdate >", getGlobalVariable("gSimulationsCompletedName"), "\n", file=makefile)
+   if(reportTo != "") {
+      cat(sep="", "\t( echo \"Finished processing of runs for simulation ", simulationDirectory, " on `hostname`.\" | sendxmpp -i ", reportTo, " || true )\n", file=makefile)
+   }
    cat(sep="", "\techo \"Simulation completed!\"\n\n", file=makefile)
 
    # ------ Summary creation ------------------------------------------------
@@ -425,9 +436,12 @@ finishMakefile <- function(makefile, summaryCommand)
    cat(sep="", "\tstartTime=`date`      &&      ", file=makefile)
    cat(sep="", summaryCommand, "      &&      ", file=makefile)
    cat(sep="", "endTime=`date`      &&      ", file=makefile)
+   if(reportTo != "") {
+      #cat(sep="", "\t( ( echo \"Simulation ", simulationDirectory, " on `hostname` has been completed.\" ; echo \"Started: $$startTime, Finished: $$endTime\" ) | sendxmpp -i ", reportTo, " || true ) && ", file=makefile)
+      cat(sep="", "\t( echo \"Finished summary creation for simulation ", simulationDirectory, " on `hostname`.\" | sendxmpp -i ", reportTo, " || true ) && ", file=makefile)
+   }
    cat(sep="", "echo \"Start: $$startTime\" >", getGlobalVariable("gSimulationsCompletedName"), " && ", file=makefile)
    cat(sep="", "echo \"End:   $$endTime\" >>", getGlobalVariable("gSimulationsCompletedName"), "\n", file=makefile)
-   cat(sep="", "\t@echo \"Summary completed!\"\n\n", file=makefile)
 
    # ------ Archival of results ---------------------------------------------
    cat(sep="", getGlobalVariable("gResultsArchiveName"), ":\t", getGlobalVariable("gSimulationsCompletedName"), "\n", file=makefile)
@@ -474,7 +488,7 @@ executeMake <- function()
    }
 
    if(simulationScriptOutputVerbosity > 0) {
-      cat(sep="", "* Step #4: Running make...\n")
+      cat(sep="", "* Step #4: Running make ...\n")
       if(exists("distributionPool") && (distributionPool != "") &&
          exists("distributionProcs") && (distributionProcs > 0)) {
          cat(sep="", "   - Distribution to pool \"", distributionPool, "\", ", CPUs , " processes\n")
@@ -483,12 +497,17 @@ executeMake <- function()
       cat(sep="", "   - To view logfile: tail -f ", getGlobalVariable("gLogfileName"), "\n")
       cat(paste(sep="", "   - Sim. Start = ", startTime, "\n"))
    }
-   cmd <- paste(sep="", " if [ -e Makefile ] ; then make MODE=release ", simCreatorSimulationBinary, " ; fi && cd tools && make runtimeestimator && cd .. && make -i -j" ,
+
+   # The output of "make" goes into the log file.
+   # In case of error, the last 20 lines of the log file are copied into the error file.
+   # The error file can later be used to write these lines to Jabber.
+   cmd <- paste(sep="", " rm -f ", getGlobalVariable("gErrorName"), " && if [ -e Makefile ] ; then make MODE=release ", simCreatorSimulationBinary, " ; fi && ( make -k -j" ,
                 CPUs,
                 " -l -f ", getGlobalVariable("gMakefileName"),
-                " all >", getGlobalVariable("gLogfileName"))
+                " all >", getGlobalVariable("gLogfileName") , " 2>&1 || tail -n20 ", getGlobalVariable("gLogfileName"), " | tee ", getGlobalVariable("gErrorName"), " )")
 
    # ------ Execute make ----------------------------------------------------
+   # cat("\n\n",cmd,"\n\n")
    r <- readLines(pc <- pipe(cmd))
    close(pc)
    stopTime <- Sys.time()
@@ -497,6 +516,15 @@ executeMake <- function()
       cat(paste(sep="", "   - Sim. Stop  = ", stopTime, "\n"))
       cat(sep="", "   - Runtime    = ",
           signif(as.double(difftime(stopTime, startTime, units="min")),2), "min\n")
+   }
+   writeLines(r)
+
+   if(reportTo != "") {
+      cmd <- paste(sep="", "( ( echo \"Finished ", simulationDirectory, ".\" ; if [ -e ", getGlobalVariable("gErrorName"), " ] ; then echo \"Simulation processing has FAILED:\" ; echo \"----- Last Lines in Log -----\" ; cat ", getGlobalVariable("gErrorName"), " ; echo \"----- End of Log -----\" ; fi ) | sendxmpp -i ", reportTo, " || true )")
+
+      # cat("\n\n",cmd,"\n\n")
+      r <- readLines(pc <- pipe(cmd))
+      close(pc)
    }
 }
 

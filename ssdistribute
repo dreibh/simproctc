@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 # $Id$
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
-#                  Copyright (C) 2005-2009 Thomas Dreibholz
+#                  Copyright (C) 2005-2010 Thomas Dreibholz
 #
 #               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 # ###########################################################################
@@ -45,13 +45,16 @@ MAX_RETRY=10               # After a remote-side error, retry how many times?
 #
 SIMULATION_ENVIRONMENT="simulation-environment.tar.bz2"
 SIMULATION_CONFIGS=""   # "simulation.config-stage1"
-SIMULATION_POOLUSER=~/src/rsplib2/rsplib/scriptingclient
+#SIMULATION_POOLUSER=~dreibh/src/rsplib2/rsplib/scriptingclient
+SIMULATION_POOLUSER=/usr/bin/scriptingclient
 # ###########################################################################
 
 UNIQUE_ID="$2/$INI_NAME"
 PU_LOGFILE="$RUN_DIRECTORY/$INI_NAME.log"
 PU_LOGLEVEL=2
-VALGRIND="" # "valgrind  -v --tool=memcheck --leak-check=yes --show-reachable=no --leak-resolution=high --num-callers=40 --freelist-vol=4000000"
+VALGRIND=
+#VALGRIND="valgrind  -v --tool=memcheck --leak-check=yes --show-reachable=no --leak-resolution=high --num-callers=40 --freelist-vol=4000000"
+#VALGRIND="valgrind" #  -v --tool=helgrind"
 
 
 # ====== Prepare temporary file names =======================================
@@ -71,6 +74,7 @@ tar czhf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY $SIMULATI
 # ====== Start PU for job distribution ======================================
 echo "Distributing and processing [$UNIQUE_ID] ..."
 $VALGRIND $SIMULATION_POOLUSER -runid=$UNIQUE_ID -quiet -maxretry=$MAX_RETRY -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT -logfile=$PU_LOGFILE -loglevel=$PU_LOGLEVEL || exit 1
+# >vg$RANDOM.txt 2>&1 || exit 1
 if [ -e $PU_LOGFILE ] ; then
    rm -f $PU_LOGFILE.bz2
    bzip2 $PU_LOGFILE

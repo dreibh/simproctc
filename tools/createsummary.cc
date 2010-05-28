@@ -1,7 +1,7 @@
 // $Id$
 // ###########################################################################
 //             Thomas Dreibholz's R Simulation Scripts Collection
-//                  Copyright (C) 2004-2009 Thomas Dreibholz
+//                  Copyright (C) 2004-2010 Thomas Dreibholz
 //
 //           Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 // ###########################################################################
@@ -753,7 +753,7 @@ static void dumpScalars(const char*        simulationsDirectory,
 static void usage(const char* name)
 {
    cerr << "Usage: "
-        << name << " [Var Names] {-compress=1-9} {-interactive|-batch}" << endl;
+        << name << " [Var Names] {-compress=0-9} {-interactive|-batch}" << endl;
    exit(1);
 }
 

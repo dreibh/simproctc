@@ -2,9 +2,9 @@
 // ###########################################################################
 //                   A Very Simple Example Simulation for
 //             Thomas Dreibholz's R Simulation Scripts Collection
-//                    Copyright (C) 2008 Thomas Dreibholz
+//                  Copyright (C) 2008-2010 Thomas Dreibholz
 //
-//           Author: Thomas Dreibholz, dreibh@exp-math.uni-essen.de
+//               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 // ###########################################################################
 //
 // This program is free software: you can redistribute it and/or modify
@@ -117,7 +117,7 @@ void Source::handleMessage(cMessage* msg)
       else {
          send(static_cast<cMessage*>(OutputQueue.pop()), "outputGate");
          ChannelReadyEvent = new cChannelReadyEvent("NewMessageEvent");
-         scheduleAt(OutputGate->getTransmissionFinishTime(), ChannelReadyEvent);
+         scheduleAt(OutputGate->getChannel()->getTransmissionFinishTime(), ChannelReadyEvent);
       }
    }
 
@@ -320,7 +320,7 @@ void Multiplexer::handleMessage(cMessage* msg)
    if((OutputQueue.front() != NULL) && (TimerEvent == NULL)) {
       cDataPacket* packet = (cDataPacket*)OutputQueue.front();
       const unsigned int packetLength = packet->getBitLength() / 8;
-      const simtime_t    transmitTime = std::max(OutputGate->getTransmissionFinishTime(),
+      const simtime_t    transmitTime = std::max(OutputGate->getChannel()->getTransmissionFinishTime(),
                                                  simTime() + (double)packetLength / OutputRate);
       ev << "Scheduling timer for message #" << packet->getMsgSeqNumber()
          << " from " << packet->getSource()
