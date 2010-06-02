@@ -68,4 +68,4 @@ t2u:	test1.sca.bz2 test2.sca.bz2 createsummary
 
 
 clean:
-	rm -f runtimeestimator createsummary combinesummaries extractvectors test.results *~ *.o
+	rm -f runtimeestimator createsummary combinesummaries extractvectors getrelativepath test.results *~ *.o
