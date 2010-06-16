@@ -224,7 +224,8 @@ static unsigned int getAggregate(char*        objectName,
                                  char*        aggNames,
                                  const size_t aggNamesSize,
                                  char*        aggValues,
-                                 const size_t aggValuesSize)
+                                 const size_t aggValuesSize,
+                                 const bool   topLevel = true)
 {
    /*
       Example:
@@ -243,8 +244,10 @@ static unsigned int getAggregate(char*        objectName,
 
    // ====== Get segment ====================================================
    unsigned int levels;
+   bool         levelIsObject = false;
    char* segment = rindex(objectName, '.');
    if(segment == NULL) {
+      levelIsObject = true;
       segment       = objectName;
       scalarName[0] = 0x00;
       aggNames[0]   = 0x00;
@@ -256,7 +259,8 @@ static unsigned int getAggregate(char*        objectName,
       segment = (char*)&segment[1];
       // ====== Recursively process top segments ============================
       levels = getAggregate(objectName, statName, scalarName, scalarNameSize,
-                            aggNames, aggNamesSize, aggValues, aggValuesSize);
+                            aggNames, aggNamesSize, aggValues, aggValuesSize,
+                            false);
    }
 
    // ====== Process segment ================================================
@@ -299,11 +303,9 @@ static unsigned int getAggregate(char*        objectName,
       safestrcat(scalarName, ".", scalarNameSize);
    }
    safestrcat(scalarName, aggregate, scalarNameSize);
-   // printf("Level %u: scalarName=<%s> aggNames=<%s> aggValues=<%s>\n",
-   //        levels, scalarName, aggNames, aggValues);
 
    // ------ Add scalar name to scalarName-----------------
-   if((size_t)i >= length - 1) {
+   if(topLevel) {
       char* identifier = index(statName, '#');
       if(identifier) {
          const size_t identifierLength = strlen(identifier);
@@ -332,6 +334,9 @@ static unsigned int getAggregate(char*        objectName,
       safestrcat(scalarName, "-", scalarNameSize);
       safestrcat(scalarName, statName, scalarNameSize);
    }
+
+   // printf("Level %u: scalarName=<%s> statName=<%s> aggNames=<%s> aggValues=<%s>\n",
+   //        levels, scalarName, statName, aggNames, aggValues);
 
    return(levels + 1);
 }
@@ -418,6 +423,12 @@ static void addScalar(const char*  scalarName,
          exit(1);
       }
       NextScalarNode = NULL;
+   }
+   else {
+      NextScalarNode->ScalarName = NULL;
+      NextScalarNode->AggNames   = NULL;
+      NextScalarNode->AggValues  = NULL;
+      NextScalarNode->VarValues  = NULL;
    }
 
    scalarNode->ValueSet.push_back(value);
