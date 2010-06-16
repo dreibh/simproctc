@@ -1,0 +1,15 @@
+#!/bin/sh
+
+make createsummary && \
+( echo "--skip=tsb.nameServerArray.enrpServer" && \
+  echo "--simulationsdirectory=." && \
+  echo "--resultsdirectory=/tmp" && \
+  echo "--values=Three" && echo "--input=test3.sca" && \
+  echo "--values=Four"  && echo "--input=test3.sca" && \
+  echo "--values=Five"  && echo "--input=test3.sca" && \
+  echo "--values=Six"   && echo "--input=test3.sca" && \
+  echo "--values=Seven" && echo "--input=test3.sca" && \
+  echo "--skip=KeepAlive" ) | \
+G_SLICE=always-malloc valgrind  -v --tool=memcheck --leak-check=yes --show-reachable=no --leak-resolution=high --num-callers=40 --freelist-vol=4000000 ./createsummary MyVarName
+
+# ./createsummary MyVarName

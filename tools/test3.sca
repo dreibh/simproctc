@@ -1,0 +1,6 @@
+run 1 "configurableScenario"
+scalar "configurableScenario.tsb[3].poolElementArray[77].poolElement"  "Throughput Stream #1"  1123
+scalar "configurableScenario.tsb[3].poolElementArray[77].poolElement"  "Throughput Stream #2"  1300
+scalar "configurableScenario.tsb[3].poolElementArray[77].poolElement"  "Throughput Stream #3"  1343
+scalar "configurableScenario.tsb[3].poolElementArray[77].poolElement"  "Throughput Stream #3"  1343
+scalar "configurableScenario.tsb[9].poolElementArray[32].poolElement"  "Test Variable"         1100

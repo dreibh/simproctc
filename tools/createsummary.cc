@@ -145,8 +145,8 @@ static int scalarNodeComparisonFunction(const void* node1, const void* node2)
 
 
 static struct SimpleRedBlackTree StatisticsStorage;
-static ScalarNode*                   NextScalarNode = NULL;
-static SkipListNode*                 SkipList       = NULL;
+static ScalarNode*               NextScalarNode = NULL;
+static SkipListNode*             SkipList       = NULL;
 
 
 
@@ -217,21 +217,36 @@ static int safestrcat(char* dest, const char* src, const size_t size)
 
 
 // ###### Get aggregate data ################################################
-static unsigned int getAggregate(char*        str,
-                                 char*        objectName,
-                                 const size_t objectNameSize,
+static unsigned int getAggregate(char*        objectName,
+                                 char*        statName,
+                                 char*        scalarName,
+                                 const size_t scalarNameSize,
                                  char*        aggNames,
                                  const size_t aggNamesSize,
                                  char*        aggValues,
                                  const size_t aggValuesSize)
 {
-   unsigned int levels;
+   /*
+      Example:
+         objectName="configurableScenario.tsb[0].nameServerArray[0].poolElement"
+         statName="Value#1"
+      Hierarchy:
+         => tsb -> 0
+         => nameServerArray -> 0
+         => poolElement
+         => Value -> 1
+      Results:
+         scalarName="tsb.nameServerArray.poolElement-Value"
+         aggNames="tsb tsb.nameServerArray Value"
+         aggValues="0 0 1"
+   */
 
    // ====== Get segment ====================================================
-   char* segment = rindex(str, '.');
+   unsigned int levels;
+   char* segment = rindex(objectName, '.');
    if(segment == NULL) {
-      segment       = str;
-      objectName[0] = 0x00;
+      segment       = objectName;
+      scalarName[0] = 0x00;
       aggNames[0]   = 0x00;
       aggValues[0]  = 0x00;
       levels        = 0;
@@ -240,7 +255,7 @@ static unsigned int getAggregate(char*        str,
       segment[0] = 0x00;
       segment = (char*)&segment[1];
       // ====== Recursively process top segments ============================
-      levels = getAggregate(str, objectName, objectNameSize,
+      levels = getAggregate(objectName, statName, scalarName, scalarNameSize,
                             aggNames, aggNamesSize, aggValues, aggValuesSize);
    }
 
@@ -259,13 +274,13 @@ static unsigned int getAggregate(char*        str,
    strncpy((char*)&aggregate, segment, i + 1);
    aggregate[i + 1] = 0x00;
 
-   // ------ Build object hierarchy (if necessary) --------
+   // ------ Extract aggregate and its value --------------
    if((size_t)i < length - 1) {
      if(aggNames[0] != 0x00) {
         safestrcat(aggNames, " ", aggNamesSize);
      }
-     if(objectName[0] != 0x00) {
-       safestrcat(aggNames, objectName, aggNamesSize);
+     if(scalarName[0] != 0x00) {
+       safestrcat(aggNames, scalarName, aggNamesSize);
        safestrcat(aggNames, ".", aggNamesSize);
      }
      safestrcat(aggNames, aggregate, aggNamesSize);
@@ -279,11 +294,45 @@ static unsigned int getAggregate(char*        str,
      safestrcat(aggValues, valueString, aggValuesSize);
    }
 
-   // ------ Add object to object name --------------------
-   if(objectName[0] != 0x00) {
-      safestrcat(objectName, ".", objectNameSize);
+   // ------ Add aggregate (or object) to scalarName ------
+   if(scalarName[0] != 0x00) {
+      safestrcat(scalarName, ".", scalarNameSize);
    }
-   safestrcat(objectName, aggregate, objectNameSize);
+   safestrcat(scalarName, aggregate, scalarNameSize);
+   // printf("Level %u: scalarName=<%s> aggNames=<%s> aggValues=<%s>\n",
+   //        levels, scalarName, aggNames, aggValues);
+
+   // ------ Add scalar name to scalarName-----------------
+   if((size_t)i >= length - 1) {
+      char* identifier = index(statName, '#');
+      if(identifier) {
+         const size_t identifierLength = strlen(identifier);
+         for(size_t i = 1;i < identifierLength;i++) {
+            if(!isdigit(identifier[i])) {
+               // Identifier is not a number -> skip it!
+               identifier = NULL;
+               break;
+            }
+         }
+         if(identifier) {
+            identifier[0] = 0x00;   // Cut number off from statName.
+
+            if(aggNames[0] != 0x00) {
+               safestrcat(aggNames, "\t", aggNamesSize);
+            }
+            safestrcat(aggNames, statName, aggNamesSize);
+
+            if(aggValues[0] != 0x00) {
+               safestrcat(aggValues, "\t", aggValuesSize);
+            }
+            safestrcat(aggValues, (const char*)&identifier[1], aggValuesSize);
+         }
+      }
+
+      safestrcat(scalarName, "-", scalarNameSize);
+      safestrcat(scalarName, statName, scalarNameSize);
+   }
+
    return(levels + 1);
 }
 
@@ -340,15 +389,15 @@ static void addScalar(const char*  scalarName,
       }
    }
 
-   NextScalarNode->Run = runNumber;
-   NextScalarNode->ScalarName = strdup(scalarName);
-   NextScalarNode->AggNames   = strdup(aggNames);
-   NextScalarNode->AggValues  = strdup(aggValues);
-   NextScalarNode->VarValues  = strdup(varValues);
+   NextScalarNode->Run        = runNumber;
+   NextScalarNode->ScalarName = (char*)scalarName;   // WARNING: String MUST be duplicated when node is added!
+   NextScalarNode->AggNames   = (char*)aggNames;     // WARNING: String MUST be duplicated when node is added!
+   NextScalarNode->AggValues  = (char*)aggValues;    // WARNING: String MUST be duplicated when node is added!
+   NextScalarNode->VarValues  = (char*)varValues;    // WARNING: String MUST be duplicated when node is added!
    if( (NextScalarNode->ScalarName == NULL) ||
-       (NextScalarNode->AggNames == NULL) ||
-       (NextScalarNode->AggValues == NULL) ||
-       (NextScalarNode->VarValues == NULL) ) {
+       (NextScalarNode->AggNames   == NULL) ||
+       (NextScalarNode->AggValues  == NULL) ||
+       (NextScalarNode->VarValues  == NULL) ) {
       cerr << "ERROR: Out of memory!" << endl;
       exit(1);
    }
@@ -356,6 +405,18 @@ static void addScalar(const char*  scalarName,
    ScalarNode* scalarNode = (ScalarNode*)
       simpleRedBlackTreeInsert(&StatisticsStorage, &NextScalarNode->Node);
    if(scalarNode == NextScalarNode) {
+      // ====== Duplicate string, so that no temporary copies are linked ====
+      NextScalarNode->ScalarName = strdup(scalarName);
+      NextScalarNode->AggNames   = strdup(aggNames);
+      NextScalarNode->AggValues  = strdup(aggValues);
+      NextScalarNode->VarValues  = strdup(varValues);
+      if( (NextScalarNode->ScalarName == NULL) ||
+          (NextScalarNode->AggNames   == NULL) ||
+          (NextScalarNode->AggValues  == NULL) ||
+          (NextScalarNode->VarValues  == NULL) ) {
+         cerr << "ERROR: Out of memory!" << endl;
+         exit(1);
+      }
       NextScalarNode = NULL;
    }
 
@@ -486,11 +547,10 @@ static bool handleScalarFile(const char* varNames,
          char scalarName[4096];
          char aggNames[MAX_NAME_SIZE];
          char aggValues[MAX_VALUES_SIZE];
-         getAggregate(objectName, (char*)&scalarName, sizeof(scalarName),
-                                  (char*)&aggNames, sizeof(aggNames),
-                                  (char*)&aggValues, sizeof(aggValues));
-         safestrcat((char*)&scalarName, "-", sizeof(scalarName));
-         safestrcat((char*)&scalarName, statName, sizeof(scalarName));
+         getAggregate(objectName, statName,
+                      (char*)&scalarName, sizeof(scalarName),
+                      (char*)&aggNames, sizeof(aggNames),
+                      (char*)&aggValues, sizeof(aggValues));
 
          // ====== Reconciliate with skip list ==============================
          SkipListNode* skipListNode = SkipList;
@@ -761,15 +821,15 @@ static void usage(const char* name)
 // ###### Main program ######################################################
 int main(int argc, char** argv)
 {
-   char         varNamesBuffer[2048];
-   const char*  varNames = "_NoVarNamesGiven_";
+   unsigned int compressionLevel = 9;
+   bool         interactive      = true;
+   const char*  varNames         = "_NoVarNamesGiven_";
    char         varValues[4096];
+   char         varNamesBuffer[2048];
    char         simulationsDirectory[4096];
    char         resultsDirectory[4096];
    char         logFileName[4096];
    char         statusFileName[4096];
-   unsigned int compressionLevel = 9;
-   bool         interactive      = true;
    char         buffer[4096];
    char*        command;
 
@@ -778,6 +838,7 @@ int main(int argc, char** argv)
                              scalarNodeComparisonFunction);
 
 
+   // ====== Handle command-line arguments ==================================
    if(argc > 1) {
       varNames = argv[1];
       for(int i = 2;i < argc;i++) {
@@ -803,13 +864,14 @@ int main(int argc, char** argv)
    }
 
 
-   cout << "CreateSummary - Version 3.00" << endl
+   cout << "CreateSummary - Version 4.00" << endl
         << "============================" << endl << endl
         << "Compression Level: " << compressionLevel << endl
         << "Interactive Mode:  " << (interactive ? "on" : "off") << endl
         << endl;
 
 
+   // ====== Handle interactive commands ====================================
    varValues[0]      = 0x00;
    logFileName[0]    = 0x00;
    statusFileName[0] = 0x00;
@@ -927,6 +989,7 @@ int main(int argc, char** argv)
    }
 
 
+   // ====== Write results ==================================================
    if(interactive) {
       cout << endl << endl;
    }
@@ -940,6 +1003,17 @@ int main(int argc, char** argv)
    }
 
 
+   // ====== Clean up =======================================================
+   if(NextScalarNode) {
+      delete NextScalarNode;
+      NextScalarNode = NULL;
+   }
+   ScalarNode* scalarNode = (ScalarNode*)simpleRedBlackTreeGetFirst(&StatisticsStorage);
+   while(scalarNode) {
+      simpleRedBlackTreeRemove(&StatisticsStorage, &scalarNode->Node);
+      delete scalarNode;
+      scalarNode = (ScalarNode*)simpleRedBlackTreeGetFirst(&StatisticsStorage);
+   }
    simpleRedBlackTreeDelete(&StatisticsStorage);
    return(0);
 }

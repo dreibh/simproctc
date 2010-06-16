@@ -23,7 +23,7 @@
 
 
 #CPPFLAGS=-O0 -Wall -g
-CPPFLAGS=-O3 -Wall
+CPPFLAGS=-O3 -Wall -g
 CC=g++
 
 
