@@ -332,6 +332,7 @@ plotstd3 <- function(mainTitle,
                      rangeColors       = c(),
                      hideLegend        = FALSE,
                      legendOnly        = FALSE,
+                     enumerateLines    = FALSE,
                      xValueFilter      = "%s",
                      yValueFilter      = "%s",
                      zValueFilter      = "%s",
@@ -471,6 +472,7 @@ plotstd3 <- function(mainTitle,
    }
 
    # ------ Plot curves -----------------------------------------------------
+   lineNum      <- 1
    legendTexts  <- c()
    legendColors <- c()
    legendStyles <- c()
@@ -508,6 +510,12 @@ plotstd3 <- function(mainTitle,
             if(length(wLevels) > 1) {
                legendText <- paste(sep="", "paste(sep=\"\", ", legendText, ", \", \", ", getAbbreviation(wTitle), ", \"=", gettextf(wValueFilter, w), "\")")
             }
+            if(enumerateLines) {
+               lineNumText <- paste(sep="", lineNum)
+               lineNum <- lineNum + 1
+               legendText <- paste(sep="", "paste(sep=\"\", ", ", \"", lineNumText, ": \", ", legendText, ")")
+            }
+
 
             if(!legendOnly) {
                # ----- Points plot ------------------------------------------
@@ -1011,6 +1019,7 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                      xSeparatorsColors = c(),
                      rangeSet          = c(),
                      rangeColors       = c(),
+                     enumerateLines    = FALSE,
                      pStart            = 0,
                      hideLegend        = FALSE,
                      frameColor        = par("fg"))
@@ -1087,6 +1096,7 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                         xSeparatorsColors = xSeparatorsColors,
                         rangeSet          = rangeSet,
                         rangeColors       = rangeColors,
+                        enumerateLines    = enumerateLines,
                         type              = type,
                         hideLegend        = hideLegend,
                         legendSize        = legendSize,
@@ -1329,13 +1339,13 @@ plothist <- function(mainTitle,
          legendBackground <- "white"
       }
       legend(lx, ly,
-            xjust = lxjust,
-            yjust = lyjust,
-            zLevels,
-            bg=legendBackground,
-            col=zColorArray,
-            text.col=zColorArray,
-            lwd=10*par("cex"), cex=legendSize*par("cex"))
+             xjust = lxjust,
+             yjust = lyjust,
+             zLevels,
+             bg=legendBackground,
+             col=zColorArray,
+             text.col=zColorArray,
+             lwd=10*par("cex"), cex=legendSize*par("cex"))
    }
 
    par(opar)
@@ -1704,6 +1714,7 @@ createPlots <- function(simulationDirectory, plotConfigurations, customFilter=""
                legendPos      = legendPos,
                dotSet         = dotSet,
                dotScaleFactor = dotScaleFactor,
+               enumerateLines = plotEnumerateLines,
                zSortAscending = zSortAscending,
                vSortAscending = vSortAscending,
                wSortAscending = wSortAscending)
@@ -1830,3 +1841,20 @@ closePDFMetadata <- function()
       setGlobalVariable("pdfMetadataFile", NA)
    }
 }
+
+
+
+# ###########################################################################
+# #### Default Settings                                                  ####
+# ###########################################################################
+
+plotColorMode        <- cmColor
+plotHideLegend       <- FALSE
+plotLegendSizeFactor <- 0.8
+plotOwnOutput        <- FALSE
+plotFontFamily       <- "Helvetica"
+plotFontPointsize    <- 22
+plotWidth            <- 10
+plotHeight           <- 10
+plotConfidence       <- 0.95
+plotEnumerateLines   <- TRUE
