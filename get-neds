@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # $Id$
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
@@ -23,21 +23,36 @@
 # Contact: dreibh@iem.uni-due.de
 
 if [ $# -lt 1 ] ; then
-   echo "Usage: package-simproctc [version]" >&2
+   echo >&2 "Usage: get-neds [NED Directory] {NED file or directory} ..."
    exit 1
 fi
-VERSION=$1
+
+NEDDIR=$1
+shift
 
 
-if [ -e simproctc-$VERSION ] ; then
-   rm -rf simproctc-$VERSION
+# ====== Prepare NED directory ==============================================
+if [ -e $NEDDIR ] ; then
+   rm -rf $NEDDIR
 fi
+mkdir $NEDDIR || exit 1
 
-svn co https://132.252.152.132/svn/omnetpp/trunk/simproctc simproctc-$VERSION && \
-cd simproctc-$VERSION/demo && \
-./make-links && \
-cd .. && \
-rm -f package-simproctc && \
-cd .. && \
-find simproctc-$VERSION -name ".svn" | xargs rm -rf && \
-tar czvf simproctc-$VERSION.tar.gz simproctc-$VERSION
+
+# ====== Copy NED files =====================================================
+# Create list of NEDs first; otherwise, "find" would also find newly copied
+# files in the output directory!
+while [ $# -gt 0 ] ; do
+   NED=$1
+   shift
+
+   if [ -d $NED ] ; then
+      rm -f $NEDDIR/out.tar
+      find $NED -name "*.ned" -printf "%P\n" | grep --invert-match "tdtoolchain/" | tar cf $NEDDIR/out.tar -C $NED -T -
+      if [ -e $NEDDIR/out.tar ] ; then
+         ( cd $NEDDIR && tar xf out.tar )
+      fi
+      rm -f $NEDDIR/out.tar
+   else
+      cp $NED $NEDDIR
+   fi
+done
