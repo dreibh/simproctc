@@ -26,7 +26,7 @@
 channel Link10M extends ned.DatarateChannel
 {
     parameters:
-        delay = 10ms;
+        delay    = 10ms;
         datarate = 10000000bps;
 }
 
@@ -34,12 +34,12 @@ channel Link10M extends ned.DatarateChannel
 simple Source
 {
     parameters:
-        volatile double startupDelay @unit(s);
-        double headerSize;
-        volatile double payloadSize;
+        volatile double startupDelay     @unit(s);
+        double          headerSize       @unit(B);
+        volatile double payloadSize      @unit(B);
         volatile double interarrivalTime @unit(s);
-        double id;
-        double destination;
+        double          id;
+        double          destination;
     gates:
         output outputGate;
 }
@@ -48,8 +48,8 @@ simple Source
 simple Multiplexer
 {
     parameters:
-        double outputRate;
-        double maxQueueLength;
+        double outputRate     @unit(Bps);
+        double maxQueueLength @unit(B);
     gates:
         input inputGate[];
         output outputGate;
@@ -60,7 +60,7 @@ simple Demultiplexer
 {
     parameters:
     gates:
-        input inputGate;
+        input  inputGate;
         output outputGate[];
 }
 
@@ -101,10 +101,10 @@ module MultiSink
 simple Fragmenter
 {
     parameters:
-        double cellPayloadSize;
-        double cellHeaderSize;
+        double cellPayloadSize @unit(B);
+        double cellHeaderSize  @unit(B);
     gates:
-        input inputGate;
+        input  inputGate;
         output outputGate;
 }
 
@@ -113,7 +113,7 @@ simple Defragmenter
 {
     parameters:
     gates:
-        input inputGate;
+        input  inputGate;
         output outputGate;
 }
 
@@ -129,17 +129,17 @@ simple Duplicator
 module IntermediateNode
 {
     parameters:
-        double outputRate;
-        double maxQueueLength;
+        double outputRate     @unit(Bps);
+        double maxQueueLength @unit(B);
 
         @display("bgb=140,93;bgp=10,10");
     gates:
-        input inputGate;
+        input  inputGate;
         output outputGate;
     submodules:
         outputBuffer: Multiplexer {
             parameters:
-                outputRate = outputRate;
+                outputRate     = outputRate;
                 maxQueueLength = maxQueueLength;
                 @display("p=82,64;i=queue");
             gates:
@@ -154,19 +154,20 @@ module IntermediateNode
 module FragmenterScenario
 {
     parameters:
-        double intermediateNodeOutputRate;
-        volatile double sourceInterarrivalTime @unit(s);
-        volatile double sourcePayloadSize;
-        double sourceHeaderSize;
+        double          intermediateNodeOutputRate     @unit(Bps);
+        double          intermediateNodeMaxQueueLength @unit(B);
+        volatile double sourceInterarrivalTime         @unit(s);
+        volatile double sourcePayloadSize              @unit(B);
+        double          sourceHeaderSize               @unit(B);
     submodules:
         source: Source {
             parameters:
-                startupDelay = 0s;
+                startupDelay     = 0s;
                 interarrivalTime = sourceInterarrivalTime;
-                payloadSize = sourcePayloadSize;
-                headerSize = sourceHeaderSize;
-                id = 1000;
-                destination = 1;
+                payloadSize      = sourcePayloadSize;
+                headerSize       = sourceHeaderSize;
+                id               = 1000;
+                destination      = 1;
                 @display("b=34,34;p=260,310;i=bwgen");
         }
         duplicator: Duplicator {
@@ -177,14 +178,14 @@ module FragmenterScenario
         }
         fragmenter: Fragmenter {
             parameters:
-                cellPayloadSize = default(128);
-                cellHeaderSize = default(8);
+                cellPayloadSize = default(128 B);
+                cellHeaderSize  = default(8 B);
                 @display("p=60,160;i=proc2");
         }
         nodeArray1[4]: IntermediateNode {
             parameters:
-                outputRate = intermediateNodeOutputRate;
-                maxQueueLength = intermediateNodeOutputRate;
+                outputRate     = intermediateNodeOutputRate;
+                maxQueueLength = intermediateNodeMaxQueueLength;
                 @display("b=32,30;p=60,60,row,100;i=queue");
         }
         defragmenter: Defragmenter {
@@ -197,8 +198,8 @@ module FragmenterScenario
         }
         nodeArray2[4]: IntermediateNode {
             parameters:
-                outputRate = intermediateNodeOutputRate;
-                maxQueueLength = intermediateNodeOutputRate;
+                outputRate     = intermediateNodeOutputRate;
+                maxQueueLength = intermediateNodeMaxQueueLength;
                 @display("p=60,460,row,100;i=queue");
         }
         sink2: Sink {
@@ -226,8 +227,9 @@ module FragmenterScenario
 network fragmenterScenario extends FragmenterScenario
 {
     parameters:
-        intermediateNodeOutputRate = default(50000);
-        sourceInterarrivalTime = default(0.1s);
-        sourcePayloadSize = default(500);
-        sourceHeaderSize = default(20);
+        intermediateNodeOutputRate     = default(50000 Bps);
+        intermediateNodeMaxQueueLength = default(50000 B);
+        sourceInterarrivalTime         = default(0.1s);
+        sourcePayloadSize              = default(500 B);
+        sourceHeaderSize               = default(20 B);
 }
