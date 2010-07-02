@@ -510,16 +510,20 @@ static bool handleScalarFile(const char* varNames,
 
       if(buffer[0] == '#') {
       }
-      else if(!(strncmp(buffer, "run ", 4))) {
+      else if( (!(strncmp(buffer, "bin", 3))) ||
+               (!(strncmp(buffer, "attr", 4))) ||
+               (!(strncmp(buffer, "field", 5))) ||
+               (!(strncmp(buffer, "statistic", 9))) ) {
+         // Skip this item
+      }
+      else if(!(strncmp(buffer, "run", 3))) {
          run++;
       }
-      else if(!(strncmp(buffer, "attr ", 5))) {
+      else if(!(strncmp(buffer, "version", 7))) {
          // Skip this item
       }
-      else if(!(strncmp(buffer, "version ", 8))) {
-         // Skip this item
-      }
-      else if(!(strncmp(buffer, "scalar ", 7))) {
+      else if( (!(strncmp(buffer, "scalar ",  7))) ||
+               (!(strncmp(buffer, "scalar\t", 7))) ) {
          // ====== Parse scalar line ========================================
          char* s = getWord((char*)&buffer[7], (char*)&objectName);
          if(s) {
@@ -583,9 +587,8 @@ static bool handleScalarFile(const char* varNames,
       else if(buffer[0] == 0x00) {
       }
       else {
-         cerr << "ERROR: File \"" << fileName << "\", line " << line << " - Expected values, got crap!" << endl;
-         success = false;
-         break;
+         cerr << "NOTE: " << fileName << ":" << line << " - Ignoring line \"" << buffer << "\"" << endl;
+         // Skip this item
       }
    }
 
