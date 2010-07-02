@@ -320,8 +320,11 @@ void Multiplexer::handleMessage(cMessage* msg)
    if((OutputQueue.front() != NULL) && (TimerEvent == NULL)) {
       cDataPacket* packet = (cDataPacket*)OutputQueue.front();
       const unsigned int packetLength = packet->getBitLength() / 8;
-      const simtime_t    transmitTime = std::max(OutputGate->getChannel()->getTransmissionFinishTime(),
-                                                 simTime() + (double)packetLength / OutputRate);
+      const simtime_t    transmitTime =
+         std::max(
+            OutputGate->getTransmissionChannel()->getTransmissionFinishTime(),
+            simTime() + (double)packetLength / OutputRate
+         );
       ev << "Scheduling timer for message #" << packet->getMsgSeqNumber()
          << " from " << packet->getSource()
          << ", transmit time: "

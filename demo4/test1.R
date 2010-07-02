@@ -2,9 +2,9 @@
 # ###########################################################################
 #                   A Very Simple Example Simulation for
 #             Thomas Dreibholz's R Simulation Scripts Collection
-#                  Copyright (C) 2005-2009 Thomas Dreibholz
+#                  Copyright (C) 2005-2010 Thomas Dreibholz
 #
-#           Author: Thomas Dreibholz, dreibh@exp-math.uni-essen.de
+#               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 # ###########################################################################
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,14 +29,14 @@ source("simulate-version1.R")
 simulationScriptOutputVerbosity <- 8
 simulationDirectory <- "test1"
 simulationDuration <- 1
-simulationRuns <- 3
+simulationRuns <- 5
 simulationStoreVectors <- FALSE
 simulationExecuteMake <- TRUE
 simulationSummaryCompressionLevel <- 5
 simulationSummarySkipList <- c()
 # -------------------------------------
 distributionPool  <- "ScriptingPool"
-distributionProcs <- 2    # Set to 0 for to disable distribution!
+distributionProcs <- 0    # Set to 0 for to disable distribution!
 distributionPUOpt <- ""   # Add misc options for ScriptingPU here.
 # -------------------------------------
 
@@ -44,7 +44,7 @@ distributionPUOpt <- ""   # Add misc options for ScriptingPU here.
 
 simulationConfigurations <- list(
    # ------ Scenario Settings -----------------------------------------------
-   list("cellPayloadSize", 4, 8, 16, 32, 64, 96, 128, 192, 256, 384),
+   list("cellPayloadSize", 4, 8, 16, 32, 64, 96, 128, 192, 256, 320, 384),
    list("cellHeaderSize", 4),
    list("intermediateNodeOutputRate", 150000),
    list("sourceInterarrivalTime", 0.1),

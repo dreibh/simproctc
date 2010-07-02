@@ -48,7 +48,10 @@ demoWriteHeader <- function(iniFile, simulationRun, scalarName, vectorName, dura
    else {
       cat(sep="", "**.vector-recording = false\n", file=iniFile)
    }
-   cat(sep="", "**.vector-recording-interval = ", simCreatorSimulationStartup, "..", simCreatorSimulationStartup, " ", duration, "s\n", file=iniFile)
+   cat(sep="", "# NOTE: In OMNeT++ 4.0, this parameter has been named vector-recording-interval!\n", file=iniFile)
+   cat(sep="", "# To use under OMNeT++ 4.0, check simulate-version1.R and replace:\n", file=iniFile)
+   cat(sep="", "# vector-recording-intervals by vector-recording-interval!\n", file=iniFile)
+   cat(sep="", "**.vector-recording-intervals = ", simCreatorSimulationStartup, "..", simCreatorSimulationStartup, " ", duration, "s\n", file=iniFile)
    cat(sep="", "\n", file=iniFile)
    cat(sep="", "\n", file=iniFile)
 }
