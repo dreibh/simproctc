@@ -70,7 +70,9 @@ OUTPUT_ARCHIVE="`mktemp -t --tmpdir=$TMP_DIRECTORY output-XXXXXXXXXX`"
 # ====== Create input archive ===============================================
 echo "Preparing input [$UNIQUE_ID] ..."
 # Using "nice" here, since there may be many sessions ...
-nice tar czhf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY $SIMULATION_ENVIRONMENT -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME || exit 1
+# NOTE: Using plain Tar file => requires rsplib-2.7.3 to work!
+#       Older rsplib versions *always* assume Tar/GZip!
+nice tar chf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY $SIMULATION_ENVIRONMENT -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME || exit 1
 
 
 # ====== Start PU for job distribution ======================================
