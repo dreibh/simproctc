@@ -63,8 +63,8 @@ if [ ! -e "$SIMULATION_POOLUSER" ] ; then
    echo "ERROR: Unable to find PU program at $SIMULATION_POOLUSER!" >&2
    exit 1
 fi
-INPUT_ARCHIVE="`mktemp -t --tmpdir=$TMP_DIRECTORY input-XXXXXXXXXX`"
-OUTPUT_ARCHIVE="`mktemp -t --tmpdir=$TMP_DIRECTORY output-XXXXXXXXXX`"
+INPUT_ARCHIVE="`mktemp -t -p $TMP_DIRECTORY input-XXXXXXXXXX`"
+OUTPUT_ARCHIVE="`mktemp -t -p $TMP_DIRECTORY output-XXXXXXXXXX`"
 
 
 # ====== Create input archive ===============================================
