@@ -257,6 +257,8 @@ prepareDirectory <- function(simulationDirectory)
    dir.create(simulationDirectory, showWarnings=FALSE)
    setGlobalVariable("gResultsDirectoryName", paste(sep="", simulationDirectory, "/", "Results"))
    dir.create(getGlobalVariable("gResultsDirectoryName"), showWarnings=FALSE)
+   setGlobalVariable("gTempDirectoryName", paste(sep="", simulationDirectory, "/", "Temp"))
+   dir.create(getGlobalVariable("gTempDirectoryName"), showWarnings=FALSE)
    setGlobalVariable("gSimulationsDirectoryName", paste(sep="", simulationDirectory, "/", "Simulations"))
    dir.create(getGlobalVariable("gSimulationsDirectoryName"), showWarnings=FALSE)
 
@@ -385,6 +387,7 @@ finishMakefile <- function(makefile, summaryCommand)
 
    # ------ Simulation environment archive ----------------------------------
    cat(sep="", "simulation-binary:\n", file=makefile)
+   cat(sep="", "\trm -rf ", getGlobalVariable("gTempDirectoryName"), "/*\n", file=makefile)
    if(reportTo != "") {
       poolingInfo <- " "
       if(distributionProcs > 0) {
@@ -425,6 +428,7 @@ finishMakefile <- function(makefile, summaryCommand)
 
    # ------ Completion of simulation runs -----------------------------------
    cat(sep="", getGlobalVariable("gSimulationsCompletedName"), ":\tsimulation-binary ", simulationDirectory, "/simulation-environment.tar.bz2 tools/runtimeestimator tools/getrelativepath ", getGlobalVariable("gRuntimeName"), "   ", getGlobalVariable("gSimulationDependencies"), "\n", file=makefile)
+   cat(sep="", "\trm -rf ", getGlobalVariable("gTempDirectoryName"), "/*\n", file=makefile)
    cat(sep="", "\tdate >", getGlobalVariable("gSimulationsCompletedName"), "\n", file=makefile)
    if(reportTo != "") {
       cat(sep="", "\t( echo \"Finished processing of runs for simulation ", simulationDirectory, " on `hostname`.\" | sendxmpp -i ", reportTo, " || true )\n", file=makefile)

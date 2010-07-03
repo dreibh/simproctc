@@ -28,12 +28,13 @@ if [ $# -lt 4 ] ; then
    echo "Usage: ssdistribute [Simulation Directory] [Run Directory] [.ini File Name] [Pool Handle] {Misc Options to PU}"
    exit 1
 fi
-SIM_DIRECTORY="`pwd`/$1"   # e.g.: <path>/test1
-RUN_DIRECTORY="`pwd`/$2"   # e.g.: <path>/test1/Simulations/Set-XXXX
-INI_NAME="$3"              # e.g.: run1-parameters.ini
-POOLHANDLE="$4"            # e.g.: ScriptingPool
-PU_MISCOPT="$5"            # e.g.: "-cspserver=... ..."
-MAX_RETRY=10               # After a remote-side error, retry how many times?
+SIM_DIRECTORY="`pwd`/$1"        # e.g.: <path>/test1
+TMP_DIRECTORY="`pwd`/$1/Temp"   # e.g.: <path>/test1/Temp
+RUN_DIRECTORY="`pwd`/$2"        # e.g.: <path>/test1/Simulations/Set-XXXX
+INI_NAME="$3"                   # e.g.: run1-parameters.ini
+POOLHANDLE="$4"                 # e.g.: ScriptingPool
+PU_MISCOPT="$5"                 # e.g.: "-cspserver=... ..."
+MAX_RETRY=10                    # After a remote-side error, retry how many times?
 
 # ###########################################################################
 # Settings for running the simulation:
@@ -62,8 +63,8 @@ if [ ! -e "$SIMULATION_POOLUSER" ] ; then
    echo "ERROR: Unable to find PU program at $SIMULATION_POOLUSER!" >&2
    exit 1
 fi
-INPUT_ARCHIVE="`mktemp -t input-XXXXXXXXXX`"
-OUTPUT_ARCHIVE="`mktemp -t output-XXXXXXXXXX`"
+INPUT_ARCHIVE="`mktemp -t --tmpdir=$TMP_DIRECTORY input-XXXXXXXXXX`"
+OUTPUT_ARCHIVE="`mktemp -t --tmpdir=$TMP_DIRECTORY output-XXXXXXXXXX`"
 
 
 # ====== Create input archive ===============================================
