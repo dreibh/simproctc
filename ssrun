@@ -96,9 +96,9 @@ for INI_FILE in $INI_FILES ; do
       cd $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR && \
       startTime=`date` && \
       rm -f $RUN_DIRECTORY/$SCALAR_FILE.bz2 $RUN_DIRECTORY/$VECTOR_FILE.bz2 $RUN_DIRECTORY/$OUTPUT_FILE.bz2 && \
-      echo "   -> $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS" && \
+      echo "   -> env -i $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS" && \
       chmod 700 ./$SIMULATION_PROGRAM && \
-      $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS >$OUTPUT_FILE 2>&1 && \
+      env -i $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS >$OUTPUT_FILE 2>&1 && \
       find . -name $OUTPUT_FILE -or -name $VECTOR_FILE -or -name $SCALAR_FILE | xargs --no-run-if-empty bzip2 -f && \
       endTime=`date` && \
       ( echo "Start: $startTime" && echo "End:   $endTime" ) >$STATUS_FILE
@@ -111,7 +111,9 @@ for INI_FILE in $INI_FILES ; do
       echo ""
       echo "----- SIMULATION RUN FAILED -----"
       echo ""
-ls -l $RUN_DIRECTORY
+      echo "Contents of directory $RUN_DIRECTORY :"
+      ls -l $RUN_DIRECTORY
+      echo "-----"
       if [ -e $RUN_DIRECTORY/$OUTPUT_FILE.bz2 ] ; then
          echo "#########################################################"
          bzcat $RUN_DIRECTORY/$OUTPUT_FILE.bz2

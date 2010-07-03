@@ -68,11 +68,13 @@ OUTPUT_ARCHIVE="`mktemp -t output-XXXXXXXXXX`"
 
 # ====== Create input archive ===============================================
 echo "Preparing input [$UNIQUE_ID] ..."
-tar czhf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY $SIMULATION_ENVIRONMENT -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME || exit 1
+# Using "nice" here, since there may be many sessions ...
+nice tar czhf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY $SIMULATION_ENVIRONMENT -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME || exit 1
 
 
 # ====== Start PU for job distribution ======================================
 echo "Distributing and processing [$UNIQUE_ID] ..."
+# Not using "nice" here, in order to ensure quick upload/download ...
 $VALGRIND $SIMULATION_POOLUSER -runid=$UNIQUE_ID -quiet -maxretry=$MAX_RETRY -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT -logfile=$PU_LOGFILE -loglevel=$PU_LOGLEVEL || exit 1
 # >vg$RANDOM.txt 2>&1 || exit 1
 if [ -e $PU_LOGFILE ] ; then
@@ -85,7 +87,8 @@ fi
 echo "Extracting [$UNIQUE_ID] ..."
 cd $RUN_DIRECTORY || exit 1
 if [ -s "$OUTPUT_ARCHIVE" ] ; then
-   ( tar xzhvf "$OUTPUT_ARCHIVE" | xargs touch ) || exit 1   # This will also update the time stamp!
+   # Using "nice" here, since there may be many sessions ...
+   ( nice tar xzhvf "$OUTPUT_ARCHIVE" | xargs touch ) || exit 1   # This will also update the time stamp!
    rm -f $INPUT_ARCHIVE $OUTPUT_ARCHIVE
    exit 0
 else
