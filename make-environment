@@ -180,6 +180,8 @@ echo "+ `date` Writing configuration ..."
    echo "SIMULATION_LIBS=lib"
    echo "SIMULATION_NEDS=\"$NEW_NED_PATHS\""
    echo "SIMULATION_BASEDIR=$SIMULATION_BASEDIR"
+   echo "SIMULATION_SYSTEM=\"`uname -s`\""
+   echo "SIMULATION_MACHINE=\"`uname -m`\""
 ) >simulation.config-stage0
 
 
