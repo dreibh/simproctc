@@ -67,6 +67,8 @@ for INI_FILE in $INI_FILES ; do
    echo "      o Simulation libraries:      $SIMULATION_LIBS"
    echo "      o Simulation NED files:      $SIMULATION_NEDS"
    echo "      o Simulation program:        $SIMULATION_PROGRAM"
+   echo "      o Simulation system:         $SIMULATION_SYSTEM"
+   echo "      o Simulation machine:        $SIMULATION_MACHINE"
    nedArgs=""
    for n in $SIMULATION_NEDS ; do
       if [ "x$nedArgs" = "x" ] ; then
@@ -91,6 +93,15 @@ for INI_FILE in $INI_FILES ; do
    if [ ! -e $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_LIBS ] ; then
       ln -s $SIMULATION_DIRECTORY/Environment/$SIMULATION_LIBS $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_LIBS || exit 13
    fi
+   thisOperatingSystem="`uname -s `"
+   if [ "$thisOperatingSystem" != "$SIMULATION_SYSTEM" ] ; then
+      echo "###### Simulation compiled for different operating system! ######"
+      if [ "$thisOperatingSystem" = "FreeBSD" ] ; then
+         echo "Trying: brandelf -t $SIMULATION_SYSTEM $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_LIBS/ld-loader.so"
+         brandelf -t $SIMULATION_SYSTEM $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_LIBS/ld-loader.so || exit 14
+      fi
+      echo "#################################################################"
+   fi
 
    (
       cd $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR && \
@@ -99,7 +110,7 @@ for INI_FILE in $INI_FILES ; do
       echo "   -> env -i $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS" && \
       chmod 700 ./$SIMULATION_PROGRAM && \
       env -i $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS >$OUTPUT_FILE 2>&1 && \
-      find . -name $OUTPUT_FILE -or -name $VECTOR_FILE -or -name $SCALAR_FILE | xargs --no-run-if-empty bzip2 -f && \
+      find . -name $OUTPUT_FILE -or -name $VECTOR_FILE -or -name $SCALAR_FILE | xargs -r bzip2 -f && \
       endTime=`date` && \
       ( echo "Start: $startTime" && echo "End:   $endTime" ) >$STATUS_FILE
    ) || RESULT=15
@@ -130,7 +141,7 @@ done
 echo "+ `date` Archiving results ..."
 (
    cd $RUN_DIRECTORY/Environment/$SIMULATION_BASEDIR && \
-   find . -name "*-status.txt" -or -name "*.txt.bz2" -or -name "*-scalars.sca.bz2" -or -name "*-vectors.vec.bz2" -or -name "core*" | xargs --no-run-if-empty tar czf output.tar.gz
+   find . -name "*-status.txt" -or -name "*.txt.bz2" -or -name "*-scalars.sca.bz2" -or -name "*-vectors.vec.bz2" -or -name "core*" | xargs -r tar czf output.tar.gz
 ) || exit 20
 mv $RUN_DIRECTORY/Environment/$SIMULATION_BASEDIR/output.tar.gz $OUTPUT_ARCHIVE || exit 25
 
