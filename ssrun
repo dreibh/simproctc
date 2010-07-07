@@ -24,17 +24,18 @@
 
 
 # ====== Check parameters ===================================================
-if [ $# -lt 1 ] ; then
-   echo "Usage: ssrun [Output File Name]"
+if [ $# -lt 2 ] ; then
+   echo "Usage: ssrun [Output File Name] [Environment File Name]"
    exit 2
 fi
 OUTPUT_ARCHIVE="$1"
+ENVIRONMENT_FILE="$2"
 
 
 # ====== Prepare simulation environment =====================================
 echo "+ `date` Unpacking environment ..."
-if [ -e simulation-environment.tar.bz2 ] ; then
-   tar xjf simulation-environment.tar.bz2 || exit 3
+if [ -e $ENVIRONMENT_FILE ] ; then
+   tar xjf $ENVIRONMENT_FILE || exit 3
 fi
 
 

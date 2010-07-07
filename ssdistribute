@@ -46,8 +46,8 @@ MAX_RETRY=10                    # After a remote-side error, retry how many time
 #
 SIMULATION_ENVIRONMENT="simulation-environment.tar.bz2"
 SIMULATION_CONFIGS=""   # "simulation.config-stage1"
-#SIMULATION_POOLUSER=~dreibh/src/rsplib2/rsplib/scriptingclient
-SIMULATION_POOLUSER=/usr/bin/scriptingclient
+SIMULATION_POOLUSER=~dreibh/src/rsplib2/rsplib/scriptingclient
+# SIMULATION_POOLUSER=/usr/bin/scriptingclient
 # ###########################################################################
 
 UNIQUE_ID="$2/$INI_NAME"
@@ -72,13 +72,13 @@ echo "Preparing input [$UNIQUE_ID] ..."
 # Using "nice" here, since there may be many sessions ...
 # NOTE: Using plain Tar file => requires rsplib-2.7.3 to work!
 #       Older rsplib versions *always* assume Tar/GZip!
-nice tar chf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY $SIMULATION_ENVIRONMENT -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME || exit 1
+nice tar chf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME || exit 1
 
 
 # ====== Start PU for job distribution ======================================
 echo "Distributing and processing [$UNIQUE_ID] ..."
 # Not using "nice" here, in order to ensure quick upload/download ...
-$VALGRIND $SIMULATION_POOLUSER -runid=$UNIQUE_ID -quiet -maxretry=$MAX_RETRY -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT -logfile=$PU_LOGFILE -loglevel=$PU_LOGLEVEL || exit 1
+$VALGRIND $SIMULATION_POOLUSER -runid=$UNIQUE_ID -quiet -maxretry=$MAX_RETRY -environment=$SIM_DIRECTORY/$SIMULATION_ENVIRONMENT -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT -logfile=$PU_LOGFILE -loglevel=$PU_LOGLEVEL || exit 1
 # >vg$RANDOM.txt 2>&1 || exit 1
 if [ -e $PU_LOGFILE ] ; then
    rm -f $PU_LOGFILE.bz2
