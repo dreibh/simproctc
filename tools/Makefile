@@ -3,7 +3,7 @@
 #             Thomas Dreibholz's R Simulation Scripts Collection
 #                  Copyright (C) 2005-2010 Thomas Dreibholz
 #
-#               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
+#              Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 # ###########################################################################
 #
 # This program is free software: you can redistribute it and/or modify
@@ -22,16 +22,16 @@
 # Contact: dreibh@iem.uni-due.de
 
 
-#CPPFLAGS=-O0 -Wall -g
-CPPFLAGS=-O3 -Wall -g
+CPPFLAGS=-O0 -Wall -g
+# CPPFLAGS=-O3 -Wall -g
 CC=g++
 
 
 all:	createsummary runtimeestimator combinesummaries extractvectors getrelativepath
 
 
-createsummary:	createsummary.cc simpleredblacktree.o doublelinkedringlist.o
-	$(CC) createsummary.cc -o createsummary $(CPPFLAGS) simpleredblacktree.o doublelinkedringlist.o -lbz2
+createsummary:	createsummary.cc inputfile.o outputfile.o simpleredblacktree.o doublelinkedringlist.o
+	$(CC) createsummary.cc -o createsummary inputfile.o outputfile.o simpleredblacktree.o doublelinkedringlist.o -lbz2 $(CPPFLAGS)
 
 combinesummaries:	combinesummaries.cc
 	$(CC) combinesummaries.cc -o combinesummaries $(CPPFLAGS) -lbz2
@@ -52,6 +52,13 @@ simpleredblacktree.o:	simpleredblacktree.c simpleredblacktree.h redblacktree.h r
 
 doublelinkedringlist.o:	doublelinkedringlist.c doublelinkedringlist.h
 	$(CC) doublelinkedringlist.c -c -o doublelinkedringlist.o $(CPPFLAGS)
+
+
+inputfile.o:	inputfile.cc inputfile.h
+	$(CC) inputfile.cc -c -o inputfile.o $(CPPFLAGS)
+
+outputfile.o:	outputfile.cc outputfile.h
+	$(CC) outputfile.cc -c -o outputfile.o $(CPPFLAGS)
 
 
 t1:	test1.sca test2.sca createsummary
