@@ -1,0 +1,599 @@
+------------------------------------------------------------------------
+r450 | dreibh | 2010-07-07 12:18:01 +0200 (Wed, 07 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/ssdistribute
+   M /trunk/simproctc/ssrun
+
+Modified scripts to use environment-caching version of the scripting service.
+
+------------------------------------------------------------------------
+r448 | dreibh | 2010-07-04 14:52:04 +0200 (Sun, 04 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/ssrun
+
+Support for FreeBSD processing the simulation runs. Requires: "kldload linux"!
+
+------------------------------------------------------------------------
+r447 | dreibh | 2010-07-04 14:50:23 +0200 (Sun, 04 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/make-environment
+
+make-environment now creates information about the used operating system and machine type.
+
+------------------------------------------------------------------------
+r444 | dreibh | 2010-07-03 18:57:34 +0200 (Sat, 03 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/ssdistribute
+
+ssdistribute has to use "-p" instead "--tempdir", in order to be compatible to older systems.
+
+------------------------------------------------------------------------
+r442 | dreibh | 2010-07-03 18:40:08 +0200 (Sat, 03 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/ssdistribute
+
+Replaced GZipped Tar archive of work package by plain Tar => signification overhead reduction for distributor to large pools.
+
+------------------------------------------------------------------------
+r440 | dreibh | 2010-07-03 18:22:48 +0200 (Sat, 03 Jul 2010) | 4 lines
+Changed paths:
+   M /trunk/simproctc/TODO
+   M /trunk/simproctc/simulation.R
+   M /trunk/simproctc/ssdistribute
+
+- Create temp directories within simulation directory, not in /tmp.
+- Clean up temp directory before and after simulation runs
+ => avoids problems with remaining garbage when simulation is aborted.
+
+------------------------------------------------------------------------
+r438 | dreibh | 2010-07-03 17:13:13 +0200 (Sat, 03 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/ssdistribute
+   M /trunk/simproctc/ssrun
+
+Improved ssdistribute and ssrun.
+
+------------------------------------------------------------------------
+r437 | dreibh | 2010-07-02 23:27:32 +0200 (Fri, 02 Jul 2010) | 1 line
+Changed paths:
+   A /trunk/simproctc/TODO
+
+
+------------------------------------------------------------------------
+r429 | dreibh | 2010-07-02 21:02:12 +0200 (Fri, 02 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/demo4/omnetpp.ini
+   M /trunk/simproctc/demo4/scenario.ned
+   M /trunk/simproctc/demo4/simulate-version1.R
+
+Improved demo4 example.
+
+------------------------------------------------------------------------
+r428 | dreibh | 2010-07-02 09:35:02 +0200 (Fri, 02 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/demo/implementation.cc
+   M /trunk/simproctc/docs/Handbook.txt
+   A /trunk/simproctc/get-neds
+   M /trunk/simproctc/hashfunctions.R
+   M /trunk/simproctc/package-simproctc
+
+Version update.
+
+------------------------------------------------------------------------
+r427 | dreibh | 2010-07-02 09:34:18 +0200 (Fri, 02 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/tools/Makefile
+   M /trunk/simproctc/tools/createsummary.cc
+   M /trunk/simproctc/tools/runtimeestimator.cc
+
+Updated createsummary.cc to extended format of OMNeT++ 4.1.
+
+------------------------------------------------------------------------
+r426 | dreibh | 2010-07-02 09:33:49 +0200 (Fri, 02 Jul 2010) | 2 lines
+Changed paths:
+   A /trunk/simproctc/demo4/__IMPORTANT_NOTE_FOR_OMNeT++_4.0_USERS__
+   M /trunk/simproctc/demo4/implementation.cc
+   M /trunk/simproctc/demo4/messages.msg
+   M /trunk/simproctc/demo4/plot-test1.R
+   M /trunk/simproctc/demo4/simulate-version1.R
+   M /trunk/simproctc/demo4/simulation.config-stage1
+   M /trunk/simproctc/demo4/test1.R
+
+Updated demo for OMNeT++ 4.1.
+
+------------------------------------------------------------------------
+r408 | dreibh | 2010-06-16 15:58:05 +0200 (Wed, 16 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+Added curve numbering feature to plotter.R.
+
+------------------------------------------------------------------------
+r407 | dreibh | 2010-06-16 15:57:34 +0200 (Wed, 16 Jun 2010) | 3 lines
+Changed paths:
+   M /trunk/simproctc/tools/createsummary.cc
+
+- Scalar combination bugfix in createsummary.cc.
+- Fixed memory deallocation problem in createsummary.cc.
+
+------------------------------------------------------------------------
+r404 | dreibh | 2010-06-16 15:20:11 +0200 (Wed, 16 Jun 2010) | 2 lines
+Changed paths:
+   A /trunk/simproctc/tools/extractvectors.cc
+   A /trunk/simproctc/tools/getrelativepath.cc
+
+Added extractvectors and getrelativepath programs.
+
+------------------------------------------------------------------------
+r403 | dreibh | 2010-06-16 15:18:30 +0200 (Wed, 16 Jun 2010) | 4 lines
+Changed paths:
+   M /trunk/simproctc/tools/Makefile
+   M /trunk/simproctc/tools/createsummary.cc
+   A /trunk/simproctc/tools/cs-test1
+   A /trunk/simproctc/tools/test3.sca
+
+- Added scalar combination feature to createsummary.
+Example: "Stream #1", "Stream #2" => Output of "Stream" with table row containing 1 or 2.
+- Fixed memory leak in createsummary.
+
+------------------------------------------------------------------------
+r395 | dreibh | 2010-06-02 17:38:13 +0200 (Wed, 02 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/simproctc/tools/Makefile
+
+
+------------------------------------------------------------------------
+r390 | dreibh | 2010-05-28 20:17:23 +0200 (Fri, 28 May 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/archive-simulation
+   M /trunk/simproctc/archive-simulation-completely
+   M /trunk/simproctc/demo4/implementation.cc
+   M /trunk/simproctc/demo4/omnetpp.ini
+   M /trunk/simproctc/demo4/scenario.ned
+   M /trunk/simproctc/demo4/simulate-version1.R
+   A /trunk/simproctc/docs/OMNeT++Workshop2008-final.pdf (from /trunk/simproctc/docs/OMNeTWorkshop2008-final.pdf:388)
+   A /trunk/simproctc/docs/OMNeT++Workshop2009-final.pdf
+   D /trunk/simproctc/docs/OMNeTWorkshop2008-final.pdf
+   M /trunk/simproctc/get-libs
+   M /trunk/simproctc/make-environment
+   M /trunk/simproctc/perform-run
+   M /trunk/simproctc/plotter.R
+   M /trunk/simproctc/simulation.R
+   M /trunk/simproctc/ssdistribute
+   M /trunk/simproctc/ssrun
+   M /trunk/simproctc/tools/Makefile
+   M /trunk/simproctc/tools/combinesummaries.cc
+   M /trunk/simproctc/tools/createsummary.cc
+   M /trunk/simproctc/tools/debug.h
+   M /trunk/simproctc/tools/doublelinkedringlist.h
+   M /trunk/simproctc/tools/redblacktree.h
+   M /trunk/simproctc/tools/redblacktree_impl.h
+   M /trunk/simproctc/tools/runtimeestimator.cc
+   M /trunk/simproctc/tools/simpleredblacktree.h
+
+Version updates.
+
+------------------------------------------------------------------------
+r204 | dreibh | 2009-11-15 00:00:32 +0100 (Sun, 15 Nov 2009) | 1 line
+Changed paths:
+   A /trunk/simproctc/archive-simulation
+   A /trunk/simproctc/archive-simulation-completely
+   M /trunk/simproctc/plotter.R
+   M /trunk/simproctc/simulation.R
+
+
+------------------------------------------------------------------------
+r143 | dreibh | 2009-09-23 10:05:48 +0200 (Wed, 23 Sep 2009) | 1 line
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+
+------------------------------------------------------------------------
+r136 | dreibh | 2009-08-05 22:47:02 +0200 (Wed, 05 Aug 2009) | 2 lines
+Changed paths:
+   M /trunk/simproctc/simulation.R
+
+Must use "-l" for "make". Otherwise, the number of jobs is limited by system load.
+
+------------------------------------------------------------------------
+r129 | dreibh | 2009-07-11 18:14:02 +0200 (Sat, 11 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/inet-toolchain/computation-pool.R
+   M /trunk/inet-toolchain/omnetpp-default.ini
+   M /trunk/inet-toolchain/simulate-version1.R
+   M /trunk/inet-toolchain/test1.R
+   M /trunk/simproctc/tools/combinesummaries.cc
+
+Fixed buffer overflow in combinesummaries.
+
+------------------------------------------------------------------------
+r128 | dreibh | 2009-06-23 16:23:01 +0200 (Tue, 23 Jun 2009) | 1 line
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+
+------------------------------------------------------------------------
+r127 | dreibh | 2009-06-23 16:14:29 +0200 (Tue, 23 Jun 2009) | 1 line
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+
+------------------------------------------------------------------------
+r126 | dreibh | 2009-06-23 16:13:36 +0200 (Tue, 23 Jun 2009) | 1 line
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+
+------------------------------------------------------------------------
+r125 | dreibh | 2009-06-23 15:48:15 +0200 (Tue, 23 Jun 2009) | 1 line
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+
+------------------------------------------------------------------------
+r124 | dreibh | 2009-06-23 15:25:43 +0200 (Tue, 23 Jun 2009) | 3 lines
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+Fixed plotter.R: When there are no A/B levels, do not make A/B layout. Fixed problem with reduced cex.
+
+
+------------------------------------------------------------------------
+r123 | dreibh | 2009-05-07 09:32:40 +0200 (Thu, 07 May 2009) | 1 line
+Changed paths:
+   M /trunk/simproctc/perform-run
+   M /trunk/simproctc/ssrun
+
+
+------------------------------------------------------------------------
+r121 | dreibh | 2009-05-04 09:33:09 +0200 (Mon, 04 May 2009) | 1 line
+Changed paths:
+   M /trunk/simproctc/demo4/make-links
+   M /trunk/simproctc/demo4/simulate-version1.R
+   M /trunk/simproctc/demo4/test1.R
+   M /trunk/simproctc/get-libs
+   D /trunk/simproctc/get-neds
+   M /trunk/simproctc/hashfunctions.R
+   A /trunk/simproctc/make-environment
+   A /trunk/simproctc/perform-run
+   M /trunk/simproctc/simulation.R
+   M /trunk/simproctc/ssdistribute
+   M /trunk/simproctc/ssrun
+
+
+------------------------------------------------------------------------
+r112 | dreibh | 2009-03-07 16:46:40 +0100 (Sat, 07 Mar 2009) | 1 line
+Changed paths:
+   M /trunk/simproctc/demo4/test1.R
+   M /trunk/simproctc/simulation.R
+
+
+------------------------------------------------------------------------
+r111 | dreibh | 2009-03-05 11:49:30 +0100 (Thu, 05 Mar 2009) | 1 line
+Changed paths:
+   M /trunk/simproctc/demo4/simulate-version1.R
+   M /trunk/simproctc/demo4/test1.R
+   M /trunk/simproctc/simulation.R
+   M /trunk/simproctc/ssrun
+
+
+------------------------------------------------------------------------
+r110 | dreibh | 2009-01-15 14:08:12 +0100 (Thu, 15 Jan 2009) | 2 lines
+Changed paths:
+   M /trunk/simproctc/tools/Makefile
+   M /trunk/simproctc/tools/combinesummaries.cc
+   M /trunk/simproctc/tools/createsummary.cc
+   M /trunk/simproctc/tools/debug.h
+   M /trunk/simproctc/tools/doublelinkedringlist.c
+   M /trunk/simproctc/tools/doublelinkedringlist.h
+   M /trunk/simproctc/tools/redblacktree.h
+   M /trunk/simproctc/tools/redblacktree_impl.h
+   M /trunk/simproctc/tools/runtimeestimator.cc
+   M /trunk/simproctc/tools/simpleredblacktree.c
+   M /trunk/simproctc/tools/simpleredblacktree.h
+
+Tools update.
+
+------------------------------------------------------------------------
+r109 | dreibh | 2008-11-27 12:13:55 +0100 (Thu, 27 Nov 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/ssdistribute
+
+
+------------------------------------------------------------------------
+r108 | dreibh | 2008-11-13 11:34:08 +0100 (Thu, 13 Nov 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/demo4/simulate-version1.R
+   M /trunk/simproctc/demo4/test1.R
+
+
+------------------------------------------------------------------------
+r107 | dreibh | 2008-11-11 22:38:23 +0100 (Tue, 11 Nov 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/demo/scenario.ned
+   M /trunk/simproctc/demo4/implementation.cc
+   M /trunk/simproctc/demo4/messages.msg
+   M /trunk/simproctc/demo4/omnetpp.ini
+   M /trunk/simproctc/demo4/scenario.ned
+   M /trunk/simproctc/demo4/simulate-version1.R
+
+
+------------------------------------------------------------------------
+r106 | dreibh | 2008-11-07 14:16:30 +0100 (Fri, 07 Nov 2008) | 2 lines
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+Fixed bSet label bug in plotter.R.
+
+------------------------------------------------------------------------
+r105 | dreibh | 2008-11-06 19:07:36 +0100 (Thu, 06 Nov 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+
+------------------------------------------------------------------------
+r104 | dreibh | 2008-10-23 11:54:26 +0200 (Thu, 23 Oct 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/demo/simulate-version1.R
+   M /trunk/simproctc/demo/test1.R
+   A /trunk/simproctc/demo4 (from /trunk/simproctc/demo:102)
+   M /trunk/simproctc/demo4/implementation.cc
+   M /trunk/simproctc/demo4/messages.msg
+   M /trunk/simproctc/demo4/omnetpp.ini
+   M /trunk/simproctc/demo4/scenario.ned
+   M /trunk/simproctc/demo4/simulate-version1.R
+   M /trunk/simproctc/demo4/test1.R
+   M /trunk/simproctc/plotter.R
+
+
+------------------------------------------------------------------------
+r103 | dreibh | 2008-10-22 18:10:47 +0200 (Wed, 22 Oct 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/tools/createsummary.cc
+
+
+------------------------------------------------------------------------
+r102 | dreibh | 2008-08-24 15:51:30 +0200 (Sun, 24 Aug 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/get-libs
+   M /trunk/simproctc/get-neds
+   M /trunk/simproctc/hashfunctions.R
+   M /trunk/simproctc/package-simproctc
+   M /trunk/simproctc/plotter.R
+   M /trunk/simproctc/simulation.R
+   M /trunk/simproctc/ssdistribute
+   M /trunk/simproctc/ssrun
+
+
+------------------------------------------------------------------------
+r101 | dreibh | 2008-08-23 16:16:37 +0200 (Sat, 23 Aug 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/simulation.R
+   M /trunk/simproctc/tools/createsummary.cc
+
+
+------------------------------------------------------------------------
+r100 | dreibh | 2008-08-22 13:18:28 +0200 (Fri, 22 Aug 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/simulation.R
+
+
+------------------------------------------------------------------------
+r99 | dreibh | 2008-08-22 12:34:16 +0200 (Fri, 22 Aug 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/plotter.R
+   M /trunk/simproctc/simulation.R
+
+
+------------------------------------------------------------------------
+r98 | dreibh | 2008-08-20 11:56:52 +0200 (Wed, 20 Aug 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/ssrun
+
+
+------------------------------------------------------------------------
+r97 | dreibh | 2008-07-24 10:20:02 +0200 (Thu, 24 Jul 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/demo/test1.R
+
+
+------------------------------------------------------------------------
+r96 | dreibh | 2008-07-11 21:23:47 +0200 (Fri, 11 Jul 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/tools/Makefile
+   M /trunk/simproctc/tools/createsummary.cc
+
+
+------------------------------------------------------------------------
+r95 | dreibh | 2008-07-11 08:52:47 +0200 (Fri, 11 Jul 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/ssrun
+
+
+------------------------------------------------------------------------
+r94 | dreibh | 2008-07-06 17:59:20 +0200 (Sun, 06 Jul 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/ssrun
+   M /trunk/simproctc/tools/createsummary.cc
+
+
+------------------------------------------------------------------------
+r93 | dreibh | 2008-07-06 17:26:39 +0200 (Sun, 06 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/simproctc/demo/make-links
+   M /trunk/simproctc/demo/simulate-version1.R
+   A /trunk/simproctc/get-neds
+   M /trunk/simproctc/simulation.R
+
+Update to support .ned file transfer.
+
+------------------------------------------------------------------------
+r92 | dreibh | 2008-06-27 14:48:55 +0200 (Fri, 27 Jun 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/ssdistribute
+   M /trunk/simproctc/tools/createsummary.cc
+
+
+------------------------------------------------------------------------
+r91 | dreibh | 2008-06-27 11:37:44 +0200 (Fri, 27 Jun 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/ssdistribute
+
+
+------------------------------------------------------------------------
+r90 | dreibh | 2008-06-27 11:03:30 +0200 (Fri, 27 Jun 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/ssrun
+
+
+------------------------------------------------------------------------
+r89 | dreibh | 2008-06-27 10:05:57 +0200 (Fri, 27 Jun 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/simulation.R
+   M /trunk/simproctc/ssdistribute
+
+
+------------------------------------------------------------------------
+r88 | dreibh | 2008-06-26 21:54:09 +0200 (Thu, 26 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/simproctc/ssrun
+
+ssrun: Using -u Cmdenv now.
+
+------------------------------------------------------------------------
+r87 | dreibh | 2008-06-26 21:53:40 +0200 (Thu, 26 Jun 2008) | 3 lines
+Changed paths:
+   M /trunk/simproctc/demo/test1.R
+   M /trunk/simproctc/simulation.R
+   M /trunk/simproctc/tools/createsummary.cc
+
+- Updated createsummary for OMNeT++ 4.0b2 compatibility.
+- Updated simulation.R to support v4 (-u Cmdenv ...)
+
+------------------------------------------------------------------------
+r86 | dreibh | 2008-06-26 14:15:18 +0200 (Thu, 26 Jun 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/ssdistribute
+
+
+------------------------------------------------------------------------
+r85 | dreibh | 2008-06-26 14:12:46 +0200 (Thu, 26 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/simproctc/simulation.R
+
+Added possibility to specify PU options (e.g. -cspserver=...).
+
+------------------------------------------------------------------------
+r84 | dreibh | 2008-06-26 13:59:37 +0200 (Thu, 26 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/simproctc/tools/createsummary.cc
+
+createsummary now dynamically allocates memory for values, etc. => much less memory consumption.
+
+------------------------------------------------------------------------
+r83 | dreibh | 2008-06-26 13:57:06 +0200 (Thu, 26 Jun 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/simulation.R
+
+
+------------------------------------------------------------------------
+r82 | dreibh | 2008-06-26 12:14:58 +0200 (Thu, 26 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/simproctc/simulation.R
+   M /trunk/simproctc/tools/createsummary.cc
+
+Add name of .ini file into output tables.
+
+------------------------------------------------------------------------
+r81 | dreibh | 2008-03-15 12:29:11 +0100 (Sat, 15 Mar 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/package-simproctc
+
+
+------------------------------------------------------------------------
+r80 | dreibh | 2008-03-15 12:28:28 +0100 (Sat, 15 Mar 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/demo/make-links
+
+
+------------------------------------------------------------------------
+r79 | dreibh | 2008-03-15 12:28:03 +0100 (Sat, 15 Mar 2008) | 2 lines
+Changed paths:
+   D /trunk/simproctc/demo/get-libs
+   D /trunk/simproctc/demo/hashfunctions.R
+   D /trunk/simproctc/demo/plotter.R
+   D /trunk/simproctc/demo/simulation.R
+   D /trunk/simproctc/demo/ssdistribute
+   D /trunk/simproctc/demo/ssrun
+
+SimProcTC cleanup.
+
+------------------------------------------------------------------------
+r78 | dreibh | 2008-03-15 12:19:34 +0100 (Sat, 15 Mar 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/package-simproctc
+
+
+------------------------------------------------------------------------
+r77 | dreibh | 2008-03-15 12:17:00 +0100 (Sat, 15 Mar 2008) | 1 line
+Changed paths:
+   A /trunk/simproctc/package-simproctc
+
+
+------------------------------------------------------------------------
+r76 | dreibh | 2008-03-15 12:12:00 +0100 (Sat, 15 Mar 2008) | 1 line
+Changed paths:
+   M /trunk/simproctc/demo/simulation.config-stage1
+
+
+------------------------------------------------------------------------
+r75 | dreibh | 2008-03-15 12:10:55 +0100 (Sat, 15 Mar 2008) | 1 line
+Changed paths:
+   D /trunk/simproctc/demo/docs
+   A /trunk/simproctc/docs (from /trunk/simproctc/demo/docs:74)
+
+
+------------------------------------------------------------------------
+r74 | dreibh | 2008-03-15 12:10:05 +0100 (Sat, 15 Mar 2008) | 1 line
+Changed paths:
+   D /trunk/simproctc/demo/tools
+
+
+------------------------------------------------------------------------
+r73 | dreibh | 2008-03-15 12:08:21 +0100 (Sat, 15 Mar 2008) | 1 line
+Changed paths:
+   A /trunk/simproctc/demo/make-links
+   A /trunk/simproctc/get-libs (from /trunk/simproctc/demo/get-libs:72)
+   A /trunk/simproctc/hashfunctions.R (from /trunk/simproctc/demo/hashfunctions.R:72)
+   A /trunk/simproctc/plotter.R (from /trunk/simproctc/demo/plotter.R:72)
+   A /trunk/simproctc/simulation.R (from /trunk/simproctc/demo/simulation.R:72)
+   A /trunk/simproctc/ssdistribute (from /trunk/simproctc/demo/ssdistribute:72)
+   A /trunk/simproctc/ssrun (from /trunk/simproctc/demo/ssrun:72)
+   A /trunk/simproctc/tools (from /trunk/simproctc/demo/tools:72)
+
+
+------------------------------------------------------------------------
+r72 | dreibh | 2008-03-15 12:02:58 +0100 (Sat, 15 Mar 2008) | 1 line
+Changed paths:
+   D /trunk/demo
+   A /trunk/simproctc
+   A /trunk/simproctc/demo (from /trunk/demo:70)
+   R /trunk/simproctc/demo/docs (from /trunk/demo/docs:71)
+   R /trunk/simproctc/demo/get-libs (from /trunk/demo/get-libs:71)
+   R /trunk/simproctc/demo/hashfunctions.R (from /trunk/demo/hashfunctions.R:71)
+   R /trunk/simproctc/demo/implementation.cc (from /trunk/demo/implementation.cc:71)
+   R /trunk/simproctc/demo/messages.msg (from /trunk/demo/messages.msg:71)
+   R /trunk/simproctc/demo/omnetpp.ini (from /trunk/demo/omnetpp.ini:71)
+   R /trunk/simproctc/demo/plot-test1.R (from /trunk/demo/plot-test1.R:71)
+   R /trunk/simproctc/demo/plotter.R (from /trunk/demo/plotter.R:71)
+   R /trunk/simproctc/demo/scenario.ned (from /trunk/demo/scenario.ned:71)
+   R /trunk/simproctc/demo/simulate-version1.R (from /trunk/demo/simulate-version1.R:71)
+   R /trunk/simproctc/demo/simulation.R (from /trunk/demo/simulation.R:71)
+   R /trunk/simproctc/demo/simulation.config-stage1 (from /trunk/demo/simulation.config-stage1:71)
+   R /trunk/simproctc/demo/ssdistribute (from /trunk/demo/ssdistribute:71)
+   R /trunk/simproctc/demo/ssrun (from /trunk/demo/ssrun:71)
+   R /trunk/simproctc/demo/test1.R (from /trunk/demo/test1.R:71)
+   R /trunk/simproctc/demo/tools (from /trunk/demo/tools:71)
+
+
+------------------------------------------------------------------------
