@@ -70,14 +70,14 @@ OUTPUT_ARCHIVE="`mktemp -t -p $TMP_DIRECTORY output-XXXXXXXXXX`"
 # ====== Create input archive ===============================================
 echo "Preparing input [$UNIQUE_ID] ..."
 # Using "nice" here, since there may be many sessions ...
-# NOTE: Using plain Tar file => requires rsplib-2.7.3 to work!
-#       Older rsplib versions *always* assume Tar/GZip!
-nice tar chf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME || exit 1
+nice tar czhf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME || exit 1
 
 
 # ====== Start PU for job distribution ======================================
 echo "Distributing and processing [$UNIQUE_ID] ..."
 # Not using "nice" here, in order to ensure quick upload/download ...
+# NOTE: At least rsplib 2.7.4 is required to run
+#       Older version do not support workload/environment separation!
 $VALGRIND $SIMULATION_POOLUSER -runid=$UNIQUE_ID -quiet -maxretry=$MAX_RETRY -environment=$SIM_DIRECTORY/$SIMULATION_ENVIRONMENT -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT -logfile=$PU_LOGFILE -loglevel=$PU_LOGLEVEL || exit 1
 # >vg$RANDOM.txt 2>&1 || exit 1
 if [ -e $PU_LOGFILE ] ; then

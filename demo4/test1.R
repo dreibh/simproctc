@@ -29,7 +29,7 @@ source("simulate-version1.R")
 simulationScriptOutputVerbosity <- 8
 simulationDirectory <- "test1"
 simulationDuration <- 1
-simulationRuns <- 5
+simulationRuns <- 1
 simulationStoreVectors <- FALSE
 simulationExecuteMake <- TRUE
 simulationSummaryCompressionLevel <- 5
@@ -42,15 +42,29 @@ distributionPUOpt <- ""   # Add misc options for ScriptingPU here.
 
 # ###########################################################################
 
+# These are the simulation parameters. For each combination, a separate run
+# will be created.
 simulationConfigurations <- list(
    # ------ Scenario Settings -----------------------------------------------
-   list("cellPayloadSize", 4, 8, 16, 32, 64, 96, 128, 192, 256, 320, 384),
+   list("cellPayloadSize", 4, 8, 16, 32, 40, 64, 96, 128, 192, 256, 320, 384),
    list("cellHeaderSize", 4),
    list("intermediateNodeOutputRate", 150000),
    list("sourceInterarrivalTime", 0.1),
    list("sourcePayloadSize", 1000, 2500),
    list("sourceHeaderSize", 20)
 )
+
+# Certain runs can be skipped, e.g. when some parameter combinations are not
+# useful. The following function is invoked before each run creation. If it
+# returns TRUE, the run will be skipped. Otherwise, it will be included.
+simulationIncludeOrSkip <- function(simulationConfigurations)
+{
+   if(as.numeric(cellPayloadSize) == 40) {
+      cat("***** Skipping cellPayloadSize=40 *****\n")
+      return(FALSE)
+   }
+   return(TRUE)
+}
 
 # ###########################################################################
 
