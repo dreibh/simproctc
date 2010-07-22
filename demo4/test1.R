@@ -29,7 +29,7 @@ source("simulate-version1.R")
 simulationScriptOutputVerbosity <- 8
 simulationDirectory <- "test1"
 simulationDuration <- 1
-simulationRuns <- 1
+simulationRuns <- 6
 simulationStoreVectors <- FALSE
 simulationExecuteMake <- TRUE
 simulationSummaryCompressionLevel <- 5

@@ -50,29 +50,36 @@ plotConfigurations <- list(
    #      "a-Axis Variable", "b-Axis Variable", "p-Axis Variable")
    # ------------------------------------------------------------------------
 
-   list(simulationDirectory, paste(sep="", simulationDirectory, "-Delay.pdf"),
-        "End-to-End Delay at Sinks", NA, NA, list(0.5,0.5),
-        "cellPayloadSize", "sink.AverageDelay",
+   list(simulationDirectory, paste(sep="", simulationDirectory, "-MeanPacketDelay.pdf"),
+        "Mean Packet Delay at Sinks", NA, NA, list(0.5,0.75),
+        "cellPayloadSize", "sink.MeanPacketDelay",
         "sink", "sourcePayloadSize", "cellHeaderSize"),
+   list(simulationDirectory, paste(sep="", simulationDirectory, "-MeanPacketLength.pdf"),
+        "Mean Packet Length at Sinks", NA, NA, list(0.5,0.5),
+        "cellPayloadSize", "sink.MeanPacketLength",
+        "sink", "sourcePayloadSize", "cellHeaderSize"),
+   list(simulationDirectory, paste(sep="", simulationDirectory, "-MeanPacketInterarrivalTime.pdf"),
+        "Mean Packet Interarrival Time at Sinks", NA, NA, list(0,1),
+        "cellPayloadSize", "sink.MeanPacketInterarrivalTime",
+        "sink", "sourcePayloadSize", "cellHeaderSize"),
+
    list(simulationDirectory, paste(sep="", simulationDirectory, "-Overhead3.pdf"),
         "Overhead Added by Fragmenter", NA, list(seq(0, 100, 20)), list(0.5,1),
         "cellPayloadSize", "fragmenter.AddedOverhead",
+        "sourcePayloadSize", "cellHeaderSize", ""),
+   list(simulationDirectory, paste(sep="", simulationDirectory, "-Overhead.pdf"),
+        "Overhead to Payload Ratio", NA, list(seq(0, 100, 20)), list(0.5,1),
+        "cellPayloadSize", "fragmenter.OverheadToPayloadRatio",
+        "sourcePayloadSize", "cellHeaderSize", ""),
+
+   list(simulationDirectory, paste(sep="", simulationDirectory, "-Overhead1.pdf"),
+        "Transmitted Payload", NA, NA, list(1,0.5),
+        "cellPayloadSize", "fragmenter.TotalPayload",
+        "sourcePayloadSize", "cellHeaderSize", ""),
+   list(simulationDirectory, paste(sep="", simulationDirectory, "-Overhead2.pdf"),
+        "Transmitted Fragmenter Overhead", NA, NA, list(1,0.5),
+        "cellPayloadSize", "fragmenter.TotalOverhead",
         "sourcePayloadSize", "cellHeaderSize", "")
-
-
-#    list(simulationDirectory, paste(sep="", simulationDirectory, "-Overhead.pdf"),
-#         "Overhead to Payload Ratio", NA, list(seq(0, 100, 20)), list(0.5,1),
-#         "cellPayloadSize", "fragmenter.OverheadToPayloadRatio",
-#         "sourcePayloadSize", "cellHeaderSize", ""),
-#
-#    list(simulationDirectory, paste(sep="", simulationDirectory, "-Overhead1.pdf"),
-#         "Transmitted Payload", NA, NA, list(1,1),
-#         "cellPayloadSize", "fragmenter.TotalPayload",
-#         "sourcePayloadSize", "cellHeaderSize", ""),
-#    list(simulationDirectory, paste(sep="", simulationDirectory, "-Overhead2.pdf"),
-#         "Transmitted Fragmenter Overhead", NA, NA, list(1,1),
-#         "cellPayloadSize", "fragmenter.TotalOverhead",
-#         "sourcePayloadSize", "cellHeaderSize", "")
 )
 
 

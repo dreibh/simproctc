@@ -154,17 +154,17 @@ Define_Module(Sink);
 
 void Sink::initialize()
 {
-   DelayStat = new cDoubleHistogram("End-to-End Delay Statistics", 100);
+   DelayStat = new cDoubleHistogram("Packet Delay", 100);
    DelayStat->setRange(0.005,1.005);
-   DelayVector = new cOutVector("End-to-End Delay");
+   DelayVector = new cOutVector("Packet Delay");
 
-   LengthStat = new cDoubleHistogram("Packet Length Statistics");
+   LengthStat = new cDoubleHistogram("Packet Length");
    LengthStat->setRangeAuto(100,1.5);
    LengthVector = new cOutVector("Packet Length");
 
-   InterarrivalStat = new cDoubleHistogram("Interarrival Time Statistics", 100);
+   InterarrivalStat = new cDoubleHistogram("Packet Interarrival Time", 100);
    InterarrivalStat->setRange(0.005,1.0005);
-   InterarrivalVector = new cOutVector("Interarrival Time");
+   InterarrivalVector = new cOutVector("Packet Interarrival Time");
 
    LossVector = new cOutVector("Packet Loss");
 
@@ -173,8 +173,9 @@ void Sink::initialize()
 
 void Sink::finish()
 {
-   recordScalar("Average Packet Length", LengthStat->getMean());
-   recordScalar("Average Delay", DelayStat->getMean());
+   recordStatistic(LengthStat);
+   recordStatistic(DelayStat);
+   recordStatistic(InterarrivalStat);
 
    delete InterarrivalStat;
    delete InterarrivalVector;

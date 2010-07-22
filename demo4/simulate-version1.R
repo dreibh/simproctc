@@ -161,7 +161,7 @@ demoPlotVariables <- list(
    list("fragmenter.TotalPayload",
            "Total Payload in Fragmenter[1]",
            "100.0 * data1$fragmenter.TotalPayload",
-           "green4",
+           "cyan4",
            list("fragmenter-TotalPayload")),
    list("fragmenter.TotalOverhead",
            "Total Overhead in Fragmenter[1]",
@@ -183,11 +183,21 @@ demoPlotVariables <- list(
 
    list("sink", "Sink Number{S}", NA, NA, NA),
 
-   list("sink.AverageDelay",
-           "Average Delay[ms]",
-           "data1$sink.AverageDelay * 1000.0",
+   list("sink.MeanPacketDelay",
+           "Mean Packet Delay[ms]",
+           "data1$sink.MeanPacketDelay * 1000.0",
            "blue4",
-           list("sink-AverageDelay"))
+           list("sink-MeanPacketDelay")),
+   list("sink.MeanPacketLength",
+           "Mean Packet Length[Bytes]",
+           "data1$sink.MeanPacketLength * 1000.0",
+           "gold4",
+           list("sink-MeanPacketLength")),
+   list("sink.MeanPacketInterarrivalTime",
+           "Mean Packet InterarrivalTime[ms]",
+           "data1$sink.MeanPacketInterarrivalTime * 1000.0",
+           "magenta4",
+           list("sink-MeanPacketInterarrivalTime"))
 )
 
 
