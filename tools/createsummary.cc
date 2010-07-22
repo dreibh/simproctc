@@ -21,7 +21,6 @@
 //
 // Contact: dreibh@iem.uni-due.de
 
-#include <bzlib.h>
 #include <string.h>
 
 #include <iostream>
@@ -445,9 +444,9 @@ static void handleScalar(const std::string& varNames,
                          const std::string& varValues,
                          const unsigned int run,
                          const bool         interactiveMode,
-                         char* objectName,
-                         char* statName,
-                         const double value)
+                         char*              objectName,
+                         char*              statName,
+                         const double       value)
 {
 /*
    cout << "Object=" << objectName << endl;
@@ -464,9 +463,9 @@ static void handleScalar(const std::string& varNames,
    char aggNames[MAX_NAME_SIZE];
    char aggValues[MAX_VALUES_SIZE];
    getAggregate(objectName, statName,
-                  (char*)&scalarName, sizeof(scalarName),
-                  (char*)&aggNames, sizeof(aggNames),
-                  (char*)&aggValues, sizeof(aggValues));
+                (char*)&scalarName, sizeof(scalarName),
+                (char*)&aggNames, sizeof(aggNames),
+                (char*)&aggValues, sizeof(aggValues));
 
    // ====== Reconciliate with skip list ==============================
    SkipListNode* skipListNode = SkipList;
@@ -577,6 +576,20 @@ static bool handleScalarFile(const std::string& varNames,
                   success = false;
                   break;
                }
+               std::string newStatName = fieldName;
+               if(newStatName == "stddev") {
+                  newStatName = "StdDev";
+               }
+               else if(newStatName == "sqrsum") {
+                  newStatName = "SqrSum";
+               }
+               else {
+                  newStatName[0] = toupper(newStatName[0]);
+               }
+               newStatName += statisticBlockName;
+               snprintf((char*)&statName, sizeof(statName), "%s", newStatName.c_str());
+               handleScalar(varNames, varValues, run, interactiveMode,
+                            (char*)&statisticObjectName, (char*)&statName, value);
             }
          }
          else {
@@ -606,7 +619,6 @@ static bool handleScalarFile(const std::string& varNames,
          }
          removeScenarioName((char*)&statisticObjectName);
          hasStatistic = true;
-         printf("STAT=<%s><%s>\n",statisticObjectName,statisticBlockName);
       }
       else if(buffer[0] == 0x00) {
          // Empty lineNumber
@@ -628,6 +640,40 @@ static bool handleScalarFile(const std::string& varNames,
 }
 
 
+// ###### Close output file #################################################
+static void closeOutputFile(OutputFile&              outputFile,
+                            const std::string&       outputFileName,
+                            const unsigned long long lineNumber,
+                            unsigned long long&      totalIn,
+                            unsigned long long&      totalOut,
+                            unsigned long long&      totalLines,
+                            size_t                   totalFiles,
+                            const bool               interactiveMode)
+{
+   if(outputFile.exists()) {
+      unsigned long long in, out;
+      if(outputFile.finish(true, &in, &out)) {
+         totalIn    += in;
+         totalOut   += out;
+         totalLines += lineNumber;
+         totalFiles++;
+         if(interactiveMode) {
+            cout << " (" << lineNumber << " lines";
+            if(in > 0) {
+               cout << ", " << in << " -> " << out << " - "
+                    << ((double)out * 100.0 / in) << "%";
+            }
+            cout << ")" << endl;
+         }
+      }
+      else {
+         cerr << "ERROR: failed to close file <" << outputFileName << ">!" << endl;
+         exit(1);
+      }
+   }
+}
+
+
 // ###### Dump scalars to output files ######################################
 static void dumpScalars(const std::string& simulationsDirectory,
                         const std::string& resultsDirectory,
@@ -635,15 +681,14 @@ static void dumpScalars(const std::string& simulationsDirectory,
                         const unsigned int compressionLevel,
                         const bool         interactiveMode)
 {
-   OutputFile         outputFile;
    std::string        fileName           = "";
    std::string        lastStatisticsName = "";
    unsigned long long totalIn            = 0;
    unsigned long long totalOut           = 0;
    unsigned long long totalLines         = 0;
-   size_t             totalFiles         = 0;
-   size_t             lineNumber         = 0;
-   unsigned long long in, out;
+   unsigned int       totalFiles         = 0;
+   unsigned long long lineNumber         = 0;
+   OutputFile         outputFile;
 
    // simpleRedBlackTreePrint(&StatisticsStorage, stdout);
 
@@ -652,29 +697,10 @@ static void dumpScalars(const std::string& simulationsDirectory,
       ScalarNode* scalarNode = getScalarNodeFromStorageNode(node);
 
       if(strcmp(lastStatisticsName.c_str(), scalarNode->ScalarName) != 0) {
-
          // ====== Close output file ========================================
-         if(outputFile.exists()) {
-            if(outputFile.finish(true, &in, &out)) {
-               totalIn    += in;
-               totalOut   += out;
-               totalLines += lineNumber;
-               totalFiles++;
-               if(interactiveMode) {
-                  cout << " (" << lineNumber << " lines";
-                  if(in > 0) {
-                     cout << ", "
-                        << in << " -> " << out << " - "
-                        << ((double)out * 100.0 / in) << "%";
-                  }
-                  cout << ")" << endl;
-               }
-            }
-            else {
-               cerr << "ERROR: failed to close file <" << fileName << ">!" << endl;
-               exit(1);
-            }
-         }
+         closeOutputFile(outputFile, fileName, lineNumber,
+                         totalIn, totalOut, totalLines, totalFiles,
+                         interactiveMode);
 
          // ====== Open output file =========================================
          if(compressionLevel > 0) {
@@ -700,7 +726,6 @@ static void dumpScalars(const std::string& simulationsDirectory,
          }
          lineNumber = 1;
 
-
          // ====== Write table header =======================================
          if(outputFile.printf("RunNo ValueNo\t%s\t%s\t%s\n",
                               scalarNode->AggNames,
@@ -718,8 +743,8 @@ static void dumpScalars(const std::string& simulationsDirectory,
       size_t valueNumber = 1;
       vector<double>::iterator valueIterator = scalarNode->ValueSet.begin();
       while(valueIterator != scalarNode->ValueSet.end()) {
-         if(outputFile.printf("%07u %04u %04u\t%s\t%s\t%1.12f\n",
-                              (unsigned int)lineNumber,
+         if(outputFile.printf("%07llu %04u %04u\t%s\t%s\t%1.12f\n",
+                              lineNumber,
                               (unsigned int)scalarNode->Run,
                               (unsigned int)valueNumber,
                               scalarNode->AggValues,
@@ -738,30 +763,10 @@ static void dumpScalars(const std::string& simulationsDirectory,
       node = simpleRedBlackTreeGetNext(&StatisticsStorage, node);
    }
 
-
    // ====== Close last output file =========================================
-   if(outputFile.exists()) {
-      if( (outputFile.finish(true, &in, &out)) ) {
-         totalIn    += in;
-         totalOut   += out;
-         totalLines += lineNumber;
-         totalFiles++;
-         if(interactiveMode) {
-            cout << " (" << lineNumber << " lines";
-            if(in > 0) {
-               cout << ", "
-                    << in << " -> " << out << " - "
-                    << ((double)out * 100.0 / in) << "%";
-            }
-            cout << ")" << endl;
-         }
-      }
-      else {
-         cerr << "ERROR: failed to close file <" << fileName << ">!" << endl;
-         exit(1);
-      }
-   }
-
+   closeOutputFile(outputFile, fileName, lineNumber,
+                     totalIn, totalOut, totalLines, totalFiles,
+                     interactiveMode);
 
    // ====== Display some compression information ===========================
    cout << "Wrote " << totalLines << " lines into "
@@ -829,7 +834,7 @@ int main(int argc, char** argv)
    }
 
 
-   cout << "CreateSummary - Version 4.10" << endl
+   cout << "CreateSummary - Version 4.20" << endl
         << "============================" << endl << endl
         << "Compression Level: " << compressionLevel << endl
         << "Interactive Mode:  " << (interactiveMode ? "on" : "off") << endl

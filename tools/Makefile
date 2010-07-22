@@ -22,8 +22,8 @@
 # Contact: dreibh@iem.uni-due.de
 
 
-CPPFLAGS=-O0 -Wall -g
-# CPPFLAGS=-O3 -Wall -g
+# CPPFLAGS=-O0 -Wall -g
+CPPFLAGS=-O3 -Wall -g
 CC=g++
 
 
@@ -33,8 +33,8 @@ all:	createsummary runtimeestimator combinesummaries extractvectors getrelativep
 createsummary:	createsummary.cc inputfile.o outputfile.o simpleredblacktree.o doublelinkedringlist.o
 	$(CC) createsummary.cc -o createsummary inputfile.o outputfile.o simpleredblacktree.o doublelinkedringlist.o -lbz2 $(CPPFLAGS)
 
-combinesummaries:	combinesummaries.cc
-	$(CC) combinesummaries.cc -o combinesummaries $(CPPFLAGS) -lbz2
+combinesummaries:	combinesummaries.cc inputfile.o outputfile.o
+	$(CC) combinesummaries.cc -o combinesummaries inputfile.o outputfile.o $(CPPFLAGS) -lbz2
 
 extractvectors:   extractvectors.cc
 	$(CC) extractvectors.cc -o extractvectors $(CPPFLAGS) -lbz2
