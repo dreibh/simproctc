@@ -51,6 +51,7 @@ class OutputFile
                unsigned long long* bytesIn      = NULL,
                unsigned long long* bytesOut     = NULL);
    bool printf(const char* str, ...);
+   bool write(const char* buffer, const size_t bufferLength);
 
    inline bool exists() const {
       return(File || BZFile);

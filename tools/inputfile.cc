@@ -62,7 +62,8 @@ bool InputFile::initialize(const char*           name,
    BZFile = NULL;
    File = (name != NULL) ? fopen(name, "r") : tmpfile();
    if(File == NULL) {
-      std::cerr << "ERROR: Unable to create output file " << name << "!" << std::endl;
+      std::cerr << "ERROR: Unable to create output file <"
+                << Name << ">!" << std::endl;
       ReadError = true;
       return(false);
    }
@@ -73,8 +74,8 @@ bool InputFile::initialize(const char*           name,
       BZFile = BZ2_bzReadOpen(&bzerror, File, 0, 0, NULL, 0);
       if(bzerror != BZ_OK) {
          std::cerr << "ERROR: Unable to initialize BZip2 compression on file <"
-                  << name << ">!" << std::endl
-                  << "Reason: " << BZ2_bzerror(BZFile, &bzerror) << std::endl;
+                   << Name << ">!" << std::endl
+                   << "Reason: " << BZ2_bzerror(BZFile, &bzerror) << std::endl;
          BZ2_bzWriteClose(&bzerror, BZFile, 0, NULL, NULL);
          ReadError = true;
          finish();

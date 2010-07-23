@@ -501,7 +501,6 @@ static bool handleScalarFile(const std::string& varNames,
        inputFileFormat = IFF_BZip2;
    }
    if(inputFile.initialize(fileName.c_str(), inputFileFormat) == false) {
-      cerr << "ERROR: Unable to open scalar file \"" << fileName << "\"!" << endl;
       return(false);
    }
 
@@ -652,23 +651,20 @@ static void closeOutputFile(OutputFile&              outputFile,
 {
    if(outputFile.exists()) {
       unsigned long long in, out;
-      if(outputFile.finish(true, &in, &out)) {
-         totalIn    += in;
-         totalOut   += out;
-         totalLines += lineNumber;
-         totalFiles++;
-         if(interactiveMode) {
-            cout << " (" << lineNumber << " lines";
-            if(in > 0) {
-               cout << ", " << in << " -> " << out << " - "
-                    << ((double)out * 100.0 / in) << "%";
-            }
-            cout << ")" << endl;
-         }
-      }
-      else {
-         cerr << "ERROR: failed to close file <" << outputFileName << ">!" << endl;
+      if(!outputFile.finish(true, &in, &out)) {
          exit(1);
+      }
+      totalIn    += in;
+      totalOut   += out;
+      totalLines += lineNumber;
+      totalFiles++;
+      if(interactiveMode) {
+         cout << " (" << lineNumber << " lines";
+         if(in > 0) {
+            cout << ", " << in << " -> " << out << " - "
+                  << ((double)out * 100.0 / in) << "%";
+         }
+         cout << ")" << endl;
       }
    }
 }
@@ -719,9 +715,7 @@ static void dumpScalars(const std::string& simulationsDirectory,
          cout.flush();
          if(outputFile.initialize(fileName.c_str(),
                                   (compressionLevel > 0) ? OFF_BZip2 : OFF_Plain,
-                                  compressionLevel)== false) {
-            cerr << endl
-                 << "ERROR: Unable to create file <" << fileName << ">!" << endl;
+                                  compressionLevel) == false) {
             exit(1);
          }
          lineNumber = 1;
@@ -731,8 +725,6 @@ static void dumpScalars(const std::string& simulationsDirectory,
                               scalarNode->AggNames,
                               varNames.c_str(),
                               scalarNode->ScalarName) == false) {
-            cerr << "ERROR: Failed to write into file <"
-                  << fileName << ">!" << endl;
             exit(1);
          }
          lastStatisticsName = scalarNode->ScalarName;
@@ -750,9 +742,6 @@ static void dumpScalars(const std::string& simulationsDirectory,
                               scalarNode->AggValues,
                               scalarNode->VarValues,
                               *valueIterator) == false) {
-            cerr << endl << "ERROR: Failed to write into file <"
-                 << fileName << ">!" << endl;
-            outputFile.finish();
             exit(1);
          }
          valueNumber++;

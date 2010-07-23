@@ -64,7 +64,8 @@ bool OutputFile::initialize(const char*            name,
    if(format != OFF_None) {
       File = (name != NULL) ? fopen(name, "w+") : tmpfile();
       if(File == NULL) {
-         std::cerr << "ERROR: Unable to create output file " << name << "!" << std::endl;
+         std::cerr << "ERROR: Unable to create output file <"
+                   << Name << ">!" << std::endl;
          WriteError = true;
          return(false);
       }
@@ -75,8 +76,8 @@ bool OutputFile::initialize(const char*            name,
          BZFile = BZ2_bzWriteOpen(&bzerror, File, compressionLevel, 0, 30);
          if(bzerror != BZ_OK) {
             std::cerr << "ERROR: Unable to initialize BZip2 compression on file <"
-                     << name << ">!" << std::endl
-                     << "Reason: " << BZ2_bzerror(BZFile, &bzerror) << std::endl;
+                      << Name << ">!" << std::endl
+                      << "Reason: " << BZ2_bzerror(BZFile, &bzerror) << std::endl;
             BZ2_bzWriteClose(&bzerror, BZFile, 0, NULL, NULL);
             WriteError = true;
             finish();
@@ -128,6 +129,8 @@ bool OutputFile::finish(const bool          closeFile,
    if(File) {
       if(closeFile) {
          if(fclose(File) != 0) {
+            std::cerr << "ERROR: Unable to close output file <"
+                      << Name << ">!" << std::endl;
             WriteError = true;
          }
          File = NULL;
@@ -148,31 +151,41 @@ bool OutputFile::finish(const bool          closeFile,
 // ###### Write string into output file #####################################
 bool OutputFile::printf(const char* str, ...)
 {
-   char buffer[16384];
-
-   va_list va;
-   va_start(va, str);
-   int bufferLength = vsnprintf(buffer, sizeof(buffer), str, va);
-   buffer[sizeof(buffer) - 1] = 0x00;   // Just to be really sure ...
-   va_end(va);
-
    if(exists()) {
-      // ====== Compress string and write data =================================
+      char buffer[16384];
+
+      va_list va;
+      va_start(va, str);
+      int bufferLength = vsnprintf(buffer, sizeof(buffer), str, va);
+      buffer[sizeof(buffer) - 1] = 0x00;   // Just to be really sure ...
+      va_end(va);
+
+      return(write((const char*)&buffer, bufferLength));
+   }
+   return(true);
+}
+
+
+// ###### Write data into output file #######################################
+bool OutputFile::write(const char* buffer, const size_t bufferLength)
+{
+   if(exists()) {
+      // ====== Compress string and write data ==============================
       if(BZFile) {
          int bzerror;
-         BZ2_bzWrite(&bzerror, BZFile, (void*)&buffer, bufferLength);
+         BZ2_bzWrite(&bzerror, BZFile, (void*)buffer, bufferLength);
          if(bzerror != BZ_OK) {
             std::cerr << std::endl
-                     << "ERROR: libbz2 failed to write into file <"
-                     << Name << ">!" << std::endl
-                     << "Reason: " << BZ2_bzerror(BZFile, &bzerror) << std::endl;
+                      << "ERROR: libbz2 failed to write into file <"
+                      << Name << ">!" << std::endl
+                      << "Reason: " << BZ2_bzerror(BZFile, &bzerror) << std::endl;
             return(false);
          }
       }
 
-      // ====== Write string as plain text =====================================
+      // ====== Write string as plain text ==================================
       else if(File) {
-         if(fputs(buffer, File) < 0) {
+         if(fwrite(buffer, bufferLength, 1, File) != 1) {
             std::cerr << "ERROR: Failed to write into file <"
                      << Name << ">!" << std::endl;
             return(false);

@@ -1,0 +1,2 @@
+#!/bin/sh
+make extractvectors &&./extractvectors vectors.vec.bz2 vectors.data.bz2 "Packet Delay"

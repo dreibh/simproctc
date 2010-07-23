@@ -48,7 +48,6 @@ void addDataFile(OutputFile&         outputFile,
        inputFileFormat = IFF_BZip2;
    }
    if(inputFile.initialize(inputFileName.c_str(), inputFileFormat) == false) {
-      std::cerr << "ERROR: Unable to open input file \"" << inputFileName << "\"!" << std::endl;
       exit(1);
    }
 
@@ -65,8 +64,6 @@ void addDataFile(OutputFile&         outputFile,
       if(inputFile.getLine() == 1) {
          if(outputLineNumber == 0) {
             if(outputFile.printf("%s SubLineNo %s\n", varNames.c_str(), buffer) == false) {
-               std::cerr << "ERROR: Writing to output file <"
-                         << outputFile.getName() << "> failed!" << std::endl;
                outputFile.finish();
                exit(1);
             }
@@ -75,8 +72,6 @@ void addDataFile(OutputFile&         outputFile,
       else {
          if(outputFile.printf("%07llu\t%s\t%s\n",
                               outputLineNumber, varValues.c_str(), buffer) == false) {
-            std::cerr << "ERROR: Writing to output file <"
-                      << outputFile.getName() << "> failed!" << std::endl;
             outputFile.finish();
             exit(1);
          }
@@ -95,6 +90,7 @@ int main(int argc, char** argv)
    bool         quiet            = false;
    unsigned int compressionLevel = 9;
 
+   // ====== Process arguments ==============================================
    if(argc < 3) {
       std::cerr << "Usage: " << argv[0]
                 << " [Output File] [Var Names] {-compress=0-9} {-quiet}" << std::endl;
@@ -113,21 +109,28 @@ int main(int argc, char** argv)
    }
 
 
+   // ====== Print information ==============================================
    if(!quiet) {
       std::cout << "CombineSummaries - Version 2.20" << std::endl
                 << "===============================" << std::endl << std::endl;
    }
 
-   OutputFile outputFile;
-   if(outputFile.initialize(argv[1],
-                            (compressionLevel > 0) ? OFF_BZip2 : OFF_Plain,
+
+   // ====== Open output file ===============================================
+   OutputFile        outputFile;
+   const std::string outputFileName   = argv[1];
+   OutputFileFormat  outputFileFormat = OFF_Plain;
+   if( (outputFileName.rfind(".bz2") == outputFileName.size() - 4) ||
+       (outputFileName.rfind(".BZ2") == outputFileName.size() - 4) ) {
+      outputFileFormat = OFF_BZip2;
+   }
+   if(outputFile.initialize(outputFileName.c_str(),outputFileFormat,
                             compressionLevel)== false) {
-      std::cerr << std::endl
-                << "ERROR: Unable to create file <" << argv[1] << ">!" << std::endl;
       exit(1);
    }
 
 
+   // ====== Process input ==================================================
    unsigned long long outputLineNumber = 0;
    std::string varNames                = argv[2];
    std::string varValues               = "";
@@ -179,20 +182,18 @@ int main(int argc, char** argv)
    }
 
 
+   // ====== Close output file ==============================================
    unsigned long long in, out;
-   if(outputFile.finish(true, &in, &out)) {
-      if(!quiet) {
-         std::cout << " (" << outputLineNumber << " lines";
-         if(in > 0) {
-            std::cout << ", " << in << " -> " << out << " - "
-                      << ((double)out * 100.0 / in) << "%";
-         }
-         std::cout << ")" << std::endl;
-      }
-   }
-   else {
-      std::cerr << "ERROR: failed to close file <" << argv[1] << ">!" << std::endl;
+   if(!outputFile.finish(true, &in, &out)) {
       exit(1);
+   }
+   if(!quiet) {
+      std::cout << std::endl << "Wrote " << outputLineNumber << " lines";
+      if(in > 0) {
+         std::cout << " (" << in << " -> " << out << " - "
+                   << ((double)out * 100.0 / in) << "%)";
+      }
+      std::cout << std::endl;
    }
 
    return(0);
