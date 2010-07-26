@@ -585,10 +585,12 @@ static bool handleScalarFile(const std::string& varNames,
                else {
                   newStatName[0] = toupper(newStatName[0]);
                }
-               newStatName += statisticBlockName;
-               snprintf((char*)&statName, sizeof(statName), "%s", newStatName.c_str());
+               newStatName = newStatName + statisticBlockName;
+               // handleScalar() will overwrite the fields object/stat => make copies first!
+               snprintf((char*)&statName,   sizeof(statName),   "%s", newStatName.c_str());
+               snprintf((char*)&objectName, sizeof(objectName), "%s", statisticObjectName);
                handleScalar(varNames, varValues, run, interactiveMode,
-                            (char*)&statisticObjectName, (char*)&statName, value);
+                           (char*)&objectName, (char*)&statName, value);
             }
          }
          else {
