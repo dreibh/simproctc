@@ -498,7 +498,7 @@ executeMake <- function()
          cat(sep="", "   - Distribution to pool \"", distributionPool, "\", ", CPUs , " processes\n")
       }
       cat(sep="", "   - To start make:   make -j" , CPUs, " -l -f ", getGlobalVariable("gMakefileName"), "\n")
-      cat(sep="", "   - To view logfile: tail -f ", getGlobalVariable("gLogfileName"), "\n")
+      cat(sep="", "   - To view logfile: tail -f ", getGlobalVariable("gLogfileName"), " | grep -v another\n")
       cat(paste(sep="", "   - Sim. Start = ", startTime, "\n"))
    }
 
