@@ -1,4 +1,76 @@
 ------------------------------------------------------------------------
+r465 | dreibh | 2010-07-23 07:57:45 +0200 (Fri, 23 Jul 2010) | 4 lines
+Changed paths:
+   M /trunk/simproctc/tools/Makefile
+   M /trunk/simproctc/tools/combinesummaries.cc
+   M /trunk/simproctc/tools/createsummary.cc
+   A /trunk/simproctc/tools/ev-test1
+   M /trunk/simproctc/tools/extractvectors.cc
+   M /trunk/simproctc/tools/inputfile.cc
+   M /trunk/simproctc/tools/outputfile.cc
+   M /trunk/simproctc/tools/outputfile.h
+
+- Updated extractvectors to use InputFile and OutputFile classes for I/O.
+- Code clean-ups for createsummary and combinesummaries.
+- Added test for extractvectors.
+
+------------------------------------------------------------------------
+r463 | dreibh | 2010-07-22 09:31:04 +0200 (Thu, 22 Jul 2010) | 4 lines
+Changed paths:
+   M /trunk/simproctc/tools/Makefile
+   A /trunk/simproctc/tools/cb-test1
+   M /trunk/simproctc/tools/combinesummaries.cc
+   M /trunk/simproctc/tools/createsummary.cc
+   M /trunk/simproctc/tools/cs-test1
+   A /trunk/simproctc/tools/input.data
+   A /trunk/simproctc/tools/input.data.bz2
+   A /trunk/simproctc/tools/scalars.sca
+
+- Updated createsummary to handle statistics (e.g. histogram) and extract their fields (e.g. stddev, mean, min, max, etc.).
+- Updated combinesummaries to use InputFile and OutputFile for I/O.
+- Added example files.
+
+------------------------------------------------------------------------
+r462 | dreibh | 2010-07-22 09:29:45 +0200 (Thu, 22 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/demo4/implementation.cc
+   M /trunk/simproctc/demo4/plot-test1.R
+   M /trunk/simproctc/demo4/simulate-version1.R
+   M /trunk/simproctc/demo4/test1.R
+
+Modified example to write histogram into scalars file instead of explicitly creating scalars. Updated createsummary can handle histogram statistics and convert fields to values.
+
+------------------------------------------------------------------------
+r461 | dreibh | 2010-07-21 19:52:53 +0200 (Wed, 21 Jul 2010) | 3 lines
+Changed paths:
+   M /trunk/simproctc/tools/Makefile
+   M /trunk/simproctc/tools/createsummary.cc
+   A /trunk/simproctc/tools/inputfile.cc
+   A /trunk/simproctc/tools/inputfile.h
+   A /trunk/simproctc/tools/outputfile.cc
+   A /trunk/simproctc/tools/outputfile.h
+   M /trunk/simproctc/tools/runtimeestimator.cc
+
+- Improvements to CreateSummary: plain/BZip2 file I/O is now separated into classes InputFile and OutputFile.
+- Various code clean-ups: usage of std::string instead of buffers, etc..
+
+------------------------------------------------------------------------
+r457 | dreibh | 2010-07-21 12:55:53 +0200 (Wed, 21 Jul 2010) | 2 lines
+Changed paths:
+   A /trunk/simproctc/ChangeLog
+
+Added ChangeLog.
+
+------------------------------------------------------------------------
+r456 | dreibh | 2010-07-21 12:47:42 +0200 (Wed, 21 Jul 2010) | 3 lines
+Changed paths:
+   M /trunk/simproctc/demo4/test1.R
+   M /trunk/simproctc/ssdistribute
+
+- Added skipping example.
+- Updated ssdistribute with some comments. Again using gzip to compress input file.
+
+------------------------------------------------------------------------
 r450 | dreibh | 2010-07-07 12:18:01 +0200 (Wed, 07 Jul 2010) | 2 lines
 Changed paths:
    M /trunk/simproctc/ssdistribute
