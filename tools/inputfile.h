@@ -62,7 +62,7 @@ class InputFile
    inline unsigned long long getLine() const {
       return(Line);
    }
-   ssize_t readLine(char* buffer, const size_t bufferSize, bool& eof);
+   ssize_t readLine(char* buffer, size_t bufferSize, bool& eof);
 
    // ====== Private Data ===================================================
    private:

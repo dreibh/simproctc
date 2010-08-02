@@ -113,9 +113,14 @@ bool InputFile::finish(const bool closeFile)
 
 
 // ###### Read line from file ###############################################
-ssize_t InputFile::readLine(char* buffer, const size_t bufferSize, bool& eof)
+ssize_t InputFile::readLine(char* buffer, size_t bufferSize, bool& eof)
 {
    eof = false;
+
+   if(bufferSize < 1) {
+      return(-1);
+   }   
+   bufferSize--;  // Leave one byte for terminating 0x00 byte.
 
    ssize_t bytesRead;
    for(;;) {
