@@ -1470,6 +1470,8 @@ applyManipulator <- function(manipulator, inputDataTable, columnName, filter)
 # ====== Create plots =======================================================
 createPlots <- function(simulationDirectory, plotConfigurations, customFilter="")
 {
+   inputDirectorySet <- c()
+   inputFileSet      <- c()
    if(!plotOwnOutput) {
       pdf(paste(sep="", simulationDirectory, ".pdf"),
           width=plotWidth, height=plotHeight, onefile=TRUE,
@@ -1630,6 +1632,8 @@ createPlots <- function(simulationDirectory, plotConfigurations, customFilter=""
          resultFileName  <- paste(sep="", simulationDirectory, "/Results/", resultsName, ".data.bz2")
          cat(sep="", "     + Loading results from ", resultFileName, " ...\n")
          data <- append(data, list(loadResults(resultFileName, quiet=FALSE, customFilter=customFilter)))
+         inputDirectorySet <- unique(append(inputDirectorySet, c(paste(sep="", simulationDirectory, "/Results"))))
+         inputFileSet      <- unique(append(inputFileSet, c(resultFileName)))
       }
       if(length(data) < 1) {
          stop("ERROR: No data has been loaded! Check plot configuration to ensure that some data is specified!\n")
@@ -1724,6 +1728,14 @@ createPlots <- function(simulationDirectory, plotConfigurations, customFilter=""
    }
    if(!plotOwnOutput) {
       dev.off()
+   }
+   cat(sep="", "* Commands to back up required input files:\n")
+   cat(sep="", "   DESTINATION=<my backup path>\n")
+   for(d in inputDirectorySet) {
+      cat(sep="", "   mkdir -p $DESTINATION/", d, "\n")
+   }
+   for(f in inputFileSet) {
+      cat(sep="", "   cp ", f, " \\\n      $DESTINATION/", f, "\n")
    }
 }
 
