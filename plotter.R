@@ -457,7 +457,7 @@ plotstd3 <- function(mainTitle,
             xpd = NA, font = par("font.main"), cex = par("cex"))
       mtext(parse(text=getLabel(mainTitle)), col=frameColor,
             side = 3, adj=0.5, line=1.75,
-            xpd = NA, font = par("font.main"), cex = 1.5 * par("cex"))
+            xpd = NA, font = par("font.main"), cex = sqrt(2) * par("cex"))
 
       zvwLabel <- getLabel(zTitle)
       if(length(vLevels) > 1) {
