@@ -11,6 +11,8 @@ scalar "configurableScenario.tsb[0].nameServerArray[0].KeepAlives" 	"Total Keep 
 scalar "configurableScenario.tsb[0].nameServerArray[1].KeepAlives" 	"Total Keep Alives"	5150
 scalar "configurableScenario.tsb[1].nameServerArray[0].KeepAlives" 	"Total Keep Alives"	51000
 scalar "configurableScenario.tsb[1].nameServerArray[1].KeepAlives" 	"Total Keep Alives"	51500
+scalar "configurableScenario.tsb[1].nameServerArray[1].Test"         "Test Scalar 1:1.2.3.4"  55555
+scalar "configurableScenario.tsb[1].nameServerArray[1].Test"         "Test Scalar 2:2.3.4.5"  1000
 
 run 1 "configurableScenario"
 scalar "configurableScenario.tsb[0].nameServerArray[0].enrpServer" 	"Total Registrations"	200
@@ -25,6 +27,8 @@ scalar "configurableScenario.tsb[0].nameServerArray[0].KeepAlives" 	"Total Keep 
 scalar "configurableScenario.tsb[0].nameServerArray[1].KeepAlives" 	"Total Keep Alives"	6150
 scalar "configurableScenario.tsb[1].nameServerArray[0].KeepAlives" 	"Total Keep Alives"	61000
 scalar "configurableScenario.tsb[1].nameServerArray[1].KeepAlives" 	"Total Keep Alives"	61500
+scalar "configurableScenario.tsb[1].nameServerArray[1].Test"         "Test Scalar 1:1.2.3.4"  66666
+scalar "configurableScenario.tsb[1].nameServerArray[1].Test"         "Test Scalar 2:2.3.4.5"  1000
 
 run 1 "configurableScenario"
 scalar "configurableScenario.tsb[0].nameServerArray[0].enrpServer" 	"Total Registrations"	101
@@ -39,3 +43,5 @@ scalar "configurableScenario.tsb[0].nameServerArray[0].KeepAlives" 	"Total Keep 
 scalar "configurableScenario.tsb[0].nameServerArray[1].KeepAlives" 	"Total Keep Alives"	5151
 scalar "configurableScenario.tsb[1].nameServerArray[0].KeepAlives" 	"Total Keep Alives"	51001
 scalar "configurableScenario.tsb[1].nameServerArray[1].KeepAlives" 	"Total Keep Alives"	51501
+scalar "configurableScenario.tsb[1].nameServerArray[1].Test"         "Test Scalar 1:1.2.3.4"  77777
+scalar "configurableScenario.tsb[1].nameServerArray[1].Test"         "Test Scalar 2:2.3.4.5"  1000

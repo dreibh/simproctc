@@ -22,8 +22,8 @@
 # Contact: dreibh@iem.uni-due.de
 
 
-CPPFLAGS=-O0 -Wall -g
-# CPPFLAGS=-O3 -Wall -g
+# CPPFLAGS=-O0 -Wall -g
+CPPFLAGS=-O3 -Wall -g
 CC=g++
 
 
@@ -62,13 +62,13 @@ outputfile.o:	outputfile.cc outputfile.h
 
 
 t1:	test1.sca test2.sca createsummary
-	( echo "--skip=tsb.nameServerArray.enrpServer" && echo "--simulationsdirectory=." && echo "--resultsdirectory=/tmp" && echo "--values=One" && echo "--input=test1.sca" && echo "--values=Two" && echo "--input=test2.sca" && echo "--skip=KeepAlive" ) | ./createsummary MyVarName
+	( echo "--splitall" && echo "--skip=tsb.nameServerArray.enrpServer" && echo "--simulationsdirectory=." && echo "--resultsdirectory=/tmp" && echo "--values=One" && echo "--input=test1.sca" && echo "--values=Two" && echo "--input=test2.sca" && echo "--skip=KeepAlive" ) | ./createsummary MyVarName
 
 t1u:	test1.sca test2.sca createsummary
 	( echo "--simulationsdirectory=." && echo "--resultsdirectory=/tmp" && echo "--values=One" && echo "--input=test1.sca" && echo "--values=Two" && echo "--input=test2.sca" ) | ./createsummary MyVarName -compress=0
 
 t2:	test1.sca.bz2 test2.sca.bz2 createsummary
-	( echo "--varnames=\"MyVarName\"" && echo "--simulationsdirectory=." && echo "--resultsdirectory=/tmp" && echo "--values=One" && echo "--input=test1.sca.bz2" && echo "--values=Two" && echo "--input=test2.sca.bz2" ) | ./createsummary
+	( echo "--splitall" && echo "--varnames=\"MyVarName\"" && echo "--simulationsdirectory=." && echo "--resultsdirectory=/tmp" && echo "--values=One" && echo "--input=test1.sca.bz2" && echo "--values=Two" && echo "--input=test2.sca.bz2" ) | ./createsummary
 
 t2u:	test1.sca.bz2 test2.sca.bz2 createsummary
 	( echo "--varnames=\"MyVarName\"" && echo "--simulationsdirectory=." && echo "--resultsdirectory=/tmp" && echo "--values=One" && echo "--input=test1.sca.bz2" && echo "--values=Two" && echo "--input=test2.sca.bz2" ) | ./createsummary X -compress=0

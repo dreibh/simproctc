@@ -3,9 +3,13 @@ scalar "configurableScenario.tsb[0].nameServerArray[0].enrpServer" 	"Total Regis
 scalar "configurableScenario.tsb[0].nameServerArray[1].enrpServer" 	"Total Registrations"	250
 scalar "configurableScenario.tsb[1].nameServerArray[0].enrpServer" 	"Total Registrations"	2000
 scalar "configurableScenario.tsb[1].nameServerArray[1].enrpServer" 	"Total Registrations"	2500
+scalar "configurableScenario.tsb[1].nameServerArray[1].Test"         "Test Scalar 1:1.2.3.4"  2000
+scalar "configurableScenario.tsb[1].nameServerArray[1].Test"         "Test Scalar 2:2.3.4.5"  1000
 
 run 2 "configurableScenario"
 scalar "configurableScenario.tsb[0].nameServerArray[0].enrpServer" 	"Total Registrations"	300
 scalar "configurableScenario.tsb[0].nameServerArray[1].enrpServer" 	"Total Registrations"	400
 scalar "configurableScenario.tsb[1].nameServerArray[0].enrpServer" 	"Total Registrations"	3000
 scalar "configurableScenario.tsb[1].nameServerArray[1].enrpServer" 	"Total Registrations"	4000
+scalar "configurableScenario.tsb[1].nameServerArray[1].Test"         "Test Scalar 1:1.2.3.4"  2000
+scalar "configurableScenario.tsb[1].nameServerArray[1].Test"         "Test Scalar 2:2.3.4.5"  1000
