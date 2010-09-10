@@ -370,7 +370,7 @@ finishSummary <- function(summary)
                            "mkdir ", getGlobalVariable("gResultsDirectoryName"), " && ",
                            "tools/createsummary ",
                            "\"", activeVariablesString, " SourceINI SourceVec\" ",
-                           "-batch ",
+                           "-batch -splitall ",
                            "-compress=", simulationSummaryCompressionLevel, " ",
                            "<", getGlobalVariable("gSummaryName"))
    return(summaryCommand)
