@@ -504,12 +504,12 @@ plotstd3 <- function(mainTitle,
             # else {
             #    legendText <- paste(sep="", "\"", z, "\"")
             # }
-            legendText <- paste(sep="", "paste(sep=\"\", ", getAbbreviation(zTitle), ", \"=", gettextf(zValueFilter, z), "\")")
+            legendText <- paste(sep="", "paste(sep=\"\", ", getAbbreviation(zTitle), ", '=", gettextf(zValueFilter, z), "')")
             if(length(vLevels) > 1) {
-               legendText <- paste(sep="", "paste(sep=\"\", ", legendText, ", \", \", ", getAbbreviation(vTitle), ", \"=", gettextf(vValueFilter, v), "\")")
+               legendText <- paste(sep="", "paste(sep=\"\", ", legendText, ", \", \", ", getAbbreviation(vTitle), ", '=", gettextf(vValueFilter, v), "')")
             }
             if(length(wLevels) > 1) {
-               legendText <- paste(sep="", "paste(sep=\"\", ", legendText, ", \", \", ", getAbbreviation(wTitle), ", \"=", gettextf(wValueFilter, w), "\")")
+               legendText <- paste(sep="", "paste(sep=\"\", ", legendText, ", \", \", ", getAbbreviation(wTitle), ", '=", gettextf(wValueFilter, w), "')")
             }
             if(enumerateLines) {
                lineNumText <- paste(sep="", lineNum)
@@ -945,7 +945,7 @@ makeLayout <- function(aSet, bSet, aTitle, bTitle, pTitle, pSubLabel,
          plot.new()
          plot.window(c(0, 1), c(0, 1))
          rect(0, 0, 1, 1, col=bLevelsColorArray[b])
-         value <- paste(sep="", "paste(", getAbbreviation(bTitle), ", \"=", bLevels[b], "\")")
+         value <- paste(sep="", "paste(", getAbbreviation(bTitle), ", '=", bLevels[b], "')")
          text(0.5, 0.5, parse(text=value), srt=90)
       }
 
@@ -961,7 +961,7 @@ makeLayout <- function(aSet, bSet, aTitle, bTitle, pTitle, pSubLabel,
          plot.new()
          plot.window(c(0, 1), c(0, 1))
          rect(0, 0, 1, 1, col=aLevelsColorArray[a])
-         value <- paste(sep="", "paste(", getAbbreviation(aTitle), ", \"=", aLevels[a], "\")")
+         value <- paste(sep="", "paste(", getAbbreviation(aTitle), ", '=", aLevels[a], "')")
          text(0.5, 0.5, parse(text=value))
       }
 
@@ -1054,7 +1054,7 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
    for(p in pLevels) {
       # ------ Prepare page -------------------------------------------------
       if(length(pLevels) > 1) {
-         pSubLabel <- paste(sep="", "paste(sep=\"\", ", getLabel(pTitle), ", \" = ", p, "\")")
+         pSubLabel <- paste(sep="", "paste(sep=\"\", ", getLabel(pTitle), ", ' = ", p, "')")
       }
 
       pColor <- getBackgroundColor(page, colorMode, pStart)

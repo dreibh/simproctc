@@ -326,10 +326,10 @@ addRunToSummary <- function(summary, scalarName, vectorName, iniName, logName, s
    for(value in varValues) {
       # ------ Encapsulate arguments containing spaces ----------------------
       valueString <- paste(sep="", value)
-      if(length(grep(" ", valueString)) > 0) {
-         valueString <- paste(sep="", "\"", valueString , "\"")
+      if( (length(grep(" ", valueString)) > 0) ||
+          (length(grep("\"", valueString)) > 0) ) {
+         valueString <- paste(sep="", "'", valueString , "'")
       }
-
       # ------ Write output string ------------------------------------------
       if(varValuesString != "") {
          varValuesString <- paste(sep="", varValuesString, " ", valueString)
