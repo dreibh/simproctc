@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # $Id$
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
@@ -36,6 +36,7 @@ POOLHANDLE="$4"                 # e.g.: ScriptingPool
 PU_MISCOPT="$5"                 # e.g.: "-cspserver=... ..."
 MAX_RETRY=10                    # After a remote-side error, retry how many times?
 
+
 # ###########################################################################
 # Settings for running the simulation:
 #  - SIMULATION_ENVIRONMENT sets tar.bz2 file containing environment
@@ -46,8 +47,8 @@ MAX_RETRY=10                    # After a remote-side error, retry how many time
 #
 SIMULATION_ENVIRONMENT="simulation-environment.tar.bz2"
 SIMULATION_CONFIGS=""   # "simulation.config-stage1"
-# SIMULATION_POOLUSER=~dreibh/src/rsplib2/rsplib/scriptingclient
 SIMULATION_POOLUSER=/usr/bin/scriptingclient
+# SIMULATION_POOLUSER=~/src/rsplib2/rsplib/scriptingclient
 # ###########################################################################
 
 UNIQUE_ID="$2/$INI_NAME"
@@ -60,7 +61,9 @@ VALGRIND=
 
 # ====== Prepare temporary file names =======================================
 if [ ! -e "$SIMULATION_POOLUSER" ] ; then
-   echo "ERROR: Unable to find PU program at $SIMULATION_POOLUSER!" >&2
+   echo >&2 "==================================================="
+   echo >&2 "ERROR: Unable to find PU program at $SIMULATION_POOLUSER!"
+   echo >&2 "==================================================="
    exit 1
 fi
 INPUT_ARCHIVE="`mktemp -t -p $TMP_DIRECTORY input-XXXXXXXXXX`"
@@ -76,10 +79,10 @@ nice tar czhf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY -C$R
 # ====== Start PU for job distribution ======================================
 echo "Distributing and processing [$UNIQUE_ID] ..."
 # Not using "nice" here, in order to ensure quick upload/download ...
-# NOTE: At least rsplib 2.7.4 is required to run
-#       Older version do not support workload/environment separation!
-$VALGRIND $SIMULATION_POOLUSER -runid=$UNIQUE_ID -quiet -maxretry=$MAX_RETRY -environment=$SIM_DIRECTORY/$SIMULATION_ENVIRONMENT -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT -logfile=$PU_LOGFILE -loglevel=$PU_LOGLEVEL || exit 1
-# >vg$RANDOM.txt 2>&1 || exit 1
+# NOTE: At least rsplib 2.7.6 is required!
+RESULT=0
+$VALGRIND $SIMULATION_POOLUSER -runid=$UNIQUE_ID -quiet -maxretry=$MAX_RETRY -environment=$SIM_DIRECTORY/$SIMULATION_ENVIRONMENT -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT -logfile=$PU_LOGFILE -loglevel=$PU_LOGLEVEL || RESULT=1
+# >vg$RANDOM.txt 2>&1 || RESULT=1
 if [ -e $PU_LOGFILE ] ; then
    rm -f $PU_LOGFILE.bz2
    bzip2 $PU_LOGFILE
@@ -89,12 +92,34 @@ fi
 # ====== Extract results archive ============================================
 echo "Extracting [$UNIQUE_ID] ..."
 cd $RUN_DIRECTORY || exit 1
-if [ -s "$OUTPUT_ARCHIVE" ] ; then
-   # Using "nice" here, since there may be many sessions ...
-   ( nice tar xzhvf "$OUTPUT_ARCHIVE" | xargs touch ) || exit 1   # This will also update the time stamp!
-   rm -f $INPUT_ARCHIVE $OUTPUT_ARCHIVE
-   exit 0
-else
-   echo "ERROR: No results have been created in directory $RUN_DIRECTORY!"
+if [ ! -s "$OUTPUT_ARCHIVE" ] ; then
+   echo >&2 "==================================================="
+   echo >&2 "ERROR: No results have been created in directory $RUN_DIRECTORY!"
+   echo >&2 "==================================================="
    exit 1
 fi
+
+# Using "nice" here, since there may be many sessions ...
+( nice tar xzhvf "$OUTPUT_ARCHIVE" | xargs touch ) || exit 1   # This will also update the time stamp!
+rm -f $INPUT_ARCHIVE $OUTPUT_ARCHIVE
+
+# Print error, if run has not been completed successfully ...
+if [ $RESULT -ne 0 ] ; then
+   echo ""
+   echo "----- SIMULATION RUN FAILED -----"
+   echo ""
+
+   OUTPUT_NAME=`echo $INI_NAME | sed -e "s/-parameters.ini$/-output.txt.bz2/g"`
+   if [ -e "$RUN_DIRECTORY/$OUTPUT_NAME" ] ; then
+      echo "#########################################################"
+      bzgrep "^<\!> Error " $RUN_DIRECTORY/$OUTPUT_NAME
+      echo "#########################################################"
+      echo ""
+   fi
+
+   echo "INI file:    $RUN_DIRECTORY/$INI_NAME"
+   echo "Output file: $RUN_DIRECTORY/$OUTPUT_NAME"
+   echo "----- SIMULATION RUN FAILED -----"
+fi
+
+exit $RESULT
