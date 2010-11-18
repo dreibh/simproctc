@@ -142,6 +142,7 @@ done
 echo "+ `date` Archiving results ..."
 (
    cd $RUN_DIRECTORY/Environment/$SIMULATION_BASEDIR && \
+   find . -name "*.txt" -or -name "*.sca" -or -name "*.vec" | xargs -r bzip2 -f && \
    find . -name "*-status.txt" -or -name "*.txt.bz2" -or -name "*-scalars.sca.bz2" -or -name "*-vectors.vec.bz2" -or -name "core*" | xargs -r tar czf output.tar.gz
 ) || exit 20
 mv $RUN_DIRECTORY/Environment/$SIMULATION_BASEDIR/output.tar.gz $OUTPUT_ARCHIVE || exit 25
