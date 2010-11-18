@@ -1485,6 +1485,13 @@ applyManipulator <- function(manipulator, inputDataTable, columnName, filter)
       result <- eval(parse(text=manipulator))
    }
    result <- subset(result, eval(filter))
+
+   if(length(result) == 1) {   # No result, if result==c(NA)!
+      if(is.na(result[1])) {
+         result <- c()
+      }
+   }
+
    return(result)
 }
 
