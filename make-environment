@@ -26,7 +26,9 @@
 # ====== Recursively collect files in $2 matching pattern given in $1 =======
 collectFiles() {
    if [ ! -e $SOURCES_DIRECTORY/$2 ] ; then
+      echo >&2 "==================================================="
       echo >&2 "ERROR: $SOURCES_DIRECTORY/$2 does not exit!"
+      echo >&2 "==================================================="
       exit 1
    fi
 
@@ -85,15 +87,21 @@ echo "   - Simulation Binary         = $SIMULATION_BINARY (in $SOURCES_DIRECTORY
 echo "   - Simulation Base Directory = $SIMULATION_BASEDIR (in $SOURCES_DIRECTORY)"
 
 if [ ! -e $SIMULATION_DIRECTORY ] ; then
+   echo >&2 "==================================================="
    echo >&2 "ERROR: Simulation directory $SIMULATION_DIRECTORY not found!"
+   echo >&2 "==================================================="
    exit 1
 fi
 if [ ! -e $SOURCES_DIRECTORY ] ; then
+   echo >&2 "==================================================="
    echo >&2 "ERROR: Sources base directory $SOURCES_DIRECTORY not found!"
+   echo >&2 "==================================================="
    exit 1
 fi
 if [ ! -e $SOURCES_DIRECTORY/$SIMULATION_BASEDIR ] ; then
+   echo >&2 "==================================================="
    echo >&2 "ERROR: Sources base directory $SOURCES_DIRECTORY/$SIMULATION_BASEDIR not found!"
+   echo >&2 "==================================================="
    exit 1
 fi
 
@@ -110,6 +118,12 @@ cd $SIMULATION_DIRECTORY/Environment || exit 1
 # ====== Copy simulation binary =============================================
 echo "+ `date` Copying simulation binary $SOURCES_DIRECTORY/$SIMULATION_BINARY ..."
 cp $SOURCES_DIRECTORY/$SIMULATION_BINARY simulation-binary || exit 1
+chrpath -d simulation-binary || {
+   echo >&2 "===================================================" && \
+   echo >&2 "ERROR: chrpath not found -- please install chrpath!" && \
+   echo >&2 "===================================================" && \
+   exit 1
+}
 
 
 # ====== Collect libraries for simulation binary ============================
@@ -146,7 +160,9 @@ while [ "x$1" != "x" ] ; do
 
    # ====== Collect NED files ===============================================
    else
+      echo >&2 "==================================================="
       echo >&2 "ERROR: Bad parameter $1."
+      echo >&2 "==================================================="
       exit 1
    fi
 done
