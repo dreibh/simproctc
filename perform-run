@@ -134,14 +134,17 @@ if [ "x$POOLHANDLE" = "x" ] ; then
       echo ""
 
       echo "#########################################################"
-      tail -n250 $RUN_DIRECTORY/$OUTPUT_FILE
+      grep "^<\!> Error " $RUN_DIRECTORY/$OUTPUT_FILE
       echo "#########################################################"
-      echo "Output file: $RUN_DIRECTORY/$OUTPUT_FILE"
+      echo ""
+
       echo "INI file:    $RUN_DIRECTORY/$INI_FILE"
+      echo "Output file: $RUN_DIRECTORY/$OUTPUT_FILE"
       echo "----- SIMULATION RUN FAILED -----"
    fi
 
    exit $RESULT
+
 
 # ====== Distribute run into pool ===========================================
 else
