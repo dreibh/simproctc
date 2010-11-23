@@ -82,11 +82,11 @@ demoWriteParameterSection <- function(filePrefix, iniFile, simulationRun, durati
 
 
 # The sources directory of the simulation.
-simCreatorSourcesDirectory <- getwd()   # i.e. the current directory
+simCreatorSourcesDirectory <- paste(sep="", getwd(), "/../example-simulation")   # i.e. the current directory
 
 # The simulation binary.
 # NOTE: The path here is relative to the directory set in sourcesDirectory!
-simCreatorSimulationBinary <- "demo4"
+simCreatorSimulationBinary <- "example-simulation"
 
 # The directory where the binary should be executed.
 # NOTE: The path here is relative to the directory set in sourcesDirectory!
