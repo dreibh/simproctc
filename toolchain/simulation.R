@@ -290,8 +290,11 @@ beginMakefile <- function()
 
 
 # ====== Add run to makefile ================================================
-addRunToMakefile <- function(makefile, runNumber, runDirectoryName, statusName)
+addRunToMakefile <- function(makefile, runNumber, runDirectoryName, scalarName, vectorName, statusName, parameterString)
 {
+   cat(sep="", "# Parameters: ", parameterString, "\n", file=makefile)
+   cat(sep="", "# Scalar:     ", scalarName, ".bz2\n", file=makefile)
+   cat(sep="", "# Vector:     ", vectorName, ".bz2\n", file=makefile)
    cat(sep="", statusName, ":\t", simulationDirectory, "/simulation-environment.tar.bz2 ", getGlobalVariable("gRuntimeName"), "\n", file=makefile)
    if(distributionProcs < 1) {
       cat(sep="", "\t./perform-run ", simulationDirectory, " ", runDirectoryName, " ", runNumber, "\n", file=makefile)
@@ -607,21 +610,22 @@ createAllSimulationRuns <- function(simulationConfigurations,
             }
 
             # ------ Debug output ----------------------------------------------
+            parameterString <- ""
             if(simulationScriptOutputVerbosity > 4) {
                for(i in 1:length(varNames)) {
                   variable  <- varNames[i]
                   value     <- varValues[i]
                   origValue <- origVarValues[i]
-                  cat(sep="", variable, "=")
+                  parameterString <- paste(sep="", parameterString, variable, "=")
                   if((!is.na(origValue)) && (value == origValue)) {
-                     cat(sep="", value)
+                     parameterString <- paste(sep="", parameterString, value)
                   }
                   else {
-                     cat(sep="", value, "(", origValue, ")")
+                     parameterString <- paste(sep="", parameterString, value, "(", origValue, ")")
                   }
-                  cat("   ")
+                  parameterString <- paste(sep="", parameterString, "\t")
                }
-               cat("\n")
+               cat(parameterString, "\n")
             }
 
             # ------ Create runs --------------------------------------------
@@ -649,7 +653,7 @@ createAllSimulationRuns <- function(simulationConfigurations,
                close(ini)
 
                addRunToSummary(summary, scalarName, vectorName, iniName, outputName, statusName, varValues)
-               addRunToMakefile(makefile, simulationRun, runDirectoryName, statusName)
+               addRunToMakefile(makefile, simulationRun, runDirectoryName, scalarName, vectorName, statusName, parameterString)
 
                setGlobalVariable("gRunNumber", getGlobalVariable("gRunNumber") + 1)
                setGlobalVariable("gSimulationDependencies",
