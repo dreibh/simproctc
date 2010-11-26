@@ -1491,6 +1491,9 @@ applyManipulator <- function(manipulator, inputDataTable, columnName, filter)
          result <- c()
       }
    }
+   if(length(levels(factor(result))) == 0) {
+      result <- c()
+   }
 
    return(result)
 }
