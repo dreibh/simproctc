@@ -290,9 +290,10 @@ beginMakefile <- function()
 
 
 # ====== Add run to makefile ================================================
-addRunToMakefile <- function(makefile, runNumber, runDirectoryName, scalarName, vectorName, statusName, parameterString)
+addRunToMakefile <- function(makefile, runNumber, runDirectoryName, iniName, scalarName, vectorName, statusName, parameterString)
 {
    cat(sep="", "# Parameters: ", parameterString, "\n", file=makefile)
+   cat(sep="", "# INI file:   ", iniName, "\n", file=makefile)
    cat(sep="", "# Scalar:     ", scalarName, ".bz2\n", file=makefile)
    cat(sep="", "# Vector:     ", vectorName, ".bz2\n", file=makefile)
    cat(sep="", statusName, ":\t", simulationDirectory, "/simulation-environment.tar.bz2 ", getGlobalVariable("gRuntimeName"), "\n", file=makefile)
@@ -648,12 +649,13 @@ createAllSimulationRuns <- function(simulationConfigurations,
                statusName <- paste(sep="", runDirectoryName, "/run", simulationRun, "-status.txt")
 
                ini <- file(iniName, "w")
+               cat(sep="", "# ###### Created on ", date(), " ######\n", file=ini)
                simCreatorWriteHeader(ini, simulationRun, scalarName, vectorName, duration)
                simCreatorWriteParameterSection(filePrefix, ini, simulationRun, duration)
                close(ini)
 
                addRunToSummary(summary, scalarName, vectorName, iniName, outputName, statusName, varValues)
-               addRunToMakefile(makefile, simulationRun, runDirectoryName, scalarName, vectorName, statusName, parameterString)
+               addRunToMakefile(makefile, simulationRun, runDirectoryName, iniName, scalarName, vectorName, statusName, parameterString)
 
                setGlobalVariable("gRunNumber", getGlobalVariable("gRunNumber") + 1)
                setGlobalVariable("gSimulationDependencies",
