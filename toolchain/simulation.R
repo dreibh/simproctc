@@ -402,7 +402,7 @@ finishMakefile <- function(makefile, summaryCommand)
    cat(sep="", "\t( cd ", simCreatorSourcesDirectory, " && $(MAKE) )\n\n", file=makefile)
 
    # ------ Simulation environment archive ----------------------------------
-   cat(sep="", simulationDirectory, "/simulation-environment.tar.bz2:\t", simCreatorSourcesDirectory, "/", simCreatorSimulationBinary, "\n", file=makefile)
+   cat(sep="", simulationDirectory, "/simulation-environment.tar.bz2:\t", simCreatorSourcesDirectory, "/", simCreatorSimulationBinary, " tools/getrelativepath\n", file=makefile)
 
    makeEnvParams <- ""
    for(n in simCreatorNEDFiles) {
