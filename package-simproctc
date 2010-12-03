@@ -33,7 +33,7 @@ if [ -e simproctc-$VERSION ] ; then
    rm -rf simproctc-$VERSION
 fi
 
-svn co https://132.252.152.132/svn/omnetpp/trunk/simproctc simproctc-$VERSION && \
+svn co https://svn1.tdr.iem.uni-due.de/svn/omnetpp/trunk/simproctc simproctc-$VERSION && \
 rm -f package-simproctc && \
 find simproctc-$VERSION -name ".svn" | xargs rm -rf && \
 tar czvf simproctc-$VERSION.tar.gz simproctc-$VERSION
