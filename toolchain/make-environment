@@ -128,7 +128,7 @@ chrpath -d simulation-binary || {
 
 # ====== Collect libraries for simulation binary ============================
 echo "+ `date` Collecting libraries ..."
-$TOOLCHAINDIR/get-libs simulation-binary lib || exit 1
+$TOOLCHAINDIR/get-libs $SOURCES_DIRECTORY/$SIMULATION_BINARY lib || exit 1
 
 
 # ====== Copy other files ===================================================

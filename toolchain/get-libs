@@ -36,8 +36,31 @@ fi
 
 
 # ====== Get library names ==================================================
-LIBS=`ldd $PROGRAM | awk -F " " '{ if(length($3)>length($1)) { print $3 } }'`
-LOADER=`ldd $PROGRAM | awk -F " " '{ if(length($3)==0) { print $1 } }'`
+env LANG=C ldd $PROGRAM >$PROGRAM.ldd || exit 1
+
+LIBS_NOT_FOUND=`cat $PROGRAM.ldd | awk -F " " '{ if( ($3 == "not") && ($4 == "found")) { print $1 } }'`
+LIBS=`cat $PROGRAM.ldd | awk -F " " '{ if(length($3)>length($1)) { print $3 } }'`
+LOADER=`cat $PROGRAM.ldd | awk -F " " '{ if(length($3)==0) { print $1 } }'`
+
+if [ "$LIBS_NOT_FOUND" != "" ] ; then
+   echo >&2 "ERROR: Some shared libraries have not been found:"
+   echo >&2 "$LIBS_NOT_FOUND"
+   exit 1
+fi
+
+NUM_ENTRIES=`cat $PROGRAM.ldd | wc --lines`
+NUM_LIBS=`echo $LIBS | xargs -n1 | wc --lines`
+NUM_LOADER=`echo $LOADER | xargs -n1 | wc --lines`
+
+USED_ENTRIES=$(($NUM_LIBS + $NUM_LOADER))
+
+if [ $USED_ENTRIES -ne $NUM_ENTRIES ] ; then
+   echo >&2 "ERROR: Something went wrong with shared library collection! Got unexpected ldd output!"
+   echo >&2 "-----"
+   cat $PROGRAM.ldd >&2
+   echo >&2 "-----"
+   exit 1
+fi
 
 
 # ====== Prepare library directory ==========================================
