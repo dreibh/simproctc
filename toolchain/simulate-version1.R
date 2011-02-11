@@ -85,16 +85,16 @@ demoWriteParameterSection <- function(filePrefix, iniFile, simulationRun, durati
 simCreatorSourcesDirectory <- paste(sep="", getwd(), "/../example-simulation")   # i.e. the current directory
 
 # The simulation binary.
-# NOTE: The path here is relative to the directory set in sourcesDirectory!
+# NOTE: The path here is relative to the directory set in simCreatorSourcesDirectory!
 simCreatorSimulationBinary <- "example-simulation"
 
 # The directory where the binary should be executed.
-# NOTE: The path here is relative to the directory set in sourcesDirectory!
+# NOTE: The path here is relative to the directory set in simCreatorSourcesDirectory!
 simCreatorSimulationBaseDir <- "."
 
 # A list of directories to be recursively searched for NED files. These NED
 # files will be copied into the environment directory.
-# NOTE: The paths here are relative to the directory set in sourcesDirectory!
+# NOTE: The paths here are relative to the directory set in simCreatorSourcesDirectory!
 # Example: list("src", "examples/sctp")
 simCreatorNEDFiles <- list(".")
 # NOTE: Before examples/sctp can be used, examples/package.ned must be read.
@@ -103,7 +103,7 @@ simCreatorNEDFiles <- list(".")
 
 # A list of directories to be recursively searched for misc files. These misc
 # files will be copied into the environment directory.
-# NOTE: The paths here are relative to the directory set in sourcesDirectory!
+# NOTE: The paths here are relative to the directory set in simCreatorSourcesDirectory!
 # Example: list(c("*.mrt", "examples/sctp/cmttest1"))
 simCreatorMiscFiles <- list()
 
