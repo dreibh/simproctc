@@ -125,16 +125,24 @@ setGlobalVariable <- function(variable, value)
 }
 
 
-# ====== Get total number of simulation runs ================================
-getTotalSimulationRuns <- function(simulationConfigurations)
+# ====== Get total number of simulation run levels ==========================
+getTotalSimulationRunLevels <- function(simulationConfigurations)
 {
+   if(is.list(simulationRuns)) {
+      levels <- length(unique(unlist(simulationRuns)))
+   }
+   else {
+      levels <- simulationRuns
+   }
+   return(levels)
+}
+
+
+# ====== Get total number of simulation runs per level ======================
+getTotalSimulationRunsPerLevel <- function(simulationConfigurations)
+{
+   runs <- 1
    if(length(simulationConfigurations) > 0) {
-      if(is.list(simulationRuns)) {
-         runs <- length(unique(unlist(simulationRuns)))
-      }
-      else {
-         runs <- simulationRuns
-      }
       for(parameterConfiguration in simulationConfigurations) {
          parameters <- length(parameterConfiguration) - 1
          if(parameters > 0) {
@@ -256,13 +264,14 @@ prepareDirectory <- function(simulationDirectory)
    setGlobalVariable("gSimulationDirectoryName", simulationDirectory)
    dir.create(simulationDirectory, showWarnings=FALSE)
    setGlobalVariable("gResultsDirectoryName", paste(sep="", simulationDirectory, "/", "Results"))
-   dir.create(getGlobalVariable("gResultsDirectoryName"), showWarnings=FALSE)
+   dir.create(gResultsDirectoryName, showWarnings=FALSE)
    setGlobalVariable("gTempDirectoryName", paste(sep="", simulationDirectory, "/", "Temp"))
-   dir.create(getGlobalVariable("gTempDirectoryName"), showWarnings=FALSE)
+   dir.create(gTempDirectoryName, showWarnings=FALSE)
    setGlobalVariable("gSimulationsDirectoryName", paste(sep="", simulationDirectory, "/", "Simulations"))
-   dir.create(getGlobalVariable("gSimulationsDirectoryName"), showWarnings=FALSE)
+   dir.create(gSimulationsDirectoryName, showWarnings=FALSE)
 
    setGlobalVariable("gMakefileName", paste(sep="", simulationDirectory, "/", "Makefile"))
+   setGlobalVariable("gDependenciesName", paste(sep="", simulationDirectory, "/", "dependencies.list"))
    setGlobalVariable("gSummaryName", paste(sep="", simulationDirectory, "/", "summary.input"))
    setGlobalVariable("gSummaryCompletedName", paste(sep="", simulationDirectory, "/", "summary-completed.txt"))
    setGlobalVariable("gSimulationsCompletedName", paste(sep="", simulationDirectory, "/", "simulations-completed.txt"))
@@ -276,12 +285,12 @@ prepareDirectory <- function(simulationDirectory)
 # ====== Start creating makefile ============================================
 beginMakefile <- function()
 {
-   makefile <- file(getGlobalVariable("gMakefileName"), "w")
+   makefile <- file(gMakefileName, "w")
 
    cat(sep="", ".PHONY:\tall\n", file=makefile)
-   cat(sep="", "all:\t", getGlobalVariable("gSummaryCompletedName"), "\n\n", file=makefile)
+   cat(sep="", "all:\t", gSummaryCompletedName, "\n\n", file=makefile)
    cat(sep="", ".PHONY:\tsimulations-only\n", file=makefile)
-   cat(sep="", "simulations-only:\t", getGlobalVariable("gSimulationsCompletedName"), "\n\n", file=makefile)
+   cat(sep="", "simulations-only:\t", gSimulationsCompletedName, "\n\n", file=makefile)
 
    cat(sep="", "# ===========================================================================\n\n", file=makefile)
 
@@ -289,33 +298,62 @@ beginMakefile <- function()
 }
 
 
+# ====== Start creating status file dependencies ============================
+beginDependencies <- function()
+{
+   dependencies <- file(gDependenciesName, "w")
+   return(dependencies)
+}
+
+
 # ====== Add run to makefile ================================================
-addRunToMakefile <- function(makefile, runNumber, runDirectoryName, iniName, scalarName, vectorName, statusName, parameterString)
+addRunToMakefile <- function(makefile, runNumber, runNumberInTotalRuns, totalRunLevels, runDirectoryName, shortcutLink, iniName, scalarName, vectorName, statusName, parameterString)
 {
    cat(sep="", "# Parameters: ", parameterString, "\n", file=makefile)
    cat(sep="", "# INI file:   ", iniName, "\n", file=makefile)
    cat(sep="", "# Scalar:     ", scalarName, ".bz2\n", file=makefile)
    cat(sep="", "# Vector:     ", vectorName, ".bz2\n", file=makefile)
-   cat(sep="", statusName, ":\t", simulationDirectory, "/simulation-environment.tar.bz2 ", getGlobalVariable("gRuntimeName"), "\n", file=makefile)
+   cat(sep="", "# Shortcut:   ", shortcutLink, " -> ", runDirectoryName, "\n", file=makefile)
+   cat(sep="", statusName, ":\t", simulationDirectory, "/simulation-environment.tar.bz2 ", gRuntimeName, "\n", file=makefile)
    if(distributionProcs < 1) {
       cat(sep="", "\t./perform-run ", simulationDirectory, " ", runDirectoryName, " ", runNumber, "\n", file=makefile)
    }
    else {
       cat(sep="", "\t./perform-run ", simulationDirectory, " ", runDirectoryName, " ", runNumber, " \"", distributionPool, "\" \"", distributionPUOpt, "\"\n", file=makefile)
    }
-   cat(sep="", "\ttools/runtimeestimator ", getGlobalVariable("gRuntimeName"), " ", getGlobalVariable("gTotalSimulationRuns"), " ", getGlobalVariable("gRunNumber"), "\n", file=makefile)
+   cat(sep="", "\ttools/runtimeestimator ", gRuntimeName, " ", totalRunLevels, " ", runNumberInTotalRuns, "\n", file=makefile)
    cat(sep="", "\n", file=makefile)
+}
+
+
+# ====== Add status file dependency to Makefile =============================
+addDependency <- function(dependencies, statusName)
+{
+   cat(sep="", statusName ,"\n", file=dependencies)
+}
+
+
+# ====== Get status file dependencies of Makefile ===========================
+extractDependencies <- function(dependencies)
+{
+   close(dependencies)
+
+   # Name Example: test1/Simulations/Set-2d4e51640b4524220cc2117face782770cbc9d59/run10-status.txt
+   #  -> Sort by run number first, then set name
+   r <- readLines(pc <- pipe(paste(sep="", "sort -t / -k 4.4n -k 2 ", gDependenciesName)))
+   close(pc)
+
+   #  cat x0 | sort -t "/" -k 4
+   return(paste(sep="", r, " "))
 }
 
 
 # ====== Start creation of summary file =====================================
 beginSummary <- function()
 {
-   setGlobalVariable("gSimulationDependencies", "")
-
-   summary <- file(getGlobalVariable("gSummaryName"), "w")
-   cat(sep="", "--simulationsdirectory=", getGlobalVariable("gResultsDirectoryName"), "\n", file=summary)
-   cat(sep="", "--resultsdirectory=", getGlobalVariable("gResultsDirectoryName"), "\n", file=summary)
+   summary <- file(gSummaryName, "w")
+   cat(sep="", "--simulationsdirectory=", gResultsDirectoryName, "\n", file=summary)
+   cat(sep="", "--resultsdirectory=", gResultsDirectoryName, "\n", file=summary)
    for(skipEntry in simulationSummarySkipList) {
       cat(sep="", "--skip=", skipEntry, "\n", file=summary)
    }
@@ -357,7 +395,7 @@ finishSummary <- function(summary)
 
    # ------ Create table head with active variables -------------------------
    activeVariablesString <- ""
-   activeVariables       <- getGlobalVariable("gActiveVariables")
+   activeVariables       <- gActiveVariables
    for(variable in activeVariables) {
       if(activeVariablesString != "") {
          activeVariablesString <- paste(sep="", activeVariablesString, " ", variable)
@@ -368,21 +406,21 @@ finishSummary <- function(summary)
    }
 
    # ------ Create summary command string -----------------------------------
-   summaryName <- paste(sep="", getGlobalVariable("gSummaryName"))
+   summaryName <- gSummaryName
    summaryCommand <- paste(sep="",
-                           "rm -rf ", getGlobalVariable("gResultsDirectoryName"), " && ",
-                           "mkdir ", getGlobalVariable("gResultsDirectoryName"), " && ",
+                           "rm -rf ", gResultsDirectoryName, " && ",
+                           "mkdir ", gResultsDirectoryName, " && ",
                            "tools/createsummary ",
                            "\"", activeVariablesString, " SourceINI SourceVec\" ",
                            "-batch -splitall ",
                            "-compress=", simulationSummaryCompressionLevel, " ",
-                           "<", getGlobalVariable("gSummaryName"))
+                           "<", gSummaryName)
    return(summaryCommand)
 }
 
 
 # ====== Finish creation of makefile ========================================
-finishMakefile <- function(makefile, summaryCommand)
+finishMakefile <- function(makefile, dependencies, summaryCommand)
 {
    cat(sep="", "# ===========================================================================\n\n", file=makefile)
 
@@ -391,7 +429,7 @@ finishMakefile <- function(makefile, summaryCommand)
 
    # ------ Simulation environment archive ----------------------------------
    cat(sep="", "simulation-binary:\n", file=makefile)
-   cat(sep="", "\trm -rf ", getGlobalVariable("gTempDirectoryName"), "/*\n", file=makefile)
+   cat(sep="", "\trm -rf ", gTempDirectoryName, "/*\n", file=makefile)
    if(reportTo != "") {
       poolingInfo <- " "
       if(distributionProcs > 0) {
@@ -424,60 +462,60 @@ finishMakefile <- function(makefile, summaryCommand)
    cat(sep="", "\tcd tools && $(MAKE) getrelativepath && cd ..\n\n", file=makefile)
 
    # ------ First run of runtimeestimator -----------------------------------
-   cat(sep="", getGlobalVariable("gRuntimeName"), ":\n", file=makefile)
+   cat(sep="", gRuntimeName, ":\n", file=makefile)
    cat(sep="", "\ttools/runtimeestimator ",
-               getGlobalVariable("gRuntimeName"), " ",
-               getGlobalVariable("gTotalSimulationRuns"),
+               gRuntimeName, " ",
+               gTotalSimulationRunLevels * gTotalSimulationRunsPerLevel,
                " 0\n\n", file=makefile)
 
    # ------ Completion of simulation runs -----------------------------------
-   cat(sep="", getGlobalVariable("gSimulationsCompletedName"), ":\tsimulation-binary ", simulationDirectory, "/simulation-environment.tar.bz2 tools/runtimeestimator tools/getrelativepath ", getGlobalVariable("gRuntimeName"), "   ", getGlobalVariable("gSimulationDependencies"), "\n", file=makefile)
-   cat(sep="", "\trm -rf ", getGlobalVariable("gTempDirectoryName"), "/*\n", file=makefile)
-   cat(sep="", "\tdate >", getGlobalVariable("gSimulationsCompletedName"), "\n", file=makefile)
+   cat(sep="", gSimulationsCompletedName, ":\tsimulation-binary ", simulationDirectory, "/simulation-environment.tar.bz2 tools/runtimeestimator tools/getrelativepath ", gRuntimeName, "   ", extractDependencies(dependencies), "\n", file=makefile)
+   cat(sep="", "\trm -rf ", gTempDirectoryName, "/*\n", file=makefile)
+   cat(sep="", "\tdate >", gSimulationsCompletedName, "\n", file=makefile)
    if(reportTo != "") {
       cat(sep="", "\t( echo \"Finished processing of runs for simulation ", simulationDirectory, " on `hostname`.\" | sendxmpp -i ", reportTo, " || true )\n", file=makefile)
    }
    cat(sep="", "\techo \"Simulation completed!\"\n\n", file=makefile)
 
    # ------ Summary creation ------------------------------------------------
-   cat(sep="", getGlobalVariable("gSummaryCompletedName"), ":\ttools/createsummary ", getGlobalVariable("gSimulationsCompletedName"), "\n", file=makefile)
+   cat(sep="", gSummaryCompletedName, ":\ttools/createsummary ", gSimulationsCompletedName, "\n", file=makefile)
    cat(sep="", "\tstartTime=`date`      &&      ", file=makefile)
    cat(sep="", summaryCommand, "      &&      ", file=makefile)
    cat(sep="", "endTime=`date`      &&      ", file=makefile)
    if(reportTo != "") {
       cat(sep="", "\t( echo \"Finished summary creation for simulation ", simulationDirectory, " on `hostname`.\" | sendxmpp -i ", reportTo, " 2>/dev/null & ) && ", file=makefile)
    }
-   cat(sep="", "echo \"Start: $$startTime\" >", getGlobalVariable("gSimulationsCompletedName"), " && ", file=makefile)
-   cat(sep="", "echo \"End:   $$endTime\" >>", getGlobalVariable("gSimulationsCompletedName"), "\n", file=makefile)
+   cat(sep="", "echo \"Start: $$startTime\" >", gSimulationsCompletedName, " && ", file=makefile)
+   cat(sep="", "echo \"End:   $$endTime\" >>", gSimulationsCompletedName, "\n", file=makefile)
 
    # ------ Archival of results ---------------------------------------------
-   cat(sep="", getGlobalVariable("gResultsArchiveName"), ":\t", getGlobalVariable("gSimulationsCompletedName"), "\n", file=makefile)
-   cat(sep="", "\tcd ", getGlobalVariable("gSimulationDirectoryName"), "/Results && tar cvf - *.data* | bzip2 >../", getGlobalVariable("gSimulationDirectoryName"), ".tar.bz2\n\n", file=makefile)
+   cat(sep="", gResultsArchiveName, ":\t", gSimulationsCompletedName, "\n", file=makefile)
+   cat(sep="", "\tcd ", gSimulationDirectoryName, "/Results && tar cvf - *.data* | bzip2 >../", gSimulationDirectoryName, ".tar.bz2\n\n", file=makefile)
 
    # ------ Simulations only ------------------------------------------------
    cat(sep="", ".PHONY:\tclean-simulations-only\n", file=makefile)
    cat(sep="", "clean-simulations-only:\n", file=makefile)
-   cat(sep="", "\tfind ", getGlobalVariable("gSimulationDirectoryName"),"/ -name \"*-output.txt*\" -or -name \"*-scalars.sca*\" -or -name \"*-vectors.vec*\" -or -name \"*-status.txt*\" | xargs -n64 rm -f\n", file=makefile)
-   cat(sep="", "\trm -f ", getGlobalVariable("gLogfileName"), "\n", file=makefile)
+   cat(sep="", "\tfind ", gSimulationDirectoryName,"/ -name \"*-output.txt*\" -or -name \"*-scalars.sca*\" -or -name \"*-vectors.vec*\" -or -name \"*-status.txt*\" | xargs -n64 rm -f\n", file=makefile)
+   cat(sep="", "\trm -f ", gLogfileName, "\n", file=makefile)
    cat(sep="", "\techo \"Simulations-only clean-up completed!\"\n\n", file=makefile)
 
    # ------ Clean-up --------------------------------------------------------
    cat(sep="", ".PHONY:\tclean-simulations-and-results\n", file=makefile)
    cat(sep="", "clean-simulations-and-results:\tclean-simulations-only\n", file=makefile)
-   cat(sep="", "\tfind ", getGlobalVariable("gSimulationDirectoryName"),"/Results/ -name \"*.data*\" | xargs -n64 rm -f\n", file=makefile)
-   cat(sep="", "\trm -f ", getGlobalVariable("gSimulationsCompletedName"), " ", getGlobalVariable("gSummaryCompletedName"), " ", getGlobalVariable("gRuntimeName"), "\n", file=makefile)
+   cat(sep="", "\tfind ", gSimulationDirectoryName,"/Results/ -name \"*.data*\" | xargs -n64 rm -f\n", file=makefile)
+   cat(sep="", "\trm -f ", gSimulationsCompletedName, " ", gSummaryCompletedName, " ", gRuntimeName, "\n", file=makefile)
    cat(sep="", "\techo \"Full clean-up completed!\"\n\n", file=makefile)
 
    # ------ Clean-up including removal of archived results ------------------
    cat(sep="", ".PHONY:\tdistclean\n", file=makefile)
    cat(sep="", "distclean:\tclean-simulations-and-results\n", file=makefile)
-   cat(sep="", "\trm -f ", getGlobalVariable("gResultsArchiveName"), "\n\n", file=makefile)
+   cat(sep="", "\trm -f ", gResultsArchiveName, "\n\n", file=makefile)
 
    close(makefile)
 
 
    # ------ Removal of old output files -------------------------------------
-   cmd <- paste(sep="", "find ", getGlobalVariable("gSimulationDirectoryName"), "/Simulations/ -name \"*.txt\" | xargs -n64 touch >/dev/null 2>/dev/null")
+   cmd <- paste(sep="", "find ", gSimulationDirectoryName, "/Simulations/ -name \"*.txt\" | xargs -n64 touch >/dev/null 2>/dev/null")
    r <- readLines(pc <- pipe(cmd))
    close(pc)
 }
@@ -500,18 +538,18 @@ executeMake <- function()
          exists("distributionProcs") && (distributionProcs > 0)) {
          cat(sep="", "   - Distribution to pool \"", distributionPool, "\", ", CPUs , " processes\n")
       }
-      cat(sep="", "   - To start make:   make -j" , CPUs, " -l -f ", getGlobalVariable("gMakefileName"), "\n")
-      cat(sep="", "   - To view logfile: tail -f ", getGlobalVariable("gLogfileName"), " | grep -v another\n")
+      cat(sep="", "   - To start make:   make -j" , CPUs, " -l -f ", gMakefileName, "\n")
+      cat(sep="", "   - To view logfile: tail -f ", gLogfileName, " | grep -v another\n")
       cat(paste(sep="", "   - Sim. Start = ", startTime, "\n"))
    }
 
    # The output of "make" goes into the log file.
    # In case of error, the last 20 lines of the log file are copied into the error file.
    # The error file can later be used to write these lines to Jabber.
-   cmd <- paste(sep="", " rm -f ", getGlobalVariable("gErrorName"), " && if [ -e Makefile ] ; then make MODE=release ", simCreatorSimulationBinary, " ; fi && ( make -k -j" ,
+   cmd <- paste(sep="", " rm -f ", gErrorName, " && if [ -e Makefile ] ; then make MODE=release ", simCreatorSimulationBinary, " ; fi && ( make -k -j" ,
                 CPUs,
-                " -l -f ", getGlobalVariable("gMakefileName"),
-                " all >", getGlobalVariable("gLogfileName") , " 2>&1 || tail -n20 ", getGlobalVariable("gLogfileName"), " | tee ", getGlobalVariable("gErrorName"), " )")
+                " -l -f ", gMakefileName,
+                " all >", gLogfileName , " 2>&1 || tail -n20 ", gLogfileName, " | tee ", gErrorName, " )")
 
    # ------ Execute make ----------------------------------------------------
    # cat("\n\n",cmd,"\n\n")
@@ -527,7 +565,7 @@ executeMake <- function()
    writeLines(r)
 
    if(reportTo != "") {
-      cmd <- paste(sep="", "( ( echo \"Finished ", simulationDirectory, ".\" ; if [ -e ", getGlobalVariable("gErrorName"), " ] ; then echo \"Simulation processing has FAILED:\" ; echo \"----- Last Lines in Log -----\" ; cat ", getGlobalVariable("gErrorName"), " ; echo \"----- End of Log -----\" ; fi ) | sendxmpp -i ", reportTo, " 2>/dev/null & )")
+      cmd <- paste(sep="", "( ( echo \"Finished ", simulationDirectory, ".\" ; if [ -e ", gErrorName, " ] ; then echo \"Simulation processing has FAILED:\" ; echo \"----- Last Lines in Log -----\" ; cat ", gErrorName, " ; echo \"----- End of Log -----\" ; fi ) | sendxmpp -i ", reportTo, " 2>/dev/null & )")
 
       # cat("\n\n",cmd,"\n\n")
       r <- readLines(pc <- pipe(cmd))
@@ -539,7 +577,8 @@ executeMake <- function()
 # ====== Create all simulation runs =========================================
 createAllSimulationRuns <- function(simulationConfigurations,
                                     originalSimulationConfigurations,
-                                    makefile, summary, originalSetup=c())
+                                    makefile, summary, dependencies,
+                                    originalSetup=c())
 {
    # ------ Get a parameter configuration -----------------------------------
    # Example: parameterConfiguration <- c("Parameter Name", "Value 1", ...)
@@ -560,7 +599,7 @@ createAllSimulationRuns <- function(simulationConfigurations,
       if(length(simulationConfigurations) > 1) {
          createAllSimulationRuns(simulationConfigurations[2:length(simulationConfigurations)],
                                  originalSimulationConfigurations,
-                                 makefile, summary, setup)
+                                 makefile, summary, dependencies, setup)
       }
 
       # ------ All settings have been collected. Create a new run -----------
@@ -574,9 +613,9 @@ createAllSimulationRuns <- function(simulationConfigurations,
          }
          if(simulationScriptOutputVerbosity > 4) {
             cat(sprintf(" + Runs %d-%d of %d:   ",
-                        getGlobalVariable("gRunNumber"),
-                        getGlobalVariable("gRunNumber") + mySimulationRuns - 1,
-                        getGlobalVariable("gTotalSimulationRuns")))
+                        gRunNumberInLevel,
+                        gRunNumberInLevel + gTotalSimulationRunLevels - 1,
+                        gTotalSimulationRunLevels * gTotalSimulationRunsPerLevel))
          }
          for(i in seq(1, length(setup)-1, 2)) {
             setGlobalVariable(setup[i], setup[i+1])
@@ -591,7 +630,7 @@ createAllSimulationRuns <- function(simulationConfigurations,
          }
 
          # ------ Get variables and *original* values -----------------------
-         varNames  <- getGlobalVariable("gActiveVariables")
+         varNames      <- gActiveVariables
          origVarValues <- getActiveVariables(originalSimulationConfigurations, GAVType_VariableValues, duration)
 
          # ------ Compute auto-parameters -----------------------------------
@@ -630,18 +669,30 @@ createAllSimulationRuns <- function(simulationConfigurations,
             }
 
             # ------ Create runs --------------------------------------------
-            runDirectoryName <- paste(sep="", getGlobalVariable("gSimulationsDirectoryName"), "/",
+            runDirectoryName <- paste(sep="", gSimulationsDirectoryName, "/",
                                       "Set-", setupHash)
             dir.create(runDirectoryName, showWarnings=FALSE)
 
             if(is.list(simulationRuns)) {
-               runsSet <- unique(unlist(simulationRuns))
+               levelsSet <- unique(unlist(simulationRuns))
             }
             else {
-               runsSet <- seq(1, simulationRuns)
+               levelsSet <- seq(1, simulationRuns)
             }
-            for(simulationRun in runsSet) {
-               filePrefix <- paste(sep="", runDirectoryName, "/run", simulationRun)
+
+            # ====== Create shortcut link ===================================
+            shortcutLink <- paste(sep="", "Shortcut-", sprintf("%06d", gRunNumberInLevel))
+            oldWorkingDirectory <- setwd(gSimulationsDirectoryName)
+            if(file.exists(shortcutLink)) {
+               file.remove(shortcutLink)
+            }
+            file.symlink(paste(sep="", "Set-", setupHash), shortcutLink)
+            setwd(oldWorkingDirectory)
+
+            # ====== Create runs in level ===================================
+            level <- 0
+            for(simulationRun in levelsSet) {
+               filePrefix <- paste(sep="", runDirectoryName, "/run", simulationRun)					
                outputName <- paste(sep="", runDirectoryName, "/run", simulationRun, "-output.txt")
                iniName    <- paste(sep="", runDirectoryName, "/run", simulationRun, "-parameters.ini")
                scalarName <- paste(sep="", runDirectoryName, "/run", simulationRun, "-scalars.sca")
@@ -654,28 +705,34 @@ createAllSimulationRuns <- function(simulationConfigurations,
                simCreatorWriteParameterSection(filePrefix, ini, simulationRun, duration)
                close(ini)
 
-               addRunToSummary(summary, scalarName, vectorName, iniName, outputName, statusName, varValues)
-               addRunToMakefile(makefile, simulationRun, runDirectoryName, iniName, scalarName, vectorName, statusName, parameterString)
-
-               setGlobalVariable("gRunNumber", getGlobalVariable("gRunNumber") + 1)
-               setGlobalVariable("gSimulationDependencies",
-                                 append(getGlobalVariable("gSimulationDependencies"), c(" ", statusName)))
+               addRunToSummary(summary, scalarName, vectorName,
+                               iniName,
+                               outputName, statusName, varValues)
+               addRunToMakefile(makefile, simulationRun,
+                                gRunNumberInLevel + (level * gTotalSimulationRunsPerLevel),
+                                gTotalSimulationRunLevels * gTotalSimulationRunsPerLevel,
+                                runDirectoryName, shortcutLink,
+                                iniName, scalarName, vectorName, statusName,
+                                parameterString)
+               addDependency(dependencies, statusName)
+               level <- level + 1
             }
          }
          else {
             if(simulationScriptOutputVerbosity > 4) {
                cat(sep="","SKIPPING!\n")
                if(is.list(simulationRuns)) {
-                  runsSet <- unique(unlist(simulationRuns))
+                  levelsSet <- unique(unlist(simulationRuns))
                }
                else {
-                  runsSet <- seq(1, simulationRuns)
+                  levelsSet <- seq(1, simulationRuns)
                }
-               for(simulationRun in runsSet) {
-                  setGlobalVariable("gRunNumber", getGlobalVariable("gRunNumber") + 1)
+               for(simulationRun in levelsSet) {
                }
             }
          }
+
+         setGlobalVariable("gRunNumberInLevel", gRunNumberInLevel + 1)
       }
    }
 }
@@ -734,9 +791,11 @@ createSimulation <- function(simulationDirectory, simulationConfigurations, simu
    simulationConfigurations <- makeSimulations(simulationConfigurations, simulationDefaults)
 
    # ------ Initialize ------------------------------------------------------
-   setGlobalVariable("gRunNumber", 1)
-   setGlobalVariable("gTotalSimulationRuns",
-                     getTotalSimulationRuns(simulationConfigurations))
+   setGlobalVariable("gRunNumberInLevel", 1)
+   setGlobalVariable("gTotalSimulationRunLevels",
+                     getTotalSimulationRunLevels(simulationConfigurations))
+   setGlobalVariable("gTotalSimulationRunsPerLevel",
+                     getTotalSimulationRunsPerLevel(simulationConfigurations))
    setGlobalVariable("gActiveVariables",
                      getActiveVariables(simulationConfigurations, GAVType_VariableNames))
 
@@ -747,22 +806,23 @@ createSimulation <- function(simulationDirectory, simulationConfigurations, simu
    prepareDirectory(simulationDirectory)
    makefile <- beginMakefile()
    summary <- beginSummary()
+   dependencies <- beginDependencies()
 
    # ------ Input file creation ---------------------------------------------
    if(simulationScriptOutputVerbosity > 0) {
       cat(sep="", "* Step #2: Creating input files for ",
-                  getGlobalVariable("gTotalSimulationRuns"), " runs ...\n")
+                  gTotalSimulationRunLevels * gTotalSimulationRunsPerLevel, " runs ...\n")
       cat(sep="",   " + Active variables:\n")
-      for(varName in getGlobalVariable("gActiveVariables")) {
+      for(varName in gActiveVariables) {
          cat(sep="", "  @ ", varName, "\n")
       }
    }
-   createAllSimulationRuns(simulationConfigurations, simulationConfigurations, makefile, summary)
+   createAllSimulationRuns(simulationConfigurations, simulationConfigurations, makefile, summary, dependencies)
 
    # ------ Finish summary and makefile -------------------------------------
    cat(sep="", "* Step #3: Writing summary script and makefile ...\n")
    summaryCommand <- finishSummary(summary)
-   finishMakefile(makefile, summaryCommand)
+   finishMakefile(makefile, dependencies, summaryCommand)
    if(simulationExecuteMake) {
      executeMake()
    }
