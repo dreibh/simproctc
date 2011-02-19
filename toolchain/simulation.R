@@ -612,9 +612,9 @@ createAllSimulationRuns <- function(simulationConfigurations,
             mySimulationRuns <- simulationRuns
          }
          if(simulationScriptOutputVerbosity > 4) {
-            cat(sprintf(" + Runs %d-%d of %d:   ",
-                        gRunNumberInLevel,
-                        gRunNumberInLevel + gTotalSimulationRunLevels - 1,
+            cat(sprintf(" + Runs %d-%d of %d:\t",
+                        1 + (gRunNumberInLevel - 1) * gTotalSimulationRunLevels,
+                        1 + gRunNumberInLevel * gTotalSimulationRunLevels - 1,
                         gTotalSimulationRunLevels * gTotalSimulationRunsPerLevel))
          }
          for(i in seq(1, length(setup)-1, 2)) {
