@@ -1506,7 +1506,7 @@ applyManipulator <- function(manipulator, inputDataTable, columnName, filter)
 createPlots <- function(simulationDirectory,
                         plotConfigurations,
                         customFilter="",
-                        zColorArray=par("fg"))
+                        zColorArray=c())
 {
    inputDirectorySet <- c()
    inputFileSet      <- c()

@@ -776,11 +776,26 @@ makeSimulations <- function(configuration, defaults)
       }
       if(!found) {
          stop(paste(sep="", "ERROR: There is no default setting for parameter ",
-                     as.character(configItem[1]), "!\n         ",
-                     "This is either a typo or the simulation generator script has to be updated!"))
+                    as.character(configItem[1]), "!\n         ",
+                    "This is either a typo or the simulation generator script has to be updated!"))
       }
    }
 
+   # ====== Cross-check: each config item may exist only once ===============
+   configItemSet <- c()
+   for(j in 1:length(configuration)) {
+      configItem <- unlist(configuration[j], recursive=FALSE)
+      configItemSet <- append(configItemSet, as.character(configItem[1]))
+   }
+   duplicates <- duplicated(configItemSet)
+   for(j in 1:length(configItemSet)) {
+      if(duplicates[j]) {
+         # print(duplicates)
+         print(configItemSet)
+         stop(cat(sep="", "ERROR: Parameter ", as.character(configItemSet[j]),
+                          " has been specified twice!\n"))
+      }
+   }
    return(results)
 }
 
