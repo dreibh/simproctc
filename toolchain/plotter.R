@@ -121,13 +121,22 @@ removeSpaceRegExpr <- "([[:space:]]*)([^ ]*)([[:space:]]*)"
 expressionExpr <- ":([^:]*):"
 
 
+# ====== Strip whitespaces from front and back of string ====================
+trim <- function(str)
+{
+   str <- sub("^ +", "", str)
+   str <- sub(" +$", "", str)
+   return(str)
+}
+
+
 # ====== Extract variable from axis title ===================================
 getVariable <- function(title)
 {
    result <- sub(titleRegExpr, "\\1", title)
    e <- sub(expressionExpr, "\\1", result)
    if(e == result) {
-      return(paste(sep="", "paste(\"", result, "\")"))
+      return(paste(sep="", "paste(\"", trim(result), "\")"))
    }
    return(e)
 }
@@ -142,7 +151,7 @@ getAbbreviation <- function(title)
    }
    e <- sub(expressionExpr, "\\1", result)
    if(e == result) {
-      return(paste(sep="", "paste(\"", result, "\")"))
+      return(paste(sep="", "paste(\"", trim(result), "\")"))
    }
    return(e)
 }
@@ -154,7 +163,7 @@ getUnit <- function(title)
    result <- sub(titleRegExpr, "\\6", title)
    e <- sub(expressionExpr, "\\1", result)
    if(e == result) {
-      return(paste(sep="", "paste(\"", result, "\")"))
+      return(paste(sep="", "\"", trim(result), "\""))
    }
    return(e)
 }
@@ -167,7 +176,7 @@ getLabel <- function(title)
    if(getAbbreviation(title) != getVariable(title)) {
       label <- paste(sep="", "paste(sep=\"\", ", label, ", \" \", ", getAbbreviation(title), ")")
    }
-   if(getUnit(title) != "paste(\"\")") {   # unit is "empty string expression"
+   if(getUnit(title) != "\"\"") {   # unit is "empty string expression"
       label <- paste(sep="", "paste(sep=\"\", ", label, ", \" [\", ", getUnit(title), ", \"]\")")
    }
 
