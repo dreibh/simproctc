@@ -1,4 +1,309 @@
 ------------------------------------------------------------------------
+r982 | dreibh | 2011-09-01 11:17:41 +0200 (Thu, 01 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/simproctc/toolchain/plotter.R
+   A /trunk/simproctc/toolchain/purge-simulation
+   A /trunk/simproctc/toolchain/rename-simulation
+   M /trunk/simproctc/toolchain/simulation.R
+   A /trunk/simproctc/toolchain/stop-simulation
+   M /trunk/simproctc/toolchain/tools/inputfile.cc
+
+Updated scripts to latest versions.
+
+------------------------------------------------------------------------
+r826 | dreibh | 2011-06-28 17:38:31 +0200 (Tue, 28 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/simproctc/toolchain/plotter.R
+
+Updated plotter.R.
+
+------------------------------------------------------------------------
+r794 | dreibh | 2011-02-25 08:12:38 +0100 (Fri, 25 Feb 2011) | 2 lines
+Changed paths:
+   M /trunk/simproctc/toolchain/plotter.R
+
+Plotting improvements: stripping leading and trailing spaces from labels.
+
+------------------------------------------------------------------------
+r790 | dreibh | 2011-02-24 12:53:22 +0100 (Thu, 24 Feb 2011) | 4 lines
+Changed paths:
+   M /trunk/simproctc/toolchain/plotter.R
+   M /trunk/simproctc/toolchain/simulation.R
+
+^K  I    svn-commit.3.tmp (Ge?\195?\164ndert)                                                                                                               Row 1    Col 44  12:52  Ctrl-K H for help
+- Added cross-check for parameter duplicates.
+- Plotting improvements.
+
+------------------------------------------------------------------------
+r783 | dreibh | 2011-02-19 22:06:26 +0100 (Sat, 19 Feb 2011) | 2 lines
+Changed paths:
+   M /trunk/simproctc/toolchain/plotter.R
+   M /trunk/simproctc/toolchain/simulation.R
+
+Updated simulation and plotting scripts
+
+------------------------------------------------------------------------
+r756 | dreibh | 2011-02-17 09:46:25 +0100 (Thu, 17 Feb 2011) | 2 lines
+Changed paths:
+   M /trunk/simproctc/toolchain/simulation.R
+
+Adapted simulation script to create shortcut links to simulation directories. Avoids to manually retrieve SHA1 sum when updating parametrisation.
+
+------------------------------------------------------------------------
+r745 | dreibh | 2011-02-11 23:35:16 +0100 (Fri, 11 Feb 2011) | 2 lines
+Changed paths:
+   M /trunk/inet-toolchain/simulate-version5.R
+   M /trunk/simproctc/toolchain/simulate-version1.R
+
+Fixed comment: now using correct directory name.
+
+------------------------------------------------------------------------
+r739 | dreibh | 2011-02-09 22:41:51 +0100 (Wed, 09 Feb 2011) | 2 lines
+Changed paths:
+   M /trunk/inet-toolchain/get-libs
+   M /trunk/inet-toolchain/make-environment
+   M /trunk/simproctc/toolchain/get-libs
+   M /trunk/simproctc/toolchain/make-environment
+
+Updated make-environment and get-libs to correctly handle custom libraries.
+
+------------------------------------------------------------------------
+r689 | dreibh | 2010-12-03 15:45:23 +0100 (Fri, 03 Dec 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/toolchain/simulation.R
+
+Fixed missing dependency for getrelativepath.
+
+------------------------------------------------------------------------
+r688 | dreibh | 2010-12-03 15:21:32 +0100 (Fri, 03 Dec 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/package-simproctc
+
+Updated SVN URL.
+
+------------------------------------------------------------------------
+r687 | dreibh | 2010-12-03 15:20:25 +0100 (Fri, 03 Dec 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/package-simproctc
+   M /trunk/simproctc/toolchain/test1.R
+
+Updated packaging.
+
+------------------------------------------------------------------------
+r685 | dreibh | 2010-12-01 16:18:37 +0100 (Wed, 01 Dec 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/toolchain/simulation.R
+
+More verbose comments in generated Makefile -> makes testing and debugging easier.
+
+------------------------------------------------------------------------
+r680 | dreibh | 2010-11-26 12:57:12 +0100 (Fri, 26 Nov 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/toolchain/plotter.R
+
+Small bugfix in pSet handling.
+
+------------------------------------------------------------------------
+r673 | dreibh | 2010-11-23 18:49:51 +0100 (Tue, 23 Nov 2010) | 3 lines
+Changed paths:
+   M /trunk/simproctc/toolchain/simulation.R
+
+^K  I    svn-commit.tmp (Ge?\195?\164ndert)                                                                                                       Row 1    Col 124  6:48  Ctrl-K H for help
+Write parameter settings as well as scalar and vector file name above each Makefile entry => enhanced Makefile readability.
+
+------------------------------------------------------------------------
+r670 | dreibh | 2010-11-23 10:41:51 +0100 (Tue, 23 Nov 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/package-simproctc
+   M /trunk/simproctc/toolchain/simulate-version1.R
+   A /trunk/simproctc/toolchain/test1.R
+
+SimProcTC example now working again.
+
+------------------------------------------------------------------------
+r669 | dreibh | 2010-11-22 10:23:24 +0100 (Mon, 22 Nov 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/TODO
+   D /trunk/simproctc/archive-simulation
+   D /trunk/simproctc/archive-simulation-completely
+   D /trunk/simproctc/demo
+   D /trunk/simproctc/demo4
+   A /trunk/simproctc/example-simulation (from /trunk/simproctc/demo4:668)
+   D /trunk/simproctc/example-simulation/make-links
+   D /trunk/simproctc/example-simulation/plot-test1.R
+   D /trunk/simproctc/example-simulation/simulate-version1.R
+   D /trunk/simproctc/example-simulation/simulation.config-stage1
+   D /trunk/simproctc/get-libs
+   D /trunk/simproctc/get-neds
+   D /trunk/simproctc/hashfunctions.R
+   D /trunk/simproctc/make-environment
+   R /trunk/simproctc/package-simproctc
+   D /trunk/simproctc/perform-run
+   D /trunk/simproctc/plotter.R
+   D /trunk/simproctc/simulation.R
+   D /trunk/simproctc/ssdistribute
+   D /trunk/simproctc/ssrun
+   A /trunk/simproctc/toolchain
+   A /trunk/simproctc/toolchain/archive-simulation (from /trunk/simproctc/archive-simulation:668)
+   A /trunk/simproctc/toolchain/archive-simulation-completely (from /trunk/simproctc/archive-simulation-completely:668)
+   A /trunk/simproctc/toolchain/get-libs (from /trunk/simproctc/get-libs:668)
+   A /trunk/simproctc/toolchain/get-neds (from /trunk/simproctc/get-neds:668)
+   A /trunk/simproctc/toolchain/hashfunctions.R (from /trunk/simproctc/hashfunctions.R:668)
+   A /trunk/simproctc/toolchain/make-environment (from /trunk/simproctc/make-environment:668)
+   A /trunk/simproctc/toolchain/perform-run (from /trunk/simproctc/perform-run:668)
+   A /trunk/simproctc/toolchain/plot-test1.R (from /trunk/simproctc/demo4/plot-test1.R:668)
+   A /trunk/simproctc/toolchain/plotter.R (from /trunk/simproctc/plotter.R:668)
+   A /trunk/simproctc/toolchain/simulate-version1.R (from /trunk/simproctc/demo4/simulate-version1.R:668)
+   A /trunk/simproctc/toolchain/simulation.R (from /trunk/simproctc/simulation.R:668)
+   A /trunk/simproctc/toolchain/simulation.config-stage1 (from /trunk/simproctc/demo4/simulation.config-stage1:668)
+   A /trunk/simproctc/toolchain/ssdistribute (from /trunk/simproctc/ssdistribute:668)
+   A /trunk/simproctc/toolchain/ssrun (from /trunk/simproctc/ssrun:668)
+   A /trunk/simproctc/toolchain/tools (from /trunk/simproctc/tools:668)
+   D /trunk/simproctc/tools
+
+Restructured simproctc directory and removed OMNeT++ 3.x example.
+
+------------------------------------------------------------------------
+r662 | dreibh | 2010-11-20 16:29:39 +0100 (Sat, 20 Nov 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/tools/createsummary.cc
+
+Added quiet mode to createsummary.
+
+------------------------------------------------------------------------
+r653 | dreibh | 2010-11-18 12:46:44 +0100 (Thu, 18 Nov 2010) | 1 line
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+Skip sets, if they are c(NA).
+------------------------------------------------------------------------
+r652 | dreibh | 2010-11-18 12:13:42 +0100 (Thu, 18 Nov 2010) | 1 line
+Changed paths:
+   M /trunk/simproctc/ssrun
+
+Bugfix: runX-status.txt may not be compressed.
+------------------------------------------------------------------------
+r650 | dreibh | 2010-11-18 11:43:57 +0100 (Thu, 18 Nov 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+Plotting improvements.
+
+------------------------------------------------------------------------
+r649 | dreibh | 2010-11-18 11:43:26 +0100 (Thu, 18 Nov 2010) | 1 line
+Changed paths:
+   M /trunk/simproctc/simulation.R
+
+simulation.R: Fixed problem with make -jN calls within generated Makefile. Error messages of sendxmpp are now forwarded to /dev/null since they are confusing when there is no Internet access.
+------------------------------------------------------------------------
+r647 | dreibh | 2010-11-18 11:41:22 +0100 (Thu, 18 Nov 2010) | 1 line
+Changed paths:
+   M /trunk/simproctc/make-environment
+
+make-environment now uses chrpath to get rid of absolute paths in binary sent to remote processing nodes.
+------------------------------------------------------------------------
+r645 | dreibh | 2010-11-18 11:40:19 +0100 (Thu, 18 Nov 2010) | 1 line
+Changed paths:
+   M /trunk/simproctc/perform-run
+
+Improved printing of errors in perform-run.
+------------------------------------------------------------------------
+r643 | dreibh | 2010-11-18 11:39:27 +0100 (Thu, 18 Nov 2010) | 1 line
+Changed paths:
+   M /trunk/simproctc/ssdistribute
+
+Improved ssdistribute with better error message printing. Needs rsplib-2.7.6 scriptingclient to also download error logs of failed run.
+------------------------------------------------------------------------
+r641 | dreibh | 2010-11-18 11:35:37 +0100 (Thu, 18 Nov 2010) | 1 line
+Changed paths:
+   M /trunk/simproctc/ssrun
+
+ssrun has to bzip2-compress logs in case of error. Otherwise, they will not be transferred back to the client.
+------------------------------------------------------------------------
+r569 | dreibh | 2010-09-24 22:07:50 +0200 (Fri, 24 Sep 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/plotter.R
+   M /trunk/simproctc/simulation.R
+
+Improvements for handling of values containing quotes.
+
+------------------------------------------------------------------------
+r528 | dreibh | 2010-09-10 09:31:36 +0200 (Fri, 10 Sep 2010) | 3 lines
+Changed paths:
+   M /trunk/simproctc/plotter.R
+   M /trunk/simproctc/simulation.R
+
+- Plotting improvements.
+- Use scalar splitting option of createsummary by default.
+
+------------------------------------------------------------------------
+r527 | dreibh | 2010-09-10 09:29:15 +0200 (Fri, 10 Sep 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/tools/Makefile
+   M /trunk/simproctc/tools/createsummary.cc
+   M /trunk/simproctc/tools/test1.sca
+   M /trunk/simproctc/tools/test2.sca
+
+Added scalar splitting to createsummary.
+
+------------------------------------------------------------------------
+r513 | dreibh | 2010-09-09 09:43:46 +0200 (Thu, 09 Sep 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+Plotting improvements.
+
+------------------------------------------------------------------------
+r500 | dreibh | 2010-09-07 09:50:49 +0200 (Tue, 07 Sep 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+Improved a/b/p plotting in plotter.R.
+
+------------------------------------------------------------------------
+r494 | dreibh | 2010-09-01 09:13:11 +0200 (Wed, 01 Sep 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/plotter.R
+
+Updated plotter.R to print backup commands for input files.
+
+------------------------------------------------------------------------
+r477 | dreibh | 2010-08-02 12:56:39 +0200 (Mon, 02 Aug 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/tools/inputfile.cc
+   M /trunk/simproctc/tools/inputfile.h
+
+Fixed buffer overflow in InputFile.
+
+------------------------------------------------------------------------
+r476 | dreibh | 2010-08-02 12:56:15 +0200 (Mon, 02 Aug 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/ssdistribute
+
+Updated ssdistribute to use installed scriptingclient (in /usr/bin).
+
+------------------------------------------------------------------------
+r469 | dreibh | 2010-07-26 14:52:21 +0200 (Mon, 26 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/tools/createsummary.cc
+
+Fixed problem with histogram values (objectName is overwritten by handleScalar(), copy is needed).
+
+------------------------------------------------------------------------
+r467 | dreibh | 2010-07-26 09:15:07 +0200 (Mon, 26 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/ChangeLog
+
+Updated ChangeLog.
+
+------------------------------------------------------------------------
+r466 | dreibh | 2010-07-26 09:14:46 +0200 (Mon, 26 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/simproctc/simulation.R
+
+Improved output of "tail" command line to view simulation progress: filter out looking for another PE.
+
+------------------------------------------------------------------------
 r465 | dreibh | 2010-07-23 07:57:45 +0200 (Fri, 23 Jul 2010) | 4 lines
 Changed paths:
    M /trunk/simproctc/tools/Makefile

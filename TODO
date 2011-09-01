@@ -1,8 +1,0 @@
-ld-loader:
-   Avoid using existing shared libraries. Problem:
-   Out-of-Date OMNeT++ files in search path -> will be used instead of work-package provided files!
-   => FIXED! -> using chrpath to drop absolute library paths from executable
-
-Garbage in /tmp after aborting simulation:
-   Use per work-package temp directory instead of /tmp
-   => FIXED!
