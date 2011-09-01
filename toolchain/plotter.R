@@ -306,6 +306,22 @@ hbarHandlingSpeedAggregator <- function(xSet, ySet, hbarSet, zValue, confidence)
 }
 
 
+# ====== Default Pre-Plot Function ==========================================
+defaultPrePlotFunction <- function(xRange, yRange, zColorArray,
+                                   lineWidthScaleFactor, dotScaleFactor,
+                                   xSet, ySet, zSet, vSet, wSet)
+{
+}
+
+
+# ====== Default Pre-Plot Function ==========================================
+defaultPostPlotFunction <- function(xRange, yRange, zColorArray,
+                                   lineWidthScaleFactor, dotScaleFactor,
+                                   xSet, ySet, zSet, vSet, wSet)
+{
+}
+
+
 # Plot x/y plot with different curves as z with confidence intervals in
 # y direction. x and z can be numeric or strings, y must be numeric since
 # confidence intervals have to be computed.
@@ -326,6 +342,7 @@ plotstd3 <- function(mainTitle,
                      colorMode            = cmColor,
                      frameColor           = par("fg"),
                      zColorArray          = c(),
+                     zReverseColors       = FALSE,
                      zSortAscending       = TRUE,
                      vSortAscending       = TRUE,
                      wSortAscending       = TRUE,
@@ -347,19 +364,30 @@ plotstd3 <- function(mainTitle,
                      zValueFilter         = "%s",
                      vValueFilter         = "%s",
                      wValueFilter         = "%s",
+                     prePlotFunction      = defaultPrePlotFunction,
+                     postPlotFunction     = defaultPostPlotFunction,
                      writeMetadata        = TRUE,
                      largeMargins         = FALSE,
                      aLevels              = 1,
                      bLevels              = 1)
 {
+   if(length(zSet) < 1) {
+      zSet   <- rep(0, length(ySet))
+      zTitle <- ""
+      hideLegend <- FALSE
+   }
+   if(length(wSet) < 1) {
+      wSet <- rep(0, length(zSet))
+   }
+   if(length(vSet) < 1) {
+      vSet <- rep(0, length(zSet))
+   }
+
    xLevels <- levels(factor(xSet))
    yLevels <- levels(factor(ySet))
-   if(length(zSet) < 1) {
-      zSet <- rep(0, length(ySet))
-      zTitle     <- ""
-      hideLegend <- TRUE
-   }
    zLevels <- levels(factor(zSet))
+   vLevels <- levels(factor(vSet))
+   wLevels <- levels(factor(wSet))
    if(length(xLevels) < 1) {
       cat("WARNING: plotstd3() - xLevels=c()\n")
       return(0);
@@ -372,14 +400,6 @@ plotstd3 <- function(mainTitle,
       cat("WARNING: plotstd3() - zLevels=c()\n")
       return(0);
    }
-   if(length(vSet) < 1) {
-      vSet <- rep(0, length(zSet))
-   }
-   vLevels <- levels(factor(vSet))
-   if(length(wSet) < 1) {
-      wSet <- rep(0, length(zSet))
-   }
-   wLevels <- levels(factor(wSet))
 
    if(length(zColorArray) == 0) {
       if(colorMode == cmColor) {
@@ -484,6 +504,11 @@ plotstd3 <- function(mainTitle,
             side = 3, line=0.5, adj=1,
             xpd = NA, font = par("font.main"), cex = par("cex"))
    }
+   lineWidth <- lineWidthScaleFactor
+
+   # ------ Call to pre-plot function ---------------------------------------
+   prePlotFunction(xRange, yRange, zColorArray, lineWidth, dotScaleFactor, xSet, ySet, zSet, vSet, wSet)
+
 
    # ------ Plot curves -----------------------------------------------------
    lineNum      <- 1
@@ -494,6 +519,9 @@ plotstd3 <- function(mainTitle,
    legendDot    <- 1
    if(!zSortAscending) {
       zLevels <- rev(zLevels)
+   }
+   if(zReverseColors) {
+      zColorArray <- rev(zColorArray)
    }
    if(!vSortAscending) {
       vLevels <- rev(vLevels)
@@ -510,18 +538,14 @@ plotstd3 <- function(mainTitle,
          for(wPosition in 1:length(wLevels)) {
             w <- wLevels[wPosition]
             # ----- Legend settings -----------------------------------------
-            # Old behaviour: skip Z variable when there is no V/W axis.
-            # if((length(vLevels) > 1) || (length(wLevels) > 1)) {
-            #    legendText <- paste(sep="", "paste(sep=\"\", ", getAbbreviation(zTitle), ", \"=", gettextf(zValueFilter, z), "\")")
-            # }
-            # else {
-            #    legendText <- paste(sep="", "\"", z, "\"")
-            # }
+            legendText <- ""
             zBinder <- ""
             if( (!is.null(zTitle)) && (zTitle != "") ) {
                zBinder <- "="
             }
-            legendText <- paste(sep="", "paste(sep=\"\", ", getAbbreviation(zTitle), ", '", zBinder, gettextf(zValueFilter, z), "')")
+            if( (zBinder != "") || (length(levels(factor(zSet))) > 1) ) {
+               legendText <- paste(sep="", "paste(sep=\"\", ", getAbbreviation(zTitle), ", '", zBinder, gettextf(zValueFilter, z), "')")
+            }
             vBinder <- ""
             if( (!is.null(vTitle)) && (vTitle != "") ) {
                vBinder <- "="
@@ -538,7 +562,6 @@ plotstd3 <- function(mainTitle,
             }
             if(enumerateLines) {
                lineNumText <- paste(sep="", lineNum)
-               lineNum <- lineNum + 1
                legendText <- paste(sep="", "paste(sep=\"\", ", ", \"", lineNumText, ": \", ", legendText, ")")
             }
 
@@ -555,6 +578,7 @@ plotstd3 <- function(mainTitle,
                   legendStyles <- append(legendStyles, legendStyle)
                   legendDots   <- append(legendDots,   getDot(dotSet, legendDot))
                   legendDot    <- legendDot + 1
+                  lineNum      <- lineNum + 1
                }
 
                # ----- Horizontal bars plot ---------------------------------
@@ -573,6 +597,7 @@ plotstd3 <- function(mainTitle,
                   legendStyles <- append(legendStyles, legendStyle)
                   legendDots   <- append(legendDots,   getDot(dotSet, legendDot))
                   legendDot    <- legendDot + 1
+                  lineNum      <- lineNum + 1
                }
 
                # ----- Lines or Steps plot without confidence intervals -----
@@ -606,7 +631,8 @@ plotstd3 <- function(mainTitle,
                      legendStyles <- append(legendStyles, legendStyle)
                      legendDots   <- append(legendDots,   getDot(dotSet, legendDot))
                      legendDot    <- legendDot + 1
-                     legendStyle <- (legendStyle + 1) %% 7
+                     legendStyle  <- (legendStyle + 1) %% 7
+                     lineNum      <- lineNum + 1
                   }
                }
 
@@ -692,7 +718,8 @@ plotstd3 <- function(mainTitle,
                      legendStyles <- append(legendStyles, legendStyle)
                      legendDots   <- append(legendDots,   getDot(dotSet, legendDot))
                      legendDot    <- legendDot + 1
-                     legendStyle <- (legendStyle + 1) %% 7
+                     legendStyle  <- (legendStyle + 1) %% 7
+                     lineNum      <- lineNum + 1
                   }
                }
 
@@ -729,8 +756,8 @@ plotstd3 <- function(mainTitle,
                            hbarAggSubset, zValue,
                            confidence)
             mMean <- aggregate[1]
-            mMin <- aggregate[2]
-            mMax <- aggregate[3]
+            mMin  <- aggregate[2]
+            mMax  <- aggregate[3]
 
             # ------ Plot line segment -----------------------------------------
             if(colorMode == cmColor) {
@@ -805,6 +832,10 @@ plotstd3 <- function(mainTitle,
          i <- i + 1
       }
    }
+
+
+   # ------ Call to post-plot function --------------------------------------
+   postPlotFunction(xRange, yRange, zColorArray, lineWidth, dotScaleFactor, xSet, ySet, zSet, vSet, wSet)
 
 
    # ------ Plot legend -----------------------------------------------------
@@ -1009,7 +1040,7 @@ makeLayout <- function(aSet, bSet, aTitle, bTitle, pTitle, pSubLabel,
    plot.new()   # Sub-title
    plot.window(c(0, 1), c(0, 1))
    if(pSubLabel != "") {
-      rect(0, 0, 1, 1, col=pColor)
+      rect(0, 0, 1.02, 1, col=pColor)
       text(0.5, 0.5, parse(text=pSubLabel), adj=0.5, font=3)
    }
 
@@ -1034,6 +1065,7 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                      zColorArray          = c(),
                      xAxisTicks           = c(),
                      yAxisTicks           = c(),
+                     zReverseColors       = FALSE,
                      zSortAscending       = TRUE,
                      vSortAscending       = TRUE,
                      wSortAscending       = TRUE,
@@ -1052,7 +1084,9 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                      enumerateLines       = FALSE,
                      pStart               = 0,
                      hideLegend           = FALSE,
-                     frameColor           = par("fg"))
+                     frameColor           = par("fg"),
+                     prePlotFunction      = defaultPrePlotFunction,
+                     postPlotFunction     = defaultPostPlotFunction)
 {
    if(length(pSet) == 0) {
       pSet <- rep(1, length(xSet))
@@ -1125,6 +1159,7 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                         xTitle, yTitle, zTitle,
                         xSubset, ySubset, zSubset,
                         vSubset, wSubset, vTitle, wTitle,
+                        zReverseColors       = zReverseColors,
                         zSortAscending       = zSortAscending,
                         vSortAscending       = vSortAscending,
                         wSortAscending       = wSortAscending,
@@ -1153,6 +1188,8 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                         largeMargins         = useLargeMargins,
                         aLevels              = length(aLevels),
                         bLevels              = length(bLevels),
+                        prePlotFunction      = prePlotFunction,
+                        postPlotFunction     = postPlotFunction,
                         (singlePlotTitle == "")) < 1) {   # see below
                # If singlePlotTitle=="", we have multiple std3 plots on the
                # same page. Then, larger margins have to be used by plotstd3().
@@ -1452,7 +1489,7 @@ getIntegerTicks <- function(set, count = 10)
 
 
 # ====== Read table from results file =======================================
-loadResults <- function(name, customFilter="", quiet=FALSE)
+loadResults <- function(name, customFilter="", customFormatter=applyFormatter, quiet=FALSE)
 {
    filter <- "cat"
    if(any(grep(".bz2", name))) {
@@ -1471,6 +1508,7 @@ loadResults <- function(name, customFilter="", quiet=FALSE)
       cat(sep="", "Loading from pipe [", dataInputCommand, "] ...\n")
    }
    data <- read.table(pipe(dataInputCommand))
+   data <- customFormatter(data)
    return(data)
 }
 
@@ -1523,10 +1561,18 @@ applyManipulator <- function(manipulator, inputDataTable, columnName, filter)
 }
 
 
+# ====== Apply formatter ====================================================
+applyFormatter <- function (data)
+{
+   return(data)
+}
+
+
 # ====== Create plots =======================================================
 createPlots <- function(simulationDirectory,
                         plotConfigurations,
                         customFilter="",
+                        customFormatter=applyFormatter,
                         zColorArray=c())
 {
    inputDirectorySet <- c()
@@ -1557,14 +1603,18 @@ createPlots <- function(simulationDirectory,
       yColumn             <- as.character(plotConfiguration[8])
       dotSet              <- c()
       dotScaleFactor      <- 2
+      zColorArray         <- c()
+      zReverseColors      <- FALSE
       zSortAscending      <- TRUE
       vSortAscending      <- TRUE
       wSortAscending      <- TRUE
       aSortAscending      <- TRUE
       bSortAscending      <- TRUE
       pSortAscending      <- TRUE
+      prePlotFunction     <- defaultPrePlotFunction
+      postPlotFunction    <- defaultPostPlotFunction
 
-      frameColor <- "black"
+      frameColor   <- "black"
       yManipulator <- "set"
       xTitle <- "X-Axis" ; xFound <- FALSE
       yTitle <- "Y-Axis" ; yFound <- FALSE
@@ -1723,7 +1773,9 @@ createPlots <- function(simulationDirectory,
       for(resultsName in resultsNameSet) {
          resultFileName  <- paste(sep="", simulationDirectory, "/Results/", resultsName, ".data.bz2")
          cat(sep="", "     + Loading results from ", resultFileName, " ...\n")
-         data <- append(data, list(loadResults(resultFileName, quiet=FALSE, customFilter=customFilter)))
+         data <- append(data, list(loadResults(resultFileName, quiet=FALSE,
+                                               customFilter=customFilter,
+                                               customFormatter=customFormatter)))
          inputDirectorySet <- unique(append(inputDirectorySet, c(paste(sep="", simulationDirectory, "/Results"))))
          inputFileSet      <- unique(append(inputFileSet, c(resultFileName)))
       }
@@ -1797,27 +1849,30 @@ createPlots <- function(simulationDirectory,
                pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                pSet, aSet, bSet, xSet, ySet, zSet,
                vSet, wSet, vTitle, wTitle,
-               xAxisTicks     = xAxisTicks,
-               yAxisTicks     = yAxisTicks,
-               rangeSet       = rangeSet,
-               rangeColors    = rangeColors,
-               type           = "lines",
-               frameColor     = frameColor,
-               zColorArray    = zColorArray,
-               legendSize     = plotLegendSizeFactor,
-               confidence     = plotConfidence,
-               colorMode      = plotColorMode,
-               hideLegend     = plotHideLegend,
-               legendPos      = legendPos,
-               dotSet         = dotSet,
-               dotScaleFactor = dotScaleFactor,
-               enumerateLines = plotEnumerateLines,
-               zSortAscending = zSortAscending,
-               vSortAscending = vSortAscending,
-               wSortAscending = wSortAscending,
-               aSortAscending = aSortAscending,
-               bSortAscending = bSortAscending,
-               pSortAscending = pSortAscending)
+               xAxisTicks       = xAxisTicks,
+               yAxisTicks       = yAxisTicks,
+               rangeSet         = rangeSet,
+               rangeColors      = rangeColors,
+               type             = "lines",
+               frameColor       = frameColor,
+               zColorArray      = zColorArray,
+               confidence       = plotConfidence,
+               colorMode        = plotColorMode,
+               hideLegend       = plotHideLegend,
+               legendPos        = legendPos,
+               legendSize       = plotLegendSizeFactor,
+               dotSet           = dotSet,
+               dotScaleFactor   = dotScaleFactor,
+               enumerateLines   = plotEnumerateLines,
+               zReverseColors   = zReverseColors,
+               zSortAscending   = zSortAscending,
+               vSortAscending   = vSortAscending,
+               wSortAscending   = wSortAscending,
+               aSortAscending   = aSortAscending,
+               bSortAscending   = bSortAscending,
+               pSortAscending   = pSortAscending,
+               prePlotFunction  = prePlotFunction,
+               postPlotFunction = postPlotFunction)
       if(plotOwnOutput) {
          dev.off()
       }

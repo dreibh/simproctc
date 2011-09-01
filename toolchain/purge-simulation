@@ -1,0 +1,58 @@
+#!/bin/sh
+# $Id$
+# ###########################################################################
+#             Thomas Dreibholz's R Simulation Scripts Collection
+#                  Copyright (C) 2005-2011 Thomas Dreibholz
+#
+#               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
+# ###########################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Contact: dreibh@iem.uni-due.de
+
+SIMULATION="$1"
+if [ ! -e "$SIMULATION" ] ; then
+   echo "ERROR: Directory $SIMULATION does not exist!"
+   exit
+fi
+if [ ! -e "$SIMULATION/dependencies.list" ] ; then
+   echo "ERROR: $SIMULATION/dependencies.list does not exist!"
+   exit
+fi
+
+
+echo "Finding obsolete runs ..."
+
+# Generate an SED script to remove in-use file prefixes from file prefix list ...
+cat "$SIMULATION/dependencies.list" | xargs -n1 -i§ echo "s|^§-.*$||g" >"$SIMULATION/purge.sed"
+# cat "$SIMULATION/purge.sed"
+
+# Get list of obsolete file prefixes
+rm -f "$SIMULATION/purge.list"
+find "$SIMULATION/Simulations/" -type f -and -name "run[0-9]*-*" | \
+   sed -f "$SIMULATION/purge.sed" -e '/^$/ d' \
+      >"$SIMULATION/purge.list"
+# cat "$SIMULATION/purge.list"
+
+
+echo "Removing obsolete runs ..."
+
+cat "$SIMULATION/purge.list" | xargs --no-run-if-empty -n1 -i§ rm -f "§"
+find "$SIMULATION/Simulations/" -mindepth 1 -maxdepth 1 -and -type d | xargs --no-run-if-empty -n1 -i§ rmdir --ignore-fail-on-non-empty "§"
+find "$SIMULATION/Simulations/" -name "Shortcut-*" | xargs --no-run-if-empty -n1 -i§ rm -f "§"
+rm -f "$SIMULATION/purge.list" "$SIMULATION/purge.sed" "$SIMULATION/make.log"
+
+
+echo "Done!"

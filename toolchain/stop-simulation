@@ -1,0 +1,45 @@
+#!/bin/sh
+# $Id$
+# ###########################################################################
+#             Thomas Dreibholz's R Simulation Scripts Collection
+#                  Copyright (C) 2005-2010 Thomas Dreibholz
+#
+#               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
+# ###########################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Contact: dreibh@iem.uni-due.de
+
+if [ ! -e $1.R ] ; then
+   echo "ERROR: $1.R does not exist!"
+   exit
+fi
+
+
+MAKE=`ps ax | grep $1 | grep "make -k" | awk '{ print $1 }'`
+echo make:            $MAKE
+echo $MAKE | xargs --no-run-if-empty -n1 kill
+
+PERFORM_RUN=`ps ax | grep $1 | grep perform-run | awk '{ print $1 }'`
+echo perform-run:     $PERFORM_RUN
+echo $PERFORM_RUN | xargs --no-run-if-empty -n1 kill
+
+SSDISTRIBUTE=`ps ax | grep $1 | grep ssdistribute | awk '{ print $1 }'`
+echo ssdistribute:    $SSDISTRIBUTE
+echo $SSDISTRIBUTE | xargs --no-run-if-empty -n1 kill
+
+SCRIPTINGCLIENTS=`ps ax | grep $1 | grep scriptingclient | awk '{ print $1 }'`
+echo scriptingclient: 
+echo $SCRIPTINGCLIENTS | xargs --no-run-if-empty -n1 kill

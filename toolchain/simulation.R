@@ -327,9 +327,9 @@ addRunToMakefile <- function(makefile, runNumber, runNumberInTotalRuns, totalRun
 
 
 # ====== Add status file dependency to Makefile =============================
-addDependency <- function(dependencies, statusName)
+addDependency <- function(dependencies, filePrefix)
 {
-   cat(sep="", statusName ,"\n", file=dependencies)
+   cat(sep="", filePrefix ,"\n", file=dependencies)
 }
 
 
@@ -343,8 +343,7 @@ extractDependencies <- function(dependencies)
    r <- readLines(pc <- pipe(paste(sep="", "sort -t / -k 4.4n -k 2 ", gDependenciesName)))
    close(pc)
 
-   #  cat x0 | sort -t "/" -k 4
-   return(paste(sep="", r, " "))
+   return(paste(sep="", r, "-status.txt "))
 }
 
 
@@ -692,7 +691,7 @@ createAllSimulationRuns <- function(simulationConfigurations,
             # ====== Create runs in level ===================================
             level <- 0
             for(simulationRun in levelsSet) {
-               filePrefix <- paste(sep="", runDirectoryName, "/run", simulationRun)					
+               filePrefix <- paste(sep="", runDirectoryName, "/run", simulationRun)
                outputName <- paste(sep="", runDirectoryName, "/run", simulationRun, "-output.txt")
                iniName    <- paste(sep="", runDirectoryName, "/run", simulationRun, "-parameters.ini")
                scalarName <- paste(sep="", runDirectoryName, "/run", simulationRun, "-scalars.sca")
@@ -714,7 +713,7 @@ createAllSimulationRuns <- function(simulationConfigurations,
                                 runDirectoryName, shortcutLink,
                                 iniName, scalarName, vectorName, statusName,
                                 parameterString)
-               addDependency(dependencies, statusName)
+               addDependency(dependencies, filePrefix)
                level <- level + 1
             }
          }
