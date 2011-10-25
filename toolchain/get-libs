@@ -54,13 +54,13 @@ NUM_LOADER=`echo $LOADER | xargs -n1 | wc --lines`
 
 USED_ENTRIES=$(($NUM_LIBS + $NUM_LOADER))
 
-if [ $USED_ENTRIES -ne $NUM_ENTRIES ] ; then
-   echo >&2 "ERROR: Something went wrong with shared library collection! Got unexpected ldd output!"
-   echo >&2 "-----"
-   cat $PROGRAM.ldd >&2
-   echo >&2 "-----"
-   exit 1
-fi
+# if [ $USED_ENTRIES -ne $NUM_ENTRIES ] ; then
+#    echo >&2 "ERROR: Something went wrong with shared library collection! Got unexpected ldd output!"
+#    echo >&2 "-----"
+#    cat $PROGRAM.ldd >&2
+#    echo >&2 "-----"
+#    exit 1
+# fi
 
 
 # ====== Prepare library directory ==========================================
