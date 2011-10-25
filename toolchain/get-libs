@@ -48,12 +48,12 @@ if [ "$LIBS_NOT_FOUND" != "" ] ; then
    exit 1
 fi
 
-NUM_ENTRIES=`cat $PROGRAM.ldd | wc --lines`
-NUM_LIBS=`echo $LIBS | xargs -n1 | wc --lines`
-NUM_LOADER=`echo $LOADER | xargs -n1 | wc --lines`
-
-USED_ENTRIES=$(($NUM_LIBS + $NUM_LOADER))
-
+# NUM_ENTRIES=`cat $PROGRAM.ldd | wc --lines`
+# NUM_LIBS=`echo $LIBS | xargs -n1 | wc --lines`
+# NUM_LOADER=`echo $LOADER | xargs -n1 | wc --lines`
+# 
+# USED_ENTRIES=$(($NUM_LIBS + $NUM_LOADER))
+# 
 # if [ $USED_ENTRIES -ne $NUM_ENTRIES ] ; then
 #    echo >&2 "ERROR: Something went wrong with shared library collection! Got unexpected ldd output!"
 #    echo >&2 "-----"
