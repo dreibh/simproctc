@@ -1,7 +1,7 @@
 # $Id$
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
-#                  Copyright (C) 2005-2012 Thomas Dreibholz
+#                  Copyright (C) 2005-2015 Thomas Dreibholz
 #
 #               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 # ###########################################################################
@@ -52,11 +52,23 @@ setGlobalVariable <- function(variable, value)
 
 
 # ====== Safe division ======================================================
-safeDiv <- function(a, b, zeroValue=0) {
+safeDiv <- function(a, b, zeroValue=0)
+{
    c <- a / b
    nullSet <- is.nan(c)
    result <- replace(c, nullSet, zeroValue)
    return(result)
+}
+
+
+# ====== Check whether parameter is a number ================================
+isANumber <- function(str)
+{
+   suppressWarnings(num <- as.integer(str))
+   if(!is.na(num)) {
+      return(TRUE)
+   }
+   return (FALSE)
 }
 
 
@@ -91,7 +103,7 @@ rainbow2 <- function(n)
 #    else if(n == 5) {
 #       return(c("red", "#00aa00", "black", "blue", "magenta"))
 #    }
-   return(rainbow(n, gamma=2))
+   return(rainbow(n))
 }
 
 
@@ -356,6 +368,7 @@ plotstd3 <- function(mainTitle,
                      xSeparatorsColors    = c(),
                      rangeSet             = c(),
                      rangeColors          = c(),
+                     hideCurves           = c(),
                      hideLegend           = FALSE,
                      legendOnly           = FALSE,
                      enumerateLines       = FALSE,
@@ -566,7 +579,12 @@ plotstd3 <- function(mainTitle,
             }
 
 
-            if(!legendOnly) {
+            if( (length(hideCurves) > 0) && (length(intersect(c(lineNum), hideCurves)) > 0) ) {
+               legendDot   <- legendDot + 1
+               legendStyle <- (legendStyle + 1) %% 7
+               lineNum     <- lineNum + 1
+            }
+            else if(!legendOnly) {
                # ----- Points plot ------------------------------------------
                if((type == "p") || (type=="points")) {
                   xSubset <- subset(xSet, (zSet == z) & (vSet == v) & (wSet == w))
@@ -1083,6 +1101,7 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                      rangeColors          = c(),
                      enumerateLines       = FALSE,
                      pStart               = 0,
+                     hideCurves           = c(),
                      hideLegend           = FALSE,
                      frameColor           = par("fg"),
                      prePlotFunction      = defaultPrePlotFunction,
@@ -1177,6 +1196,7 @@ plotstd6 <- function(mainTitle, pTitle, aTitle, bTitle, xTitle, yTitle, zTitle,
                         rangeColors          = rangeColors,
                         enumerateLines       = enumerateLines,
                         type                 = type,
+                        hideCurves           = hideCurves,
                         hideLegend           = hideLegend,
                         legendSize           = legendSize,
                         legendPos            = legendPos,
@@ -1230,7 +1250,7 @@ plothist <- function(mainTitle,
                      colorMode        = cmColor,
                      zColorArray      = c(),
                      frameColor       = par("fg"),
-                     legendSize = 0.8,
+                     legendSize       = 0.8,
                      showMinMax       = FALSE,
                      showConfidence   = TRUE,
                      confidence       = 0.95,
@@ -1613,6 +1633,7 @@ createPlots <- function(simulationDirectory,
       pSortAscending      <- TRUE
       prePlotFunction     <- defaultPrePlotFunction
       postPlotFunction    <- defaultPostPlotFunction
+      hideCurves          <- c()
 
       frameColor   <- "black"
       yManipulator <- "set"
@@ -1872,7 +1893,8 @@ createPlots <- function(simulationDirectory,
                bSortAscending   = bSortAscending,
                pSortAscending   = pSortAscending,
                prePlotFunction  = prePlotFunction,
-               postPlotFunction = postPlotFunction)
+               postPlotFunction = postPlotFunction,
+               hideCurves       = hideCurves)               
       if(plotOwnOutput) {
          dev.off()
       }

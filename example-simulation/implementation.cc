@@ -2,7 +2,7 @@
 // ###########################################################################
 //                   A Very Simple Example Simulation for
 //             Thomas Dreibholz's R Simulation Scripts Collection
-//                  Copyright (C) 2008-2012 Thomas Dreibholz
+//                  Copyright (C) 2008-2015 Thomas Dreibholz
 //
 //               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 // ###########################################################################
@@ -217,7 +217,7 @@ void Sink::handleMessage(cMessage* msg)
       }
       LastMessageSeqNumber = packet->getMsgSeqNumber();
 
-      ev << "Message with delay " << delay << ", length " << length << " from station " << id << endl;
+      EV << "Message with delay " << delay << ", length " << length << " from station " << id << endl;
    }
    else {
       error("Unexpected message type");
@@ -304,7 +304,7 @@ void Multiplexer::handleMessage(cMessage* msg)
       QueueLengthStat->collect(QueueLength);
       QueueLengthVector->record(QueueLength);
 
-      ev << "Sending message #" << packet->getMsgSeqNumber()
+      EV << "Sending message #" << packet->getMsgSeqNumber()
          << " from " << packet->getSource() << endl;
 
       send(packet, "outputGate");
@@ -326,7 +326,7 @@ void Multiplexer::handleMessage(cMessage* msg)
             OutputGate->getTransmissionChannel()->getTransmissionFinishTime(),
             simTime() + (double)packetLength / OutputRate
          );
-      ev << "Scheduling timer for message #" << packet->getMsgSeqNumber()
+      EV << "Scheduling timer for message #" << packet->getMsgSeqNumber()
          << " from " << packet->getSource()
          << ", transmit time: "
          << transmitTime << "s" << endl;
@@ -542,7 +542,7 @@ void Defragmenter::handleMessage(cMessage* msg)
          if((!InProgress) ||
             (cell->getMsgSeqNumber() != LastMsgSeqNumber) ||
             (cell->getCellSeqNumber() != LastCellSeqNumber + 1)) {
-            ev << "Dropping cell!" << endl;
+            EV << "Dropping cell!" << endl;
          }
          else {
             LastCellSeqNumber = cell->getCellSeqNumber();

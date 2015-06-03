@@ -2,7 +2,7 @@
 # $Id$
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
-#                  Copyright (C) 2005-2012 Thomas Dreibholz
+#                  Copyright (C) 2005-2015 Thomas Dreibholz
 #
 #               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 # ###########################################################################
@@ -38,7 +38,11 @@ PU_MISCOPT="$5"                 # e.g.: "-cspserver=... ..."
 RUN_PREFIX=run$RUN_NUMBER
 STATUS_FILE=$RUN_PREFIX-status.txt
 INI_FILE=$RUN_PREFIX-parameters.ini
-
+if [ -e "scenario$RUN_NUMBER.xml" ] ; then
+   XML_FILE="scenario$RUN_NUMBER.xml"
+else
+   XML_FILE=""
+fi
 
 # ====== Check whether run still has to be performed ========================
 if [ $RUN_DIRECTORY/$INI_FILE -ot $RUN_DIRECTORY/$STATUS_FILE -o -e $RUN_DIRECTORY/$STATUS_FILE ] ; then
@@ -100,6 +104,11 @@ if [ "x$POOLHANDLE" = "x" ] ; then
    if [ ! -e $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$INI_FILE ] ; then
       ln $RUN_DIRECTORY/$INI_FILE $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$INI_FILE || exit 11
    fi
+   if [ "$XML_FILE" != "" ] ; then
+      if [ ! -e $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$XML_FILE ] ; then
+         ln $RUN_DIRECTORY/$XML_FILE $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$XML_FILE || exit 11
+      fi
+   fi
    if [ ! -e $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_PROGRAM ] ; then
       ln $SIMULATION_DIRECTORY/Environment/$SIMULATION_PROGRAM $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_PROGRAM || exit 12
    fi
@@ -139,6 +148,7 @@ if [ "x$POOLHANDLE" = "x" ] ; then
       echo ""
 
       echo "INI file:    $RUN_DIRECTORY/$INI_FILE"
+      echo "Scenario file:    $RUN_DIRECTORY/$XML_FILE"
       echo "Output file: $RUN_DIRECTORY/$OUTPUT_FILE"
       echo "----- SIMULATION RUN FAILED -----"
    fi
@@ -148,5 +158,5 @@ if [ "x$POOLHANDLE" = "x" ] ; then
 
 # ====== Distribute run into pool ===========================================
 else
-   ./ssdistribute $1 $2 $INI_FILE $POOLHANDLE "$PU_MISCOPT"
+   ./ssdistribute $1 $2 $INI_FILE $POOLHANDLE "$PU_MISCOPT" $XML_FILE
 fi

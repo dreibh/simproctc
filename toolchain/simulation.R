@@ -1,7 +1,7 @@
 # $Id$
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
-#                  Copyright (C) 2005-2012 Thomas Dreibholz
+#                  Copyright (C) 2005-2015 Thomas Dreibholz
 #
 #               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 # ###########################################################################
@@ -28,7 +28,7 @@ source("plotter.R")
 
 simulationDirectory <- "GiveAUsefulName"
 simulationRuns <- 1
-simulationDuration <- 60
+simulationDuration <- 60   # in minutes!
 simulationStoreVectors <- FALSE
 simulationExecuteMake <- TRUE
 simulationScriptOutputVerbosity <- 8
@@ -371,6 +371,9 @@ addRunToSummary <- function(summary, scalarName, vectorName, iniName, logName, s
           (length(grep("\"", valueString)) > 0) ) {
          valueString <- paste(sep="", "'", valueString , "'")
       }
+      else if(valueString == "") {
+         valueString <- "\"\""   # empty string
+      }
       # ------ Write output string ------------------------------------------
       if(varValuesString != "") {
          varValuesString <- paste(sep="", varValuesString, " ", valueString)
@@ -436,10 +439,11 @@ finishMakefile <- function(makefile, dependencies, summaryCommand)
       }
       cat(sep="", "\t( echo \"Starting simulation ", simulationDirectory, " on `hostname`", poolingInfo, " ...\" | sendxmpp -i ", reportTo, " || true )\n", file=makefile)
    }
-   cat(sep="", "\t( cd ", simCreatorSourcesDirectory, " && $(MAKE) )\n\n", file=makefile)
+   cat(sep="", "\t( cd ", simCreatorSourcesDirectory, " && $(MAKE) )\n", file=makefile)
+   cat(sep="", "\tif [ ! -e ", simCreatorSourcesDirectory, "/", simCreatorSimulationBinary, " ] ; then echo \"###### Did not find binary ", simCreatorSourcesDirectory, "/", simCreatorSimulationBinary, " -- Check your Makefile configuration (remove --make-so)! ######\" ; false ; fi\n\n", file=makefile)
 
    # ------ Simulation environment archive ----------------------------------
-   cat(sep="", simulationDirectory, "/simulation-environment.tar.bz2:\t", simCreatorSourcesDirectory, "/", simCreatorSimulationBinary, " tools/getrelativepath\n", file=makefile)
+   cat(sep="", simulationDirectory, "/simulation-environment.tar.bz2:\tsimulation-binary tools/getrelativepath\n", file=makefile)
 
    makeEnvParams <- ""
    for(n in simCreatorNEDFiles) {
@@ -694,14 +698,17 @@ createAllSimulationRuns <- function(simulationConfigurations,
                filePrefix <- paste(sep="", runDirectoryName, "/run", simulationRun)
                outputName <- paste(sep="", runDirectoryName, "/run", simulationRun, "-output.txt")
                iniName    <- paste(sep="", runDirectoryName, "/run", simulationRun, "-parameters.ini")
+	       
                scalarName <- paste(sep="", runDirectoryName, "/run", simulationRun, "-scalars.sca")
                vectorName <- paste(sep="", runDirectoryName, "/run", simulationRun, "-vectors.vec")
                statusName <- paste(sep="", runDirectoryName, "/run", simulationRun, "-status.txt")
+	       
 
                ini <- file(iniName, "w")
                cat(sep="", "# ###### Created on ", date(), " ######\n", file=ini)
                simCreatorWriteHeader(ini, simulationRun, scalarName, vectorName, duration)
                simCreatorWriteParameterSection(filePrefix, ini, simulationRun, duration)
+	       
                close(ini)
 
                addRunToSummary(summary, scalarName, vectorName,
@@ -841,4 +848,11 @@ createSimulation <- function(simulationDirectory, simulationConfigurations, simu
      executeMake()
    }
    cat(sep="", "* Script completed!\n")
+}
+
+
+# ====== Check whether argument is a numeric value ==========================
+isNumericValue <- function(value) {
+   suppressWarnings(result <- as.numeric(value))
+   return(!is.na(result))
 }

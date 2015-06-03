@@ -2,7 +2,7 @@
 # $Id$
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
-#                  Copyright (C) 2005-2012 Thomas Dreibholz
+#                  Copyright (C) 2005-2015 Thomas Dreibholz
 #
 #               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 # ###########################################################################
@@ -34,6 +34,7 @@ RUN_DIRECTORY="`pwd`/$2"        # e.g.: <path>/test1/Simulations/Set-XXXX
 INI_NAME="$3"                   # e.g.: run1-parameters.ini
 POOLHANDLE="$4"                 # e.g.: ScriptingPool
 PU_MISCOPT="$5"                 # e.g.: "-cspserver=... ..."
+XML_NAME="$6"
 MAX_RETRY=10                    # After a remote-side error, retry how many times?
 
 
@@ -73,7 +74,7 @@ OUTPUT_ARCHIVE="`mktemp -t -p $TMP_DIRECTORY output-XXXXXXXXXX`"
 # ====== Create input archive ===============================================
 echo "Preparing input [$UNIQUE_ID] ..."
 # Using "nice" here, since there may be many sessions ...
-nice tar czhf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME || exit 1
+nice tar czhf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME $XML_NAME || exit 1
 
 
 # ====== Start PU for job distribution ======================================
