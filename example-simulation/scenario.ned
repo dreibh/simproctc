@@ -140,7 +140,7 @@ module IntermediateNode
             parameters:
                 outputRate     = outputRate;
                 maxQueueLength = maxQueueLength;
-                @display("p=82,64;i=queue");
+                @display("p=82,64;i=block/queue");
             gates:
                 inputGate[1];
         }
@@ -167,11 +167,11 @@ module FragmenterScenario
                 headerSize       = sourceHeaderSize;
                 id               = 1000;
                 destination      = 1;
-                @display("b=34,34;p=260,310;i=bwgen");
+                @display("b=34,34;p=260,310;i=block/source");
         }
         duplicator: Duplicator {
             parameters:
-                @display("p=160,310;i=fork;b=40,24");
+                @display("p=160,310;i=block/broadcast;b=40,24");
             gates:
                 outputGate[2];
         }
@@ -179,31 +179,31 @@ module FragmenterScenario
             parameters:
                 cellPayloadSize = default(128 B);
                 cellHeaderSize  = default(8 B);
-                @display("p=60,160;i=proc2");
+                @display("p=60,160;i=block/fork");
         }
         nodeArray1[4]: IntermediateNode {
             parameters:
                 outputRate     = intermediateNodeOutputRate;
                 maxQueueLength = intermediateNodeMaxQueueLength;
-                @display("b=32,30;p=60,60,row,100;i=queue");
+                @display("b=32,30;p=60,60,row,100;i=block/queue");
         }
         defragmenter: Defragmenter {
             parameters:
-                @display("b=32,30;p=460,160;i=proc2");
+                @display("b=32,30;p=460,160;i=block/join");
         }
         sink1: Sink {
             parameters:
-                @display("b=34,34;p=460,260;i=bwsink");
+                @display("b=34,34;p=460,260;i=block/sink");
         }
         nodeArray2[4]: IntermediateNode {
             parameters:
                 outputRate     = intermediateNodeOutputRate;
                 maxQueueLength = intermediateNodeMaxQueueLength;
-                @display("p=60,460,row,100;i=queue");
+                @display("p=60,460,row,100;i=block/queue");
         }
         sink2: Sink {
             parameters:
-                @display("b=34,34;p=460,360;i=bwsink");
+                @display("b=34,34;p=460,360;i=block/sink");
         }
     connections:
         source.outputGate --> Link10M --> duplicator.inputGate;
