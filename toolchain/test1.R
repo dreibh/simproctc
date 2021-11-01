@@ -1,4 +1,3 @@
-# $Id$
 # ###########################################################################
 #                   A Very Simple Example Simulation for
 #             Thomas Dreibholz's R Simulation Scripts Collection
