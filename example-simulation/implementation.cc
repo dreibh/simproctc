@@ -2,7 +2,7 @@
 // ###########################################################################
 //                   A Very Simple Example Simulation for
 //             Thomas Dreibholz's R Simulation Scripts Collection
-//                  Copyright (C) 2008-2015 Thomas Dreibholz
+//                  Copyright (C) 2008-2022 Thomas Dreibholz
 //
 //               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 // ###########################################################################
@@ -111,7 +111,7 @@ void Source::handleMessage(cMessage* msg)
    }
 
    else if(msg == ChannelReadyEvent) {
-      if(OutputQueue.empty()) {
+      if(OutputQueue.isEmpty()) {
          ChannelReadyEvent = NULL;
       }
       else {

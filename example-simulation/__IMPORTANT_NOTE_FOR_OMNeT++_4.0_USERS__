@@ -1,6 +1,0 @@
-In OMNeT++ 4.1, the .ini file parameter "vector-recording-interval" has been
-renamed to "vector-recording-intervals"! This example assumes OMNeT++ 4.1, it
-will therefore fail under version 4.0
-
-To use this example under OMNeT++ 4.0, open simulate-version1.R and replace:
-"vector-recording-intervals" -> "vector-recording-interval"!
