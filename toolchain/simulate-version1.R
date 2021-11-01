@@ -73,8 +73,8 @@ demoWriteParameterSection <- function(filePrefix, iniFile, simulationRun, durati
    cat(sep="", "fragmenterScenario.fragmenter.cellPayloadSize = ", cellPayloadSize, " B\n", file=iniFile)
    cat(sep="", "fragmenterScenario.fragmenter.cellHeaderSize  = ", cellHeaderSize, " B\n", file=iniFile)
    cat(sep="", "fragmenterScenario.intermediateNodeOutputRate = ", intermediateNodeOutputRate, " Bps\n", file=iniFile)
-   cat(sep="", "fragmenterScenario.sourceInterarrivalTime     = exponential(", sourceInterarrivalTime, " s)\n", file=iniFile)
-   cat(sep="", "fragmenterScenario.sourcePayloadSize          = exponential(", sourcePayloadSize, " B)\n", file=iniFile)
+   cat(sep="", "fragmenterScenario.sourceInterarrivalTime     = int(exponential(", sourceInterarrivalTime, " s))\n", file=iniFile)
+   cat(sep="", "fragmenterScenario.sourcePayloadSize          = int(exponential(", sourcePayloadSize, " B))\n", file=iniFile)
    cat(sep="", "fragmenterScenario.sourceHeaderSize           = ", sourceHeaderSize, " B\n", file=iniFile)
    cat(sep="", "\n", file=iniFile)
 }

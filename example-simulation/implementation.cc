@@ -1,4 +1,3 @@
-// $Id$
 // ###########################################################################
 //                   A Very Simple Example Simulation for
 //             Thomas Dreibholz's R Simulation Scripts Collection
@@ -27,6 +26,10 @@
 #include "messages_m.h"
 
 
+// ##########################################################################
+// #### Source Model                                                     ####
+// ##########################################################################
+
 class Source : public cSimpleModule
 {
    public:
@@ -54,6 +57,8 @@ Source::Source() : cSimpleModule()
 {
 }
 
+
+// ###### Initialise ########################################################
 void Source::initialize()
 {
    ID                   = par("id");
@@ -71,12 +76,16 @@ void Source::initialize()
    scheduleAt((simtime_t)par("startupDelay") + (simtime_t)par("interarrivalTime"), NewMessageEvent);
 }
 
+
+// ###### Clean up ##########################################################
 void Source::finish()
 {
    delete InterarrivalStat;
    delete InterarrivalVector;
 }
 
+
+// ###### Handle message ####################################################
 void Source::handleMessage(cMessage* msg)
 {
    if(msg == NewMessageEvent) {
@@ -130,6 +139,9 @@ void Source::handleMessage(cMessage* msg)
 
 
 
+// ##########################################################################
+// #### Sink Model                                                       ####
+// ##########################################################################
 
 class Sink : public cSimpleModule
 {
@@ -152,6 +164,7 @@ class Sink : public cSimpleModule
 Define_Module(Sink);
 
 
+// ###### Initialise ########################################################
 void Sink::initialize()
 {
    DelayStat = new cDoubleHistogram("Packet Delay", 100);
@@ -171,6 +184,8 @@ void Sink::initialize()
    LastMessageTimeStamp = -1.0;
 }
 
+
+// ###### Clean up ##########################################################
 void Sink::finish()
 {
    recordStatistic(LengthStat);
@@ -186,6 +201,8 @@ void Sink::finish()
    delete LossVector;
 }
 
+
+// ###### Handle message ####################################################
 void Sink::handleMessage(cMessage* msg)
 {
    if(dynamic_cast<cDataPacket*>(msg)) {
@@ -228,6 +245,9 @@ void Sink::handleMessage(cMessage* msg)
 
 
 
+// ##########################################################################
+// #### Multiplexer Model                                                ####
+// ##########################################################################
 
 class Multiplexer : public cSimpleModule
 {
@@ -251,6 +271,7 @@ class Multiplexer : public cSimpleModule
 Define_Module(Multiplexer);
 
 
+// ###### Initialise ########################################################
 void Multiplexer::initialize()
 {
    OutputRate     = par("outputRate");
@@ -265,6 +286,8 @@ void Multiplexer::initialize()
    PacketsDroppedVector = new cOutVector("Packets Dropped");
 }
 
+
+// ###### Clean up ##########################################################
 void Multiplexer::finish()
 {
    delete QueueLengthStat;
@@ -273,6 +296,8 @@ void Multiplexer::finish()
    delete PacketsDroppedVector;
 }
 
+
+// ###### Handle message ####################################################
 void Multiplexer::handleMessage(cMessage* msg)
 {
    // ====== Handle a packet =================================================
@@ -339,6 +364,11 @@ void Multiplexer::handleMessage(cMessage* msg)
 }
 
 
+
+// ##########################################################################
+// #### Demultiplexer Model                                              ####
+// ##########################################################################
+
 class Demultiplexer : public cSimpleModule
 {
    virtual void initialize();
@@ -350,11 +380,13 @@ class Demultiplexer : public cSimpleModule
 Define_Module(Demultiplexer);
 
 
+// ###### Initialise ########################################################
 void Demultiplexer::initialize()
 {
 }
 
 
+// ###### Handle message ####################################################
 void Demultiplexer::handleMessage(cMessage* msg)
 {
    cDataPacket* packet = dynamic_cast<cDataPacket*>(msg);
@@ -367,6 +399,10 @@ void Demultiplexer::handleMessage(cMessage* msg)
 }
 
 
+
+// ##########################################################################
+// #### Fragmenter Model                                                 ####
+// ##########################################################################
 
 class Fragmenter : public cSimpleModule
 {
@@ -384,6 +420,7 @@ class Fragmenter : public cSimpleModule
 Define_Module(Fragmenter);
 
 
+// ###### Initialise ########################################################
 void Fragmenter::initialize()
 {
    CellPayloadSize = par("cellPayloadSize");
@@ -393,6 +430,7 @@ void Fragmenter::initialize()
 }
 
 
+// ###### Clean up ##########################################################
 void Fragmenter::finish()
 {
    recordScalar("Total Payload",  TotalPayload);
@@ -401,6 +439,7 @@ void Fragmenter::finish()
 }
 
 
+// ###### Handle message ####################################################
 void Fragmenter::handleMessage(cMessage* msg)
 {
    cDataPacket* packet = dynamic_cast<cDataPacket*>(msg);
@@ -451,6 +490,9 @@ void Fragmenter::handleMessage(cMessage* msg)
 
 
 
+// ##########################################################################
+// #### Dummy Model                                                      ####
+// ##########################################################################
 
 class Dummy : public cSimpleModule
 {
@@ -460,6 +502,7 @@ class Dummy : public cSimpleModule
 Define_Module(Dummy);
 
 
+// ###### Handle message ####################################################
 void Dummy::handleMessage(cMessage* msg)
 {
    send(msg, "outputGate");
@@ -467,6 +510,9 @@ void Dummy::handleMessage(cMessage* msg)
 
 
 
+// ##########################################################################
+// #### Duplicator Model                                                 ####
+// ##########################################################################
 
 class Duplicator : public cSimpleModule
 {
@@ -480,12 +526,14 @@ class Duplicator : public cSimpleModule
 Define_Module(Duplicator);
 
 
+// ###### Initialise ########################################################
 void Duplicator::initialize()
 {
    OutputGates = gateSize("outputGate");
 }
 
 
+// ###### Handle message ####################################################
 void Duplicator::handleMessage(cMessage* msg)
 {
    for(int i = 0;i < OutputGates;i++) {
@@ -496,6 +544,9 @@ void Duplicator::handleMessage(cMessage* msg)
 
 
 
+// ##########################################################################
+// #### Defragmenter Model                                               ####
+// ##########################################################################
 
 class Defragmenter : public cSimpleModule
 {
@@ -512,6 +563,7 @@ class Defragmenter : public cSimpleModule
 Define_Module(Defragmenter);
 
 
+// ###### Initialise ########################################################
 void Defragmenter::initialize()
 {
    InProgress        = false;
@@ -520,6 +572,8 @@ void Defragmenter::initialize()
    PacketLength      = 0;
 }
 
+
+// ###### Handle message ####################################################
 void Defragmenter::handleMessage(cMessage* msg)
 {
    cCell* cell = dynamic_cast<cCell*>(msg);

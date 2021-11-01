@@ -1,4 +1,3 @@
-// $Id: omnetpp.ini 51 2008-01-22 11:23:51Z dreibh $
 // ###########################################################################
 //             Thomas Dreibholz's R Simulation Scripts Collection
 //                  Copyright (C) 2005-2022 Thomas Dreibholz

@@ -1,4 +1,3 @@
-// $Id$
 // ###########################################################################
 //                   A Very Simple Example Simulation for
 //             Thomas Dreibholz's R Simulation Scripts Collection
@@ -35,11 +34,11 @@ simple Source
 {
     parameters:
         volatile double startupDelay     @unit(s);
-        double          headerSize       @unit(B);
-        volatile double payloadSize      @unit(B);
+        int             headerSize       @unit(B);
+        volatile int    payloadSize      @unit(B);
         volatile double interarrivalTime @unit(s);
-        double          id;
-        double          destination;
+        int             id;
+        int             destination;
     gates:
         output outputGate;
 }
@@ -49,7 +48,7 @@ simple Multiplexer
 {
     parameters:
         double outputRate     @unit(Bps);
-        double maxQueueLength @unit(B);
+        int    maxQueueLength @unit(B);
     gates:
         input inputGate[];
         output outputGate;
@@ -75,7 +74,7 @@ simple Sink
 module MultiSink
 {
     parameters:
-        double sinks;
+        int sinks;
         @display("bgb=267,211;bgp=10,10");
     gates:
         input inputGate;
@@ -101,8 +100,8 @@ module MultiSink
 simple Fragmenter
 {
     parameters:
-        double cellPayloadSize @unit(B);
-        double cellHeaderSize  @unit(B);
+        int cellPayloadSize @unit(B);
+        int cellHeaderSize  @unit(B);
     gates:
         input  inputGate;
         output outputGate;
@@ -130,7 +129,7 @@ module IntermediateNode
 {
     parameters:
         double outputRate     @unit(Bps);
-        double maxQueueLength @unit(B);
+        int    maxQueueLength @unit(B);
 
         @display("bgb=140,93;bgp=10,10");
     gates:
@@ -155,10 +154,10 @@ module FragmenterScenario
 {
     parameters:
         double          intermediateNodeOutputRate     @unit(Bps);
-        double          intermediateNodeMaxQueueLength @unit(B);
+        int             intermediateNodeMaxQueueLength @unit(B);
         volatile double sourceInterarrivalTime         @unit(s);
-        volatile double sourcePayloadSize              @unit(B);
-        double          sourceHeaderSize               @unit(B);
+        volatile int    sourcePayloadSize              @unit(B);
+        int             sourceHeaderSize               @unit(B);
     submodules:
         source: Source {
             parameters:
