@@ -697,17 +697,17 @@ createAllSimulationRuns <- function(simulationConfigurations,
                filePrefix <- paste(sep="", runDirectoryName, "/run", simulationRun)
                outputName <- paste(sep="", runDirectoryName, "/run", simulationRun, "-output.txt")
                iniName    <- paste(sep="", runDirectoryName, "/run", simulationRun, "-parameters.ini")
-	       
+
                scalarName <- paste(sep="", runDirectoryName, "/run", simulationRun, "-scalars.sca")
                vectorName <- paste(sep="", runDirectoryName, "/run", simulationRun, "-vectors.vec")
                statusName <- paste(sep="", runDirectoryName, "/run", simulationRun, "-status.txt")
-	       
+
 
                ini <- file(iniName, "w")
                cat(sep="", "# ###### Created on ", date(), " ######\n", file=ini)
                simCreatorWriteHeader(ini, simulationRun, scalarName, vectorName, duration)
                simCreatorWriteParameterSection(filePrefix, ini, simulationRun, duration)
-	       
+
                close(ini)
 
                addRunToSummary(summary, scalarName, vectorName,
