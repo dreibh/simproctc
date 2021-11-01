@@ -1,4 +1,4 @@
 To build these sources with OMNeT++ 5.x, run:
 
-opp_makemake -f -DAUTOIMPORT_OMNETPP_NAMESPACE
+opp_makemake -f
 make

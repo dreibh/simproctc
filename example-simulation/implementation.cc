@@ -26,6 +26,9 @@
 #include "messages_m.h"
 
 
+using namespace omnetpp;
+
+
 // ##########################################################################
 // #### Source Model                                                     ####
 // ##########################################################################
@@ -43,7 +46,7 @@ class Source : public cSimpleModule
    cQueue              OutputQueue;
    cNewMessageEvent*   NewMessageEvent;
    cChannelReadyEvent* ChannelReadyEvent;
-   cDoubleHistogram*   InterarrivalStat;
+   cHistogram*         InterarrivalStat;
    cOutVector*         InterarrivalVector;
    unsigned long int   ID;
    unsigned long int   SeqNumber;
@@ -67,7 +70,7 @@ void Source::initialize()
 
    OutputGate           = gate(findGate("outputGate"));
 
-   InterarrivalStat = new cDoubleHistogram("Interarrival Time Statistics", 100);
+   InterarrivalStat = new cHistogram("Interarrival Time Statistics", 100);
    InterarrivalStat->setRange(0.005,1.005);
    InterarrivalVector = new cOutVector("Interarrival Time");
 
@@ -150,15 +153,15 @@ class Sink : public cSimpleModule
    virtual void handleMessage(cMessage* msg);
 
    private:
-   cDoubleHistogram* DelayStat;
-   cDoubleHistogram* LengthStat;
-   cOutVector*       DelayVector;
-   cOutVector*       LengthVector;
-   cDoubleHistogram* InterarrivalStat;
-   cOutVector*       InterarrivalVector;
-   cOutVector*       LossVector;
-   simtime_t         LastMessageTimeStamp;
-   unsigned int      LastMessageSeqNumber;
+   cHistogram*  DelayStat;
+   cHistogram*  LengthStat;
+   cOutVector*  DelayVector;
+   cOutVector*  LengthVector;
+   cHistogram*  InterarrivalStat;
+   cOutVector*  InterarrivalVector;
+   cOutVector*  LossVector;
+   simtime_t    LastMessageTimeStamp;
+   unsigned int LastMessageSeqNumber;
 };
 
 Define_Module(Sink);
@@ -167,15 +170,14 @@ Define_Module(Sink);
 // ###### Initialise ########################################################
 void Sink::initialize()
 {
-   DelayStat = new cDoubleHistogram("Packet Delay", 100);
+   DelayStat = new cHistogram("Packet Delay", 100);
    DelayStat->setRange(0.005,1.005);
    DelayVector = new cOutVector("Packet Delay");
 
-   LengthStat = new cDoubleHistogram("Packet Length");
-   LengthStat->setRangeAuto(100,1.5);
+   LengthStat = new cHistogram("Packet Length");
    LengthVector = new cOutVector("Packet Length");
 
-   InterarrivalStat = new cDoubleHistogram("Packet Interarrival Time", 100);
+   InterarrivalStat = new cHistogram("Packet Interarrival Time", 100);
    InterarrivalStat->setRange(0.005,1.0005);
    InterarrivalVector = new cOutVector("Packet Interarrival Time");
 
@@ -256,16 +258,16 @@ class Multiplexer : public cSimpleModule
    virtual void handleMessage(cMessage* msg);
 
    private:
-   cQueue            OutputQueue;
-   cGate*            OutputGate;
-   cTimerEvent*      TimerEvent;
-   cDoubleHistogram* QueueLengthStat;
-   cOutVector*       QueueLengthVector;
-   cOutVector*       BytesDroppedVector;
-   cOutVector*       PacketsDroppedVector;
-   double            OutputRate;
-   unsigned int      MaxQueueLength;
-   unsigned int      QueueLength;
+   cQueue       OutputQueue;
+   cGate*       OutputGate;
+   cTimerEvent* TimerEvent;
+   cHistogram*  QueueLengthStat;
+   cOutVector*  QueueLengthVector;
+   cOutVector*  BytesDroppedVector;
+   cOutVector*  PacketsDroppedVector;
+   double       OutputRate;
+   unsigned int MaxQueueLength;
+   unsigned int QueueLength;
 };
 
 Define_Module(Multiplexer);
@@ -279,7 +281,8 @@ void Multiplexer::initialize()
    MaxQueueLength = par("maxQueueLength");
    QueueLength    = 0;
    TimerEvent     = NULL;
-   QueueLengthStat = new cDoubleHistogram("Queue Length Statistics");
+
+   QueueLengthStat = new cHistogram("Queue Length Statistics");
    QueueLengthStat->setRange(0, MaxQueueLength);
    QueueLengthVector    = new cOutVector("Queue Length");
    BytesDroppedVector   = new cOutVector("Bytes Dropped");
