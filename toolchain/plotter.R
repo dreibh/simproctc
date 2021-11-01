@@ -1,6 +1,6 @@
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
-#                  Copyright (C) 2005-2015 Thomas Dreibholz
+#                  Copyright (C) 2005-2019 Thomas Dreibholz
 #
 #               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
 # ###########################################################################
@@ -51,23 +51,11 @@ setGlobalVariable <- function(variable, value)
 
 
 # ====== Safe division ======================================================
-safeDiv <- function(a, b, zeroValue=0)
-{
+safeDiv <- function(a, b, zeroValue=0) {
    c <- a / b
    nullSet <- is.nan(c)
    result <- replace(c, nullSet, zeroValue)
    return(result)
-}
-
-
-# ====== Check whether parameter is a number ================================
-isANumber <- function(str)
-{
-   suppressWarnings(num <- as.integer(str))
-   if(!is.na(num)) {
-      return(TRUE)
-   }
-   return (FALSE)
 }
 
 
@@ -112,16 +100,21 @@ cmGrayScale <- 1
 cmBlackAndWhite <- 0
 getBackgroundColor <- function(index, colorMode = cmColor, pStart = 0)
 {
-   if(colorMode == cmColor) {
-      bgColorSet <- c("#ffffe0", "#ffe0ff", "#e0ffff", "#ffe0e0", "#e0ffe0", "#e0e0ff", "#e0e0c0", "#eeeeee", "#000000")
-   }
-   else if(colorMode == cmGrayScale) {
-      bgColorSet <- c("#ffffff", "#f8f8f8", "#f0f0f0", "#e8e8e8", "#e0e0e0", "#d8d8d8", "#d0d0d0", "#c8c8c8", "#000000")
+   if(pStart >= 0) {
+      if(colorMode == cmColor) {
+         bgColorSet <- c("#ffffe0", "#ffe0ff", "#e0ffff", "#ffe0e0", "#e0ffe0", "#e0e0ff", "#e0e0c0", "#eeeeee", "#000000")
+      }
+      else if(colorMode == cmGrayScale) {
+         bgColorSet <- c("#ffffff", "#f8f8f8", "#f0f0f0", "#e8e8e8", "#e0e0e0", "#d8d8d8", "#d0d0d0", "#c8c8c8", "#000000")
+      }
+      else {
+         bgColorSet <- c("#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff")
+      }
+      bgColor <- bgColorSet[(pStart + (index - 1)) %% length(bgColorSet)]
    }
    else {
-      bgColorSet <- c("#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff")
+      bgColor <- "#ffffff"
    }
-   bgColor <- bgColorSet[(pStart + (index - 1)) %% length(bgColorSet)]
    return(bgColor)
 }
 
@@ -347,6 +340,7 @@ plotstd3 <- function(mainTitle,
                      yAxisTicks           = c(),
                      type                 = "lines",
                      confidence           = 0.95,
+                     pointsSize           = 2,
                      legendPos            = c(0,1),
                      legendSize           = 0.8,
                      lineWidthScaleFactor = 1.0,
@@ -728,7 +722,7 @@ plotstd3 <- function(mainTitle,
                      points(xPlotSet, yPlotMeanSet,
                             col=legendColor, lty=legendStyle, pch=getDot(dotSet, legendDot),
                             lwd=par("cex"),
-                            cex=2*par("cex"), bg="yellow")
+                            cex=pointsSize*par("cex"), bg="yellow")
 
                      legendTexts  <- append(legendTexts,  legendText)
                      legendColors <- append(legendColors, legendColor)
@@ -1249,7 +1243,7 @@ plothist <- function(mainTitle,
                      colorMode        = cmColor,
                      zColorArray      = c(),
                      frameColor       = par("fg"),
-                     legendSize       = 0.8,
+                     legendSize = 0.8,
                      showMinMax       = FALSE,
                      showConfidence   = TRUE,
                      confidence       = 0.95,
