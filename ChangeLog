@@ -1,3 +1,39 @@
+commit bba1b4781bde7b938c5136b9d0631110fd7daa8c
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Nov 2 18:01:07 2021 +0100
+
+    Improved script.
+
+commit 379654dc56bf5e44bbd396e1670028c699a570bd
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Nov 2 17:52:53 2021 +0100
+
+    Added configuration file.
+
+commit 7cc1649e9594e71535b6cf08e8b600b86dda79f7
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Nov 2 13:33:04 2021 +0100
+
+    Minor update for sendxmpp call, to enforce usage of TLS.
+
+commit ff53edb86027bbc4c7caf9df62484674c8ee495e
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Nov 2 12:43:52 2021 +0100
+
+    Another update for OMNeT++ 6.0 compatibility.
+
+commit d2dec14bc28e7f57cbd686b3d3807007c67270c7
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Nov 2 12:39:38 2021 +0100
+
+    Minor update to work with OMNeT++ 6.0.
+
+commit 97941396266ba62415e4311ae3a8fc45d703cb9a
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Nov 2 11:05:15 2021 +0100
+
+    Added up-to-date ChangeLog.
+
 commit 1020402c25ab02021e8a61e86b5592aef71d5fa3
 Author: Thomas Dreibholz <dreibh@simula.no>
 Date:   Tue Nov 2 11:05:06 2021 +0100
