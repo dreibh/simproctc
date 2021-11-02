@@ -1,0 +1,49 @@
+#!/bin/sh
+# ###########################################################################
+#             Thomas Dreibholz's R Simulation Scripts Collection
+#                  Copyright (C) 2005-2022 Thomas Dreibholz
+#
+#               Author: Thomas Dreibholz, dreibh@iem.uni-due.de
+# ###########################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Contact: dreibh@iem.uni-due.de
+
+
+skipSigning=0
+if [ $# -gt 0 ] ; then
+   if [ "$1" = "-skip-signing" ] ; then
+      skipSigning=1
+   else
+      echo >&2 "Usage: $0 [-skip-signing]"
+      exit 1
+   fi
+fi
+
+PACKAGE="`cat version | awk '{ print $1 }'`"
+VERSION="`cat version | awk '{ print $2 }'`"
+CURRENT_BRANCH=`git branch --show-current`
+
+
+echo "Archiving branch $CURRENT_BRANCH into $PACKAGE-$VERSION.tar.gz ..."
+rm -f $PACKAGE-$VERSION.tar.gz $PACKAGE-$VERSION.tar.gz.asc
+git archive --format=tar.gz -o $PACKAGE-$VERSION.tar.gz --prefix=$PACKAGE-$VERSION/ $CURRENT_BRANCH
+
+if [ $skipSigning -eq 0 ] ; then
+   echo "Signing archive ..."
+   gpg -sab  $PACKAGE-$VERSION.tar.gz
+fi
+   
+du -sk  $PACKAGE-$VERSION.tar.gz*
