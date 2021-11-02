@@ -37,13 +37,15 @@ VERSION="`cat version | awk '{ print $2 }'`"
 CURRENT_BRANCH=`git branch --show-current`
 
 
-echo "Archiving branch $CURRENT_BRANCH into $PACKAGE-$VERSION.tar.gz ..."
-rm -f $PACKAGE-$VERSION.tar.gz $PACKAGE-$VERSION.tar.gz.asc
-git archive --format=tar.gz -o $PACKAGE-$VERSION.tar.gz --prefix=$PACKAGE-$VERSION/ $CURRENT_BRANCH
+echo "Archiving branch $CURRENT_BRANCH into $PACKAGE-$VERSION.tar.xz ..."
+rm -f $PACKAGE-$VERSION.tar.xz $PACKAGE-$VERSION.tar.xz.asc
+
+git config tar.tar.xz.command "xz -c"   # Enable .tar.xz output!
+git archive --format=tar.xz -o $PACKAGE-$VERSION.tar.xz --prefix=$PACKAGE-$VERSION/ $CURRENT_BRANCH
 
 if [ $skipSigning -eq 0 ] ; then
    echo "Signing archive ..."
-   gpg -sab  $PACKAGE-$VERSION.tar.gz
+   gpg -sab  $PACKAGE-$VERSION.tar.xz
 fi
    
-du -sk  $PACKAGE-$VERSION.tar.gz*
+du -sk  $PACKAGE-$VERSION.tar.xz*
