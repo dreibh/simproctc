@@ -1,976 +1,1041 @@
-------------------------------------------------------------------------
-r982 | dreibh | 2011-09-01 11:17:41 +0200 (Thu, 01 Sep 2011) | 2 lines
-Changed paths:
-   M /trunk/simproctc/toolchain/plotter.R
-   A /trunk/simproctc/toolchain/purge-simulation
-   A /trunk/simproctc/toolchain/rename-simulation
-   M /trunk/simproctc/toolchain/simulation.R
-   A /trunk/simproctc/toolchain/stop-simulation
-   M /trunk/simproctc/toolchain/tools/inputfile.cc
-
-Updated scripts to latest versions.
-
-------------------------------------------------------------------------
-r826 | dreibh | 2011-06-28 17:38:31 +0200 (Tue, 28 Jun 2011) | 2 lines
-Changed paths:
-   M /trunk/simproctc/toolchain/plotter.R
-
-Updated plotter.R.
-
-------------------------------------------------------------------------
-r794 | dreibh | 2011-02-25 08:12:38 +0100 (Fri, 25 Feb 2011) | 2 lines
-Changed paths:
-   M /trunk/simproctc/toolchain/plotter.R
-
-Plotting improvements: stripping leading and trailing spaces from labels.
-
-------------------------------------------------------------------------
-r790 | dreibh | 2011-02-24 12:53:22 +0100 (Thu, 24 Feb 2011) | 4 lines
-Changed paths:
-   M /trunk/simproctc/toolchain/plotter.R
-   M /trunk/simproctc/toolchain/simulation.R
-
-^K  I    svn-commit.3.tmp (Ge?\195?\164ndert)                                                                                                               Row 1    Col 44  12:52  Ctrl-K H for help
-- Added cross-check for parameter duplicates.
-- Plotting improvements.
-
-------------------------------------------------------------------------
-r783 | dreibh | 2011-02-19 22:06:26 +0100 (Sat, 19 Feb 2011) | 2 lines
-Changed paths:
-   M /trunk/simproctc/toolchain/plotter.R
-   M /trunk/simproctc/toolchain/simulation.R
-
-Updated simulation and plotting scripts
-
-------------------------------------------------------------------------
-r756 | dreibh | 2011-02-17 09:46:25 +0100 (Thu, 17 Feb 2011) | 2 lines
-Changed paths:
-   M /trunk/simproctc/toolchain/simulation.R
-
-Adapted simulation script to create shortcut links to simulation directories. Avoids to manually retrieve SHA1 sum when updating parametrisation.
-
-------------------------------------------------------------------------
-r745 | dreibh | 2011-02-11 23:35:16 +0100 (Fri, 11 Feb 2011) | 2 lines
-Changed paths:
-   M /trunk/inet-toolchain/simulate-version5.R
-   M /trunk/simproctc/toolchain/simulate-version1.R
-
-Fixed comment: now using correct directory name.
-
-------------------------------------------------------------------------
-r739 | dreibh | 2011-02-09 22:41:51 +0100 (Wed, 09 Feb 2011) | 2 lines
-Changed paths:
-   M /trunk/inet-toolchain/get-libs
-   M /trunk/inet-toolchain/make-environment
-   M /trunk/simproctc/toolchain/get-libs
-   M /trunk/simproctc/toolchain/make-environment
-
-Updated make-environment and get-libs to correctly handle custom libraries.
-
-------------------------------------------------------------------------
-r689 | dreibh | 2010-12-03 15:45:23 +0100 (Fri, 03 Dec 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/toolchain/simulation.R
-
-Fixed missing dependency for getrelativepath.
-
-------------------------------------------------------------------------
-r688 | dreibh | 2010-12-03 15:21:32 +0100 (Fri, 03 Dec 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/package-simproctc
-
-Updated SVN URL.
-
-------------------------------------------------------------------------
-r687 | dreibh | 2010-12-03 15:20:25 +0100 (Fri, 03 Dec 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/package-simproctc
-   M /trunk/simproctc/toolchain/test1.R
-
-Updated packaging.
-
-------------------------------------------------------------------------
-r685 | dreibh | 2010-12-01 16:18:37 +0100 (Wed, 01 Dec 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/toolchain/simulation.R
-
-More verbose comments in generated Makefile -> makes testing and debugging easier.
-
-------------------------------------------------------------------------
-r680 | dreibh | 2010-11-26 12:57:12 +0100 (Fri, 26 Nov 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/toolchain/plotter.R
-
-Small bugfix in pSet handling.
-
-------------------------------------------------------------------------
-r673 | dreibh | 2010-11-23 18:49:51 +0100 (Tue, 23 Nov 2010) | 3 lines
-Changed paths:
-   M /trunk/simproctc/toolchain/simulation.R
-
-^K  I    svn-commit.tmp (Ge?\195?\164ndert)                                                                                                       Row 1    Col 124  6:48  Ctrl-K H for help
-Write parameter settings as well as scalar and vector file name above each Makefile entry => enhanced Makefile readability.
-
-------------------------------------------------------------------------
-r670 | dreibh | 2010-11-23 10:41:51 +0100 (Tue, 23 Nov 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/package-simproctc
-   M /trunk/simproctc/toolchain/simulate-version1.R
-   A /trunk/simproctc/toolchain/test1.R
-
-SimProcTC example now working again.
-
-------------------------------------------------------------------------
-r669 | dreibh | 2010-11-22 10:23:24 +0100 (Mon, 22 Nov 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/TODO
-   D /trunk/simproctc/archive-simulation
-   D /trunk/simproctc/archive-simulation-completely
-   D /trunk/simproctc/demo
-   D /trunk/simproctc/demo4
-   A /trunk/simproctc/example-simulation (from /trunk/simproctc/demo4:668)
-   D /trunk/simproctc/example-simulation/make-links
-   D /trunk/simproctc/example-simulation/plot-test1.R
-   D /trunk/simproctc/example-simulation/simulate-version1.R
-   D /trunk/simproctc/example-simulation/simulation.config-stage1
-   D /trunk/simproctc/get-libs
-   D /trunk/simproctc/get-neds
-   D /trunk/simproctc/hashfunctions.R
-   D /trunk/simproctc/make-environment
-   R /trunk/simproctc/package-simproctc
-   D /trunk/simproctc/perform-run
-   D /trunk/simproctc/plotter.R
-   D /trunk/simproctc/simulation.R
-   D /trunk/simproctc/ssdistribute
-   D /trunk/simproctc/ssrun
-   A /trunk/simproctc/toolchain
-   A /trunk/simproctc/toolchain/archive-simulation (from /trunk/simproctc/archive-simulation:668)
-   A /trunk/simproctc/toolchain/archive-simulation-completely (from /trunk/simproctc/archive-simulation-completely:668)
-   A /trunk/simproctc/toolchain/get-libs (from /trunk/simproctc/get-libs:668)
-   A /trunk/simproctc/toolchain/get-neds (from /trunk/simproctc/get-neds:668)
-   A /trunk/simproctc/toolchain/hashfunctions.R (from /trunk/simproctc/hashfunctions.R:668)
-   A /trunk/simproctc/toolchain/make-environment (from /trunk/simproctc/make-environment:668)
-   A /trunk/simproctc/toolchain/perform-run (from /trunk/simproctc/perform-run:668)
-   A /trunk/simproctc/toolchain/plot-test1.R (from /trunk/simproctc/demo4/plot-test1.R:668)
-   A /trunk/simproctc/toolchain/plotter.R (from /trunk/simproctc/plotter.R:668)
-   A /trunk/simproctc/toolchain/simulate-version1.R (from /trunk/simproctc/demo4/simulate-version1.R:668)
-   A /trunk/simproctc/toolchain/simulation.R (from /trunk/simproctc/simulation.R:668)
-   A /trunk/simproctc/toolchain/simulation.config-stage1 (from /trunk/simproctc/demo4/simulation.config-stage1:668)
-   A /trunk/simproctc/toolchain/ssdistribute (from /trunk/simproctc/ssdistribute:668)
-   A /trunk/simproctc/toolchain/ssrun (from /trunk/simproctc/ssrun:668)
-   A /trunk/simproctc/toolchain/tools (from /trunk/simproctc/tools:668)
-   D /trunk/simproctc/tools
-
-Restructured simproctc directory and removed OMNeT++ 3.x example.
-
-------------------------------------------------------------------------
-r662 | dreibh | 2010-11-20 16:29:39 +0100 (Sat, 20 Nov 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/tools/createsummary.cc
-
-Added quiet mode to createsummary.
-
-------------------------------------------------------------------------
-r653 | dreibh | 2010-11-18 12:46:44 +0100 (Thu, 18 Nov 2010) | 1 line
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-Skip sets, if they are c(NA).
-------------------------------------------------------------------------
-r652 | dreibh | 2010-11-18 12:13:42 +0100 (Thu, 18 Nov 2010) | 1 line
-Changed paths:
-   M /trunk/simproctc/ssrun
-
-Bugfix: runX-status.txt may not be compressed.
-------------------------------------------------------------------------
-r650 | dreibh | 2010-11-18 11:43:57 +0100 (Thu, 18 Nov 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-Plotting improvements.
-
-------------------------------------------------------------------------
-r649 | dreibh | 2010-11-18 11:43:26 +0100 (Thu, 18 Nov 2010) | 1 line
-Changed paths:
-   M /trunk/simproctc/simulation.R
-
-simulation.R: Fixed problem with make -jN calls within generated Makefile. Error messages of sendxmpp are now forwarded to /dev/null since they are confusing when there is no Internet access.
-------------------------------------------------------------------------
-r647 | dreibh | 2010-11-18 11:41:22 +0100 (Thu, 18 Nov 2010) | 1 line
-Changed paths:
-   M /trunk/simproctc/make-environment
-
-make-environment now uses chrpath to get rid of absolute paths in binary sent to remote processing nodes.
-------------------------------------------------------------------------
-r645 | dreibh | 2010-11-18 11:40:19 +0100 (Thu, 18 Nov 2010) | 1 line
-Changed paths:
-   M /trunk/simproctc/perform-run
-
-Improved printing of errors in perform-run.
-------------------------------------------------------------------------
-r643 | dreibh | 2010-11-18 11:39:27 +0100 (Thu, 18 Nov 2010) | 1 line
-Changed paths:
-   M /trunk/simproctc/ssdistribute
-
-Improved ssdistribute with better error message printing. Needs rsplib-2.7.6 scriptingclient to also download error logs of failed run.
-------------------------------------------------------------------------
-r641 | dreibh | 2010-11-18 11:35:37 +0100 (Thu, 18 Nov 2010) | 1 line
-Changed paths:
-   M /trunk/simproctc/ssrun
-
-ssrun has to bzip2-compress logs in case of error. Otherwise, they will not be transferred back to the client.
-------------------------------------------------------------------------
-r569 | dreibh | 2010-09-24 22:07:50 +0200 (Fri, 24 Sep 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/plotter.R
-   M /trunk/simproctc/simulation.R
-
-Improvements for handling of values containing quotes.
-
-------------------------------------------------------------------------
-r528 | dreibh | 2010-09-10 09:31:36 +0200 (Fri, 10 Sep 2010) | 3 lines
-Changed paths:
-   M /trunk/simproctc/plotter.R
-   M /trunk/simproctc/simulation.R
-
-- Plotting improvements.
-- Use scalar splitting option of createsummary by default.
-
-------------------------------------------------------------------------
-r527 | dreibh | 2010-09-10 09:29:15 +0200 (Fri, 10 Sep 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/tools/Makefile
-   M /trunk/simproctc/tools/createsummary.cc
-   M /trunk/simproctc/tools/test1.sca
-   M /trunk/simproctc/tools/test2.sca
-
-Added scalar splitting to createsummary.
-
-------------------------------------------------------------------------
-r513 | dreibh | 2010-09-09 09:43:46 +0200 (Thu, 09 Sep 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-Plotting improvements.
-
-------------------------------------------------------------------------
-r500 | dreibh | 2010-09-07 09:50:49 +0200 (Tue, 07 Sep 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-Improved a/b/p plotting in plotter.R.
-
-------------------------------------------------------------------------
-r494 | dreibh | 2010-09-01 09:13:11 +0200 (Wed, 01 Sep 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-Updated plotter.R to print backup commands for input files.
-
-------------------------------------------------------------------------
-r477 | dreibh | 2010-08-02 12:56:39 +0200 (Mon, 02 Aug 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/tools/inputfile.cc
-   M /trunk/simproctc/tools/inputfile.h
-
-Fixed buffer overflow in InputFile.
-
-------------------------------------------------------------------------
-r476 | dreibh | 2010-08-02 12:56:15 +0200 (Mon, 02 Aug 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/ssdistribute
-
-Updated ssdistribute to use installed scriptingclient (in /usr/bin).
-
-------------------------------------------------------------------------
-r469 | dreibh | 2010-07-26 14:52:21 +0200 (Mon, 26 Jul 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/tools/createsummary.cc
-
-Fixed problem with histogram values (objectName is overwritten by handleScalar(), copy is needed).
-
-------------------------------------------------------------------------
-r467 | dreibh | 2010-07-26 09:15:07 +0200 (Mon, 26 Jul 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/ChangeLog
-
-Updated ChangeLog.
-
-------------------------------------------------------------------------
-r466 | dreibh | 2010-07-26 09:14:46 +0200 (Mon, 26 Jul 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/simulation.R
-
-Improved output of "tail" command line to view simulation progress: filter out looking for another PE.
-
-------------------------------------------------------------------------
-r465 | dreibh | 2010-07-23 07:57:45 +0200 (Fri, 23 Jul 2010) | 4 lines
-Changed paths:
-   M /trunk/simproctc/tools/Makefile
-   M /trunk/simproctc/tools/combinesummaries.cc
-   M /trunk/simproctc/tools/createsummary.cc
-   A /trunk/simproctc/tools/ev-test1
-   M /trunk/simproctc/tools/extractvectors.cc
-   M /trunk/simproctc/tools/inputfile.cc
-   M /trunk/simproctc/tools/outputfile.cc
-   M /trunk/simproctc/tools/outputfile.h
-
-- Updated extractvectors to use InputFile and OutputFile classes for I/O.
-- Code clean-ups for createsummary and combinesummaries.
-- Added test for extractvectors.
-
-------------------------------------------------------------------------
-r463 | dreibh | 2010-07-22 09:31:04 +0200 (Thu, 22 Jul 2010) | 4 lines
-Changed paths:
-   M /trunk/simproctc/tools/Makefile
-   A /trunk/simproctc/tools/cb-test1
-   M /trunk/simproctc/tools/combinesummaries.cc
-   M /trunk/simproctc/tools/createsummary.cc
-   M /trunk/simproctc/tools/cs-test1
-   A /trunk/simproctc/tools/input.data
-   A /trunk/simproctc/tools/input.data.bz2
-   A /trunk/simproctc/tools/scalars.sca
-
-- Updated createsummary to handle statistics (e.g. histogram) and extract their fields (e.g. stddev, mean, min, max, etc.).
-- Updated combinesummaries to use InputFile and OutputFile for I/O.
-- Added example files.
-
-------------------------------------------------------------------------
-r462 | dreibh | 2010-07-22 09:29:45 +0200 (Thu, 22 Jul 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/demo4/implementation.cc
-   M /trunk/simproctc/demo4/plot-test1.R
-   M /trunk/simproctc/demo4/simulate-version1.R
-   M /trunk/simproctc/demo4/test1.R
-
-Modified example to write histogram into scalars file instead of explicitly creating scalars. Updated createsummary can handle histogram statistics and convert fields to values.
-
-------------------------------------------------------------------------
-r461 | dreibh | 2010-07-21 19:52:53 +0200 (Wed, 21 Jul 2010) | 3 lines
-Changed paths:
-   M /trunk/simproctc/tools/Makefile
-   M /trunk/simproctc/tools/createsummary.cc
-   A /trunk/simproctc/tools/inputfile.cc
-   A /trunk/simproctc/tools/inputfile.h
-   A /trunk/simproctc/tools/outputfile.cc
-   A /trunk/simproctc/tools/outputfile.h
-   M /trunk/simproctc/tools/runtimeestimator.cc
-
-- Improvements to CreateSummary: plain/BZip2 file I/O is now separated into classes InputFile and OutputFile.
-- Various code clean-ups: usage of std::string instead of buffers, etc..
-
-------------------------------------------------------------------------
-r457 | dreibh | 2010-07-21 12:55:53 +0200 (Wed, 21 Jul 2010) | 2 lines
-Changed paths:
-   A /trunk/simproctc/ChangeLog
-
-Added ChangeLog.
-
-------------------------------------------------------------------------
-r456 | dreibh | 2010-07-21 12:47:42 +0200 (Wed, 21 Jul 2010) | 3 lines
-Changed paths:
-   M /trunk/simproctc/demo4/test1.R
-   M /trunk/simproctc/ssdistribute
-
-- Added skipping example.
-- Updated ssdistribute with some comments. Again using gzip to compress input file.
-
-------------------------------------------------------------------------
-r450 | dreibh | 2010-07-07 12:18:01 +0200 (Wed, 07 Jul 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/ssdistribute
-   M /trunk/simproctc/ssrun
-
-Modified scripts to use environment-caching version of the scripting service.
-
-------------------------------------------------------------------------
-r448 | dreibh | 2010-07-04 14:52:04 +0200 (Sun, 04 Jul 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/ssrun
-
-Support for FreeBSD processing the simulation runs. Requires: "kldload linux"!
-
-------------------------------------------------------------------------
-r447 | dreibh | 2010-07-04 14:50:23 +0200 (Sun, 04 Jul 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/make-environment
-
-make-environment now creates information about the used operating system and machine type.
-
-------------------------------------------------------------------------
-r444 | dreibh | 2010-07-03 18:57:34 +0200 (Sat, 03 Jul 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/ssdistribute
-
-ssdistribute has to use "-p" instead "--tempdir", in order to be compatible to older systems.
-
-------------------------------------------------------------------------
-r442 | dreibh | 2010-07-03 18:40:08 +0200 (Sat, 03 Jul 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/ssdistribute
-
-Replaced GZipped Tar archive of work package by plain Tar => signification overhead reduction for distributor to large pools.
-
-------------------------------------------------------------------------
-r440 | dreibh | 2010-07-03 18:22:48 +0200 (Sat, 03 Jul 2010) | 4 lines
-Changed paths:
-   M /trunk/simproctc/TODO
-   M /trunk/simproctc/simulation.R
-   M /trunk/simproctc/ssdistribute
-
-- Create temp directories within simulation directory, not in /tmp.
-- Clean up temp directory before and after simulation runs
- => avoids problems with remaining garbage when simulation is aborted.
-
-------------------------------------------------------------------------
-r438 | dreibh | 2010-07-03 17:13:13 +0200 (Sat, 03 Jul 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/ssdistribute
-   M /trunk/simproctc/ssrun
-
-Improved ssdistribute and ssrun.
-
-------------------------------------------------------------------------
-r437 | dreibh | 2010-07-02 23:27:32 +0200 (Fri, 02 Jul 2010) | 1 line
-Changed paths:
-   A /trunk/simproctc/TODO
-
-
-------------------------------------------------------------------------
-r429 | dreibh | 2010-07-02 21:02:12 +0200 (Fri, 02 Jul 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/demo4/omnetpp.ini
-   M /trunk/simproctc/demo4/scenario.ned
-   M /trunk/simproctc/demo4/simulate-version1.R
-
-Improved demo4 example.
-
-------------------------------------------------------------------------
-r428 | dreibh | 2010-07-02 09:35:02 +0200 (Fri, 02 Jul 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/demo/implementation.cc
-   M /trunk/simproctc/docs/Handbook.txt
-   A /trunk/simproctc/get-neds
-   M /trunk/simproctc/hashfunctions.R
-   M /trunk/simproctc/package-simproctc
-
-Version update.
-
-------------------------------------------------------------------------
-r427 | dreibh | 2010-07-02 09:34:18 +0200 (Fri, 02 Jul 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/tools/Makefile
-   M /trunk/simproctc/tools/createsummary.cc
-   M /trunk/simproctc/tools/runtimeestimator.cc
-
-Updated createsummary.cc to extended format of OMNeT++ 4.1.
-
-------------------------------------------------------------------------
-r426 | dreibh | 2010-07-02 09:33:49 +0200 (Fri, 02 Jul 2010) | 2 lines
-Changed paths:
-   A /trunk/simproctc/demo4/__IMPORTANT_NOTE_FOR_OMNeT++_4.0_USERS__
-   M /trunk/simproctc/demo4/implementation.cc
-   M /trunk/simproctc/demo4/messages.msg
-   M /trunk/simproctc/demo4/plot-test1.R
-   M /trunk/simproctc/demo4/simulate-version1.R
-   M /trunk/simproctc/demo4/simulation.config-stage1
-   M /trunk/simproctc/demo4/test1.R
-
-Updated demo for OMNeT++ 4.1.
-
-------------------------------------------------------------------------
-r408 | dreibh | 2010-06-16 15:58:05 +0200 (Wed, 16 Jun 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-Added curve numbering feature to plotter.R.
-
-------------------------------------------------------------------------
-r407 | dreibh | 2010-06-16 15:57:34 +0200 (Wed, 16 Jun 2010) | 3 lines
-Changed paths:
-   M /trunk/simproctc/tools/createsummary.cc
-
-- Scalar combination bugfix in createsummary.cc.
-- Fixed memory deallocation problem in createsummary.cc.
-
-------------------------------------------------------------------------
-r404 | dreibh | 2010-06-16 15:20:11 +0200 (Wed, 16 Jun 2010) | 2 lines
-Changed paths:
-   A /trunk/simproctc/tools/extractvectors.cc
-   A /trunk/simproctc/tools/getrelativepath.cc
-
-Added extractvectors and getrelativepath programs.
-
-------------------------------------------------------------------------
-r403 | dreibh | 2010-06-16 15:18:30 +0200 (Wed, 16 Jun 2010) | 4 lines
-Changed paths:
-   M /trunk/simproctc/tools/Makefile
-   M /trunk/simproctc/tools/createsummary.cc
-   A /trunk/simproctc/tools/cs-test1
-   A /trunk/simproctc/tools/test3.sca
-
-- Added scalar combination feature to createsummary.
-Example: "Stream #1", "Stream #2" => Output of "Stream" with table row containing 1 or 2.
-- Fixed memory leak in createsummary.
-
-------------------------------------------------------------------------
-r395 | dreibh | 2010-06-02 17:38:13 +0200 (Wed, 02 Jun 2010) | 1 line
-Changed paths:
-   M /trunk/simproctc/tools/Makefile
-
-
-------------------------------------------------------------------------
-r390 | dreibh | 2010-05-28 20:17:23 +0200 (Fri, 28 May 2010) | 2 lines
-Changed paths:
-   M /trunk/simproctc/archive-simulation
-   M /trunk/simproctc/archive-simulation-completely
-   M /trunk/simproctc/demo4/implementation.cc
-   M /trunk/simproctc/demo4/omnetpp.ini
-   M /trunk/simproctc/demo4/scenario.ned
-   M /trunk/simproctc/demo4/simulate-version1.R
-   A /trunk/simproctc/docs/OMNeT++Workshop2008-final.pdf (from /trunk/simproctc/docs/OMNeTWorkshop2008-final.pdf:388)
-   A /trunk/simproctc/docs/OMNeT++Workshop2009-final.pdf
-   D /trunk/simproctc/docs/OMNeTWorkshop2008-final.pdf
-   M /trunk/simproctc/get-libs
-   M /trunk/simproctc/make-environment
-   M /trunk/simproctc/perform-run
-   M /trunk/simproctc/plotter.R
-   M /trunk/simproctc/simulation.R
-   M /trunk/simproctc/ssdistribute
-   M /trunk/simproctc/ssrun
-   M /trunk/simproctc/tools/Makefile
-   M /trunk/simproctc/tools/combinesummaries.cc
-   M /trunk/simproctc/tools/createsummary.cc
-   M /trunk/simproctc/tools/debug.h
-   M /trunk/simproctc/tools/doublelinkedringlist.h
-   M /trunk/simproctc/tools/redblacktree.h
-   M /trunk/simproctc/tools/redblacktree_impl.h
-   M /trunk/simproctc/tools/runtimeestimator.cc
-   M /trunk/simproctc/tools/simpleredblacktree.h
-
-Version updates.
-
-------------------------------------------------------------------------
-r204 | dreibh | 2009-11-15 00:00:32 +0100 (Sun, 15 Nov 2009) | 1 line
-Changed paths:
-   A /trunk/simproctc/archive-simulation
-   A /trunk/simproctc/archive-simulation-completely
-   M /trunk/simproctc/plotter.R
-   M /trunk/simproctc/simulation.R
-
-
-------------------------------------------------------------------------
-r143 | dreibh | 2009-09-23 10:05:48 +0200 (Wed, 23 Sep 2009) | 1 line
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-
-------------------------------------------------------------------------
-r136 | dreibh | 2009-08-05 22:47:02 +0200 (Wed, 05 Aug 2009) | 2 lines
-Changed paths:
-   M /trunk/simproctc/simulation.R
-
-Must use "-l" for "make". Otherwise, the number of jobs is limited by system load.
-
-------------------------------------------------------------------------
-r129 | dreibh | 2009-07-11 18:14:02 +0200 (Sat, 11 Jul 2009) | 2 lines
-Changed paths:
-   M /trunk/inet-toolchain/computation-pool.R
-   M /trunk/inet-toolchain/omnetpp-default.ini
-   M /trunk/inet-toolchain/simulate-version1.R
-   M /trunk/inet-toolchain/test1.R
-   M /trunk/simproctc/tools/combinesummaries.cc
-
-Fixed buffer overflow in combinesummaries.
-
-------------------------------------------------------------------------
-r128 | dreibh | 2009-06-23 16:23:01 +0200 (Tue, 23 Jun 2009) | 1 line
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-
-------------------------------------------------------------------------
-r127 | dreibh | 2009-06-23 16:14:29 +0200 (Tue, 23 Jun 2009) | 1 line
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-
-------------------------------------------------------------------------
-r126 | dreibh | 2009-06-23 16:13:36 +0200 (Tue, 23 Jun 2009) | 1 line
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-
-------------------------------------------------------------------------
-r125 | dreibh | 2009-06-23 15:48:15 +0200 (Tue, 23 Jun 2009) | 1 line
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-
-------------------------------------------------------------------------
-r124 | dreibh | 2009-06-23 15:25:43 +0200 (Tue, 23 Jun 2009) | 3 lines
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-Fixed plotter.R: When there are no A/B levels, do not make A/B layout. Fixed problem with reduced cex.
-
-
-------------------------------------------------------------------------
-r123 | dreibh | 2009-05-07 09:32:40 +0200 (Thu, 07 May 2009) | 1 line
-Changed paths:
-   M /trunk/simproctc/perform-run
-   M /trunk/simproctc/ssrun
-
-
-------------------------------------------------------------------------
-r121 | dreibh | 2009-05-04 09:33:09 +0200 (Mon, 04 May 2009) | 1 line
-Changed paths:
-   M /trunk/simproctc/demo4/make-links
-   M /trunk/simproctc/demo4/simulate-version1.R
-   M /trunk/simproctc/demo4/test1.R
-   M /trunk/simproctc/get-libs
-   D /trunk/simproctc/get-neds
-   M /trunk/simproctc/hashfunctions.R
-   A /trunk/simproctc/make-environment
-   A /trunk/simproctc/perform-run
-   M /trunk/simproctc/simulation.R
-   M /trunk/simproctc/ssdistribute
-   M /trunk/simproctc/ssrun
-
-
-------------------------------------------------------------------------
-r112 | dreibh | 2009-03-07 16:46:40 +0100 (Sat, 07 Mar 2009) | 1 line
-Changed paths:
-   M /trunk/simproctc/demo4/test1.R
-   M /trunk/simproctc/simulation.R
-
-
-------------------------------------------------------------------------
-r111 | dreibh | 2009-03-05 11:49:30 +0100 (Thu, 05 Mar 2009) | 1 line
-Changed paths:
-   M /trunk/simproctc/demo4/simulate-version1.R
-   M /trunk/simproctc/demo4/test1.R
-   M /trunk/simproctc/simulation.R
-   M /trunk/simproctc/ssrun
-
-
-------------------------------------------------------------------------
-r110 | dreibh | 2009-01-15 14:08:12 +0100 (Thu, 15 Jan 2009) | 2 lines
-Changed paths:
-   M /trunk/simproctc/tools/Makefile
-   M /trunk/simproctc/tools/combinesummaries.cc
-   M /trunk/simproctc/tools/createsummary.cc
-   M /trunk/simproctc/tools/debug.h
-   M /trunk/simproctc/tools/doublelinkedringlist.c
-   M /trunk/simproctc/tools/doublelinkedringlist.h
-   M /trunk/simproctc/tools/redblacktree.h
-   M /trunk/simproctc/tools/redblacktree_impl.h
-   M /trunk/simproctc/tools/runtimeestimator.cc
-   M /trunk/simproctc/tools/simpleredblacktree.c
-   M /trunk/simproctc/tools/simpleredblacktree.h
-
-Tools update.
-
-------------------------------------------------------------------------
-r109 | dreibh | 2008-11-27 12:13:55 +0100 (Thu, 27 Nov 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/ssdistribute
-
-
-------------------------------------------------------------------------
-r108 | dreibh | 2008-11-13 11:34:08 +0100 (Thu, 13 Nov 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/demo4/simulate-version1.R
-   M /trunk/simproctc/demo4/test1.R
-
-
-------------------------------------------------------------------------
-r107 | dreibh | 2008-11-11 22:38:23 +0100 (Tue, 11 Nov 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/demo/scenario.ned
-   M /trunk/simproctc/demo4/implementation.cc
-   M /trunk/simproctc/demo4/messages.msg
-   M /trunk/simproctc/demo4/omnetpp.ini
-   M /trunk/simproctc/demo4/scenario.ned
-   M /trunk/simproctc/demo4/simulate-version1.R
-
-
-------------------------------------------------------------------------
-r106 | dreibh | 2008-11-07 14:16:30 +0100 (Fri, 07 Nov 2008) | 2 lines
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-Fixed bSet label bug in plotter.R.
-
-------------------------------------------------------------------------
-r105 | dreibh | 2008-11-06 19:07:36 +0100 (Thu, 06 Nov 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/plotter.R
-
-
-------------------------------------------------------------------------
-r104 | dreibh | 2008-10-23 11:54:26 +0200 (Thu, 23 Oct 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/demo/simulate-version1.R
-   M /trunk/simproctc/demo/test1.R
-   A /trunk/simproctc/demo4 (from /trunk/simproctc/demo:102)
-   M /trunk/simproctc/demo4/implementation.cc
-   M /trunk/simproctc/demo4/messages.msg
-   M /trunk/simproctc/demo4/omnetpp.ini
-   M /trunk/simproctc/demo4/scenario.ned
-   M /trunk/simproctc/demo4/simulate-version1.R
-   M /trunk/simproctc/demo4/test1.R
-   M /trunk/simproctc/plotter.R
-
-
-------------------------------------------------------------------------
-r103 | dreibh | 2008-10-22 18:10:47 +0200 (Wed, 22 Oct 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/tools/createsummary.cc
-
-
-------------------------------------------------------------------------
-r102 | dreibh | 2008-08-24 15:51:30 +0200 (Sun, 24 Aug 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/get-libs
-   M /trunk/simproctc/get-neds
-   M /trunk/simproctc/hashfunctions.R
-   M /trunk/simproctc/package-simproctc
-   M /trunk/simproctc/plotter.R
-   M /trunk/simproctc/simulation.R
-   M /trunk/simproctc/ssdistribute
-   M /trunk/simproctc/ssrun
-
-
-------------------------------------------------------------------------
-r101 | dreibh | 2008-08-23 16:16:37 +0200 (Sat, 23 Aug 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/simulation.R
-   M /trunk/simproctc/tools/createsummary.cc
-
-
-------------------------------------------------------------------------
-r100 | dreibh | 2008-08-22 13:18:28 +0200 (Fri, 22 Aug 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/simulation.R
-
-
-------------------------------------------------------------------------
-r99 | dreibh | 2008-08-22 12:34:16 +0200 (Fri, 22 Aug 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/plotter.R
-   M /trunk/simproctc/simulation.R
-
-
-------------------------------------------------------------------------
-r98 | dreibh | 2008-08-20 11:56:52 +0200 (Wed, 20 Aug 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/ssrun
-
-
-------------------------------------------------------------------------
-r97 | dreibh | 2008-07-24 10:20:02 +0200 (Thu, 24 Jul 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/demo/test1.R
-
-
-------------------------------------------------------------------------
-r96 | dreibh | 2008-07-11 21:23:47 +0200 (Fri, 11 Jul 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/tools/Makefile
-   M /trunk/simproctc/tools/createsummary.cc
-
-
-------------------------------------------------------------------------
-r95 | dreibh | 2008-07-11 08:52:47 +0200 (Fri, 11 Jul 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/ssrun
-
-
-------------------------------------------------------------------------
-r94 | dreibh | 2008-07-06 17:59:20 +0200 (Sun, 06 Jul 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/ssrun
-   M /trunk/simproctc/tools/createsummary.cc
-
-
-------------------------------------------------------------------------
-r93 | dreibh | 2008-07-06 17:26:39 +0200 (Sun, 06 Jul 2008) | 2 lines
-Changed paths:
-   M /trunk/simproctc/demo/make-links
-   M /trunk/simproctc/demo/simulate-version1.R
-   A /trunk/simproctc/get-neds
-   M /trunk/simproctc/simulation.R
-
-Update to support .ned file transfer.
-
-------------------------------------------------------------------------
-r92 | dreibh | 2008-06-27 14:48:55 +0200 (Fri, 27 Jun 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/ssdistribute
-   M /trunk/simproctc/tools/createsummary.cc
-
-
-------------------------------------------------------------------------
-r91 | dreibh | 2008-06-27 11:37:44 +0200 (Fri, 27 Jun 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/ssdistribute
-
-
-------------------------------------------------------------------------
-r90 | dreibh | 2008-06-27 11:03:30 +0200 (Fri, 27 Jun 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/ssrun
-
-
-------------------------------------------------------------------------
-r89 | dreibh | 2008-06-27 10:05:57 +0200 (Fri, 27 Jun 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/simulation.R
-   M /trunk/simproctc/ssdistribute
-
-
-------------------------------------------------------------------------
-r88 | dreibh | 2008-06-26 21:54:09 +0200 (Thu, 26 Jun 2008) | 2 lines
-Changed paths:
-   M /trunk/simproctc/ssrun
-
-ssrun: Using -u Cmdenv now.
-
-------------------------------------------------------------------------
-r87 | dreibh | 2008-06-26 21:53:40 +0200 (Thu, 26 Jun 2008) | 3 lines
-Changed paths:
-   M /trunk/simproctc/demo/test1.R
-   M /trunk/simproctc/simulation.R
-   M /trunk/simproctc/tools/createsummary.cc
-
-- Updated createsummary for OMNeT++ 4.0b2 compatibility.
-- Updated simulation.R to support v4 (-u Cmdenv ...)
-
-------------------------------------------------------------------------
-r86 | dreibh | 2008-06-26 14:15:18 +0200 (Thu, 26 Jun 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/ssdistribute
-
-
-------------------------------------------------------------------------
-r85 | dreibh | 2008-06-26 14:12:46 +0200 (Thu, 26 Jun 2008) | 2 lines
-Changed paths:
-   M /trunk/simproctc/simulation.R
-
-Added possibility to specify PU options (e.g. -cspserver=...).
-
-------------------------------------------------------------------------
-r84 | dreibh | 2008-06-26 13:59:37 +0200 (Thu, 26 Jun 2008) | 2 lines
-Changed paths:
-   M /trunk/simproctc/tools/createsummary.cc
-
-createsummary now dynamically allocates memory for values, etc. => much less memory consumption.
-
-------------------------------------------------------------------------
-r83 | dreibh | 2008-06-26 13:57:06 +0200 (Thu, 26 Jun 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/simulation.R
-
-
-------------------------------------------------------------------------
-r82 | dreibh | 2008-06-26 12:14:58 +0200 (Thu, 26 Jun 2008) | 2 lines
-Changed paths:
-   M /trunk/simproctc/simulation.R
-   M /trunk/simproctc/tools/createsummary.cc
-
-Add name of .ini file into output tables.
-
-------------------------------------------------------------------------
-r81 | dreibh | 2008-03-15 12:29:11 +0100 (Sat, 15 Mar 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/package-simproctc
-
-
-------------------------------------------------------------------------
-r80 | dreibh | 2008-03-15 12:28:28 +0100 (Sat, 15 Mar 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/demo/make-links
-
-
-------------------------------------------------------------------------
-r79 | dreibh | 2008-03-15 12:28:03 +0100 (Sat, 15 Mar 2008) | 2 lines
-Changed paths:
-   D /trunk/simproctc/demo/get-libs
-   D /trunk/simproctc/demo/hashfunctions.R
-   D /trunk/simproctc/demo/plotter.R
-   D /trunk/simproctc/demo/simulation.R
-   D /trunk/simproctc/demo/ssdistribute
-   D /trunk/simproctc/demo/ssrun
-
-SimProcTC cleanup.
-
-------------------------------------------------------------------------
-r78 | dreibh | 2008-03-15 12:19:34 +0100 (Sat, 15 Mar 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/package-simproctc
-
-
-------------------------------------------------------------------------
-r77 | dreibh | 2008-03-15 12:17:00 +0100 (Sat, 15 Mar 2008) | 1 line
-Changed paths:
-   A /trunk/simproctc/package-simproctc
-
-
-------------------------------------------------------------------------
-r76 | dreibh | 2008-03-15 12:12:00 +0100 (Sat, 15 Mar 2008) | 1 line
-Changed paths:
-   M /trunk/simproctc/demo/simulation.config-stage1
-
-
-------------------------------------------------------------------------
-r75 | dreibh | 2008-03-15 12:10:55 +0100 (Sat, 15 Mar 2008) | 1 line
-Changed paths:
-   D /trunk/simproctc/demo/docs
-   A /trunk/simproctc/docs (from /trunk/simproctc/demo/docs:74)
-
-
-------------------------------------------------------------------------
-r74 | dreibh | 2008-03-15 12:10:05 +0100 (Sat, 15 Mar 2008) | 1 line
-Changed paths:
-   D /trunk/simproctc/demo/tools
-
-
-------------------------------------------------------------------------
-r73 | dreibh | 2008-03-15 12:08:21 +0100 (Sat, 15 Mar 2008) | 1 line
-Changed paths:
-   A /trunk/simproctc/demo/make-links
-   A /trunk/simproctc/get-libs (from /trunk/simproctc/demo/get-libs:72)
-   A /trunk/simproctc/hashfunctions.R (from /trunk/simproctc/demo/hashfunctions.R:72)
-   A /trunk/simproctc/plotter.R (from /trunk/simproctc/demo/plotter.R:72)
-   A /trunk/simproctc/simulation.R (from /trunk/simproctc/demo/simulation.R:72)
-   A /trunk/simproctc/ssdistribute (from /trunk/simproctc/demo/ssdistribute:72)
-   A /trunk/simproctc/ssrun (from /trunk/simproctc/demo/ssrun:72)
-   A /trunk/simproctc/tools (from /trunk/simproctc/demo/tools:72)
-
-
-------------------------------------------------------------------------
-r72 | dreibh | 2008-03-15 12:02:58 +0100 (Sat, 15 Mar 2008) | 1 line
-Changed paths:
-   D /trunk/demo
-   A /trunk/simproctc
-   A /trunk/simproctc/demo (from /trunk/demo:70)
-   R /trunk/simproctc/demo/docs (from /trunk/demo/docs:71)
-   R /trunk/simproctc/demo/get-libs (from /trunk/demo/get-libs:71)
-   R /trunk/simproctc/demo/hashfunctions.R (from /trunk/demo/hashfunctions.R:71)
-   R /trunk/simproctc/demo/implementation.cc (from /trunk/demo/implementation.cc:71)
-   R /trunk/simproctc/demo/messages.msg (from /trunk/demo/messages.msg:71)
-   R /trunk/simproctc/demo/omnetpp.ini (from /trunk/demo/omnetpp.ini:71)
-   R /trunk/simproctc/demo/plot-test1.R (from /trunk/demo/plot-test1.R:71)
-   R /trunk/simproctc/demo/plotter.R (from /trunk/demo/plotter.R:71)
-   R /trunk/simproctc/demo/scenario.ned (from /trunk/demo/scenario.ned:71)
-   R /trunk/simproctc/demo/simulate-version1.R (from /trunk/demo/simulate-version1.R:71)
-   R /trunk/simproctc/demo/simulation.R (from /trunk/demo/simulation.R:71)
-   R /trunk/simproctc/demo/simulation.config-stage1 (from /trunk/demo/simulation.config-stage1:71)
-   R /trunk/simproctc/demo/ssdistribute (from /trunk/demo/ssdistribute:71)
-   R /trunk/simproctc/demo/ssrun (from /trunk/demo/ssrun:71)
-   R /trunk/simproctc/demo/test1.R (from /trunk/demo/test1.R:71)
-   R /trunk/simproctc/demo/tools (from /trunk/demo/tools:71)
-
-
-------------------------------------------------------------------------
+commit 1020402c25ab02021e8a61e86b5592aef71d5fa3
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Nov 2 11:05:06 2021 +0100
+
+    Removed obsolete script.
+
+commit b5c3a5e26efdce7670b91d83980f42076eda0892
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Nov 2 11:04:32 2021 +0100
+
+    Added script.
+
+commit a6777ad53ac2f382cc640f132b5a9e23ad72bce2
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Mon Nov 1 15:36:34 2021 +0100
+
+    Clean-ups and fixes.
+
+commit 5075eb7efab0a0347670cb4da963b49a50d1d0df
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Mon Nov 1 15:20:42 2021 +0100
+
+    Fixed image names.
+
+commit 087503e9c0b0f926873fe19549813bf92e0f98e7
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Mon Nov 1 15:09:26 2021 +0100
+
+    OMNeT++ 5.7 compatibility fixes and clean-ups.
+
+commit 4980034d6832214dec345926912590f4b60a1d88
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Mon Nov 1 14:12:21 2021 +0100
+
+    Removed tabs.
+
+commit af581748d775a5a45f3e393a41a4345f93fea94c
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Mon Nov 1 14:09:43 2021 +0100
+
+    Build with OMNeT++ 5.x.
+
+commit e91c1abd3f29b9239cc5d11d34e900e46171d917
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Mon Nov 1 14:06:00 2021 +0100
+
+    Updated documentation.
+
+commit 1dc80c88f34b609cbef525e66b3ab510e4fae94c
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Mon Nov 1 14:05:21 2021 +0100
+
+    Header updates.
+
+commit 5c4538a596330012d2b49ac949bb9ed19efb323d
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Mon Nov 1 13:57:56 2021 +0100
+
+    Updated tools.
+
+commit bc86e9276cc8f2a09d36b70037d29fc13f55b6a7
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Mon Nov 1 13:56:41 2021 +0100
+
+    Removed another $Id tag.
+
+commit 5c4dd2f173a4de8278e42788c95d7f5e0b48484e
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Mon Nov 1 13:56:04 2021 +0100
+
+    Removed $Id tag.
+
+commit 8fddb8952fb69f9e0db3c956f7b68a587fdc1fb6
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Mon Nov 1 13:55:58 2021 +0100
+
+    Updated get-libs.
+
+commit ce39b3de6915255cea9b3da63e1ac7867403f094
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Jun 3 12:05:49 2015 +0000
+
+    Updated tool-chain files. Example simulation now works with OMNeT++ 5.0.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@1125 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 90a425b07c1f7d4bc7d522cfbe408bb15b96959d
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Sep 25 19:42:09 2012 +0000
+
+    Bugfix for input handling.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@1049 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit d24e92235535fa19f7990b9c17acc61249d81c26
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Nov 23 06:55:10 2011 +0000
+
+    Synchronized with NetPerfMeter sources.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@1017 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 86e7a6d82bb940e78d8bc9ca810d749c9aa6835d
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Nov 23 06:27:56 2011 +0000
+
+    Minor updates.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@1014 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 5801f3457a6e1cbeed051ff9270184aa722ceea1
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Oct 25 12:23:38 2011 +0000
+
+    Tool-chain updates.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@997 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 8fffe9c4bd0d2e2f8970ce63a322ca9567d6b926
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Oct 25 12:19:21 2011 +0000
+
+    Fixed problem.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@996 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit eb02ea87ac7ee497fd15da0fff34bdfdfc4f00c8
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Oct 25 12:07:03 2011 +0000
+
+    Removed obsolete file.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@995 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 4f920edd3a0a367a58b1006b84cd04bb2a2e2077
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Sep 1 09:19:42 2011 +0000
+
+    Documentation updates.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@983 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 5dfaad4242d752e8689c845775ee40a576573113
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Sep 1 09:17:41 2011 +0000
+
+    Updated scripts to latest versions.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@982 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 552d416da59274fd8ff67e8a9466d6f51f26728a
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Jun 28 15:38:31 2011 +0000
+
+    Updated plotter.R.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@826 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 02c6cf06daf9ddd3f0ac744d6e5e2f933feda584
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Feb 25 07:12:38 2011 +0000
+
+    Plotting improvements: stripping leading and trailing spaces from labels.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@794 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit f279ead2e83cdf6207103bb7e45c42c48dc0c6f4
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Feb 24 11:53:22 2011 +0000
+
+    ^K  I    svn-commit.3.tmp (Geändert)                                                                                                               Row 1    Col 44  12:52  Ctrl-K H for help
+    - Added cross-check for parameter duplicates.
+    - Plotting improvements.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@790 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 916424ced3bffd49660c4b3f3118c2ad96c4381e
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Feb 19 21:06:26 2011 +0000
+
+    Updated simulation and plotting scripts
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@783 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 2f18765bc4aade4f99efaeecc2f7c13e8105aaf6
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Feb 17 08:46:25 2011 +0000
+
+    Adapted simulation script to create shortcut links to simulation directories. Avoids to manually retrieve SHA1 sum when updating parametrisation.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@756 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit bd6b60a4abbc46c35c74fc2cb459d2199dc6b66b
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Feb 11 22:35:16 2011 +0000
+
+    Fixed comment: now using correct directory name.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@745 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 9341dac6b5a1f3b045078627976174828a621f94
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Feb 9 21:41:51 2011 +0000
+
+    Updated make-environment and get-libs to correctly handle custom libraries.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@739 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 1fee0e9c772e55be5844ece39bd97008e0e215a4
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Dec 3 14:45:23 2010 +0000
+
+    Fixed missing dependency for getrelativepath.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@689 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit a6c809f97d6700a6c2b3712f3aaf19496656d320
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Dec 3 14:21:32 2010 +0000
+
+    Updated SVN URL.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@688 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit ba8a34ca960fa2835e991334e860b634b136b975
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Dec 3 14:20:25 2010 +0000
+
+    Updated packaging.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@687 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 0004e00327b48437e7dba1890997fab6f5974a11
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Dec 1 15:18:37 2010 +0000
+
+    More verbose comments in generated Makefile -> makes testing and debugging easier.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@685 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 36cf08a8cca36c77689ec37030f9bd2e1f95771b
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Nov 26 11:57:12 2010 +0000
+
+    Small bugfix in pSet handling.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@680 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit f761b10b85393d7806ae05376b515d9b5c9c785d
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Nov 23 17:49:51 2010 +0000
+
+    ^K  I    svn-commit.tmp (Geändert)                                                                                                       Row 1    Col 124  6:48  Ctrl-K H for help
+    Write parameter settings as well as scalar and vector file name above each Makefile entry => enhanced Makefile readability.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@673 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 8fa38387752b5949e57b33ba355a4dd3e007657a
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Nov 23 09:41:51 2010 +0000
+
+    SimProcTC example now working again.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@670 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 2321c7350b788a339f7148a02ab7505fc0b4b3ca
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Mon Nov 22 09:23:24 2010 +0000
+
+    Restructured simproctc directory and removed OMNeT++ 3.x example.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@669 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 56b61279884404300e44308020c9434ea6ab2249
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Nov 20 15:29:39 2010 +0000
+
+    Added quiet mode to createsummary.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@662 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 6023c34bb6121c814cfeab475ebf94d7228876de
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Nov 18 11:46:44 2010 +0000
+
+    Skip sets, if they are c(NA).
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@653 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit b48c185bf82edc9d1929b92d6585186e2ed17539
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Nov 18 11:13:42 2010 +0000
+
+    Bugfix: runX-status.txt may not be compressed.
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@652 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 9cfa0f7bc7595a207c021ece7dabb78236bac44d
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Nov 18 10:43:57 2010 +0000
+
+    Plotting improvements.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@650 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 61f04a698cf681a91aa76dd96d7de5c96d37281a
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Nov 18 10:43:26 2010 +0000
+
+    simulation.R: Fixed problem with make -jN calls within generated Makefile. Error messages of sendxmpp are now forwarded to /dev/null since they are confusing when there is no Internet access.
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@649 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit f213c271d23b0a19d4f37b5452e2702fcec1c604
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Nov 18 10:41:22 2010 +0000
+
+    make-environment now uses chrpath to get rid of absolute paths in binary sent to remote processing nodes.
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@647 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 6aaa86cd494d8778b79e5087647eadac443e63d6
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Nov 18 10:40:19 2010 +0000
+
+    Improved printing of errors in perform-run.
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@645 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 949f3e933e78a44c32323c71a597659b4c7d52a9
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Nov 18 10:39:27 2010 +0000
+
+    Improved ssdistribute with better error message printing. Needs rsplib-2.7.6 scriptingclient to also download error logs of failed run.
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@643 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 94b3db289f516ecb94f9909342918d78d3307719
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Nov 18 10:35:37 2010 +0000
+
+    ssrun has to bzip2-compress logs in case of error. Otherwise, they will not be transferred back to the client.
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@641 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 62ec060deb24cd3fb844375989eb220804296d19
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Sep 24 20:07:50 2010 +0000
+
+    Improvements for handling of values containing quotes.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@569 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit f5046e7efce078ae62ffa501539c4213c0f9eb8b
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Sep 10 07:31:36 2010 +0000
+
+    - Plotting improvements.
+    - Use scalar splitting option of createsummary by default.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@528 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 15a63dd9cba8ebb0853224397f251d2a2831428a
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Sep 10 07:29:15 2010 +0000
+
+    Added scalar splitting to createsummary.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@527 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 4b5d762588fa02acfde6bd0d04cd0d8c6c1b764a
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Sep 9 07:43:46 2010 +0000
+
+    Plotting improvements.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@513 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 0ed51af71067ad000d33dd466740a7a160a14539
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Sep 7 07:50:49 2010 +0000
+
+    Improved a/b/p plotting in plotter.R.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@500 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 4f1c454993630dfd4263813bcae98890ab19a81b
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Sep 1 07:13:11 2010 +0000
+
+    Updated plotter.R to print backup commands for input files.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@494 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 18402264ea39fce3b084a26142653606a52671b0
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Mon Aug 2 10:56:39 2010 +0000
+
+    Fixed buffer overflow in InputFile.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@477 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 6858ac8953fac0a94b873599252cfd60162eb72f
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Mon Aug 2 10:56:15 2010 +0000
+
+    Updated ssdistribute to use installed scriptingclient (in /usr/bin).
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@476 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 606adc5e5d21a234394a567178f5008eed9bd899
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Mon Jul 26 12:52:21 2010 +0000
+
+    Fixed problem with histogram values (objectName is overwritten by handleScalar(), copy is needed).
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@469 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit b8a5651029bdb0755d0a65cccfe8174c3b55faf5
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Mon Jul 26 07:15:07 2010 +0000
+
+    Updated ChangeLog.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@467 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 8175b6992a66a224c6e9dc36558a5eda148c8bb6
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Mon Jul 26 07:14:46 2010 +0000
+
+    Improved output of "tail" command line to view simulation progress: filter out looking for another PE.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@466 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit fb94467cd5c7016e3e8be09f9c8cf78205be3f81
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Jul 23 05:57:45 2010 +0000
+
+    - Updated extractvectors to use InputFile and OutputFile classes for I/O.
+    - Code clean-ups for createsummary and combinesummaries.
+    - Added test for extractvectors.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@465 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit ab26fd8a28bf0c2da5698a7fab161e2fefd09c16
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Jul 22 07:31:04 2010 +0000
+
+    - Updated createsummary to handle statistics (e.g. histogram) and extract their fields (e.g. stddev, mean, min, max, etc.).
+    - Updated combinesummaries to use InputFile and OutputFile for I/O.
+    - Added example files.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@463 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit ff1d07bd25d3bf26e34806cdf3ba0e2f2a9144f8
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Jul 22 07:29:45 2010 +0000
+
+    Modified example to write histogram into scalars file instead of explicitly creating scalars. Updated createsummary can handle histogram statistics and convert fields to values.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@462 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 3c8e4bf4936696d19380ac7d2aa20c3b34eed48e
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Jul 21 17:52:53 2010 +0000
+
+    - Improvements to CreateSummary: plain/BZip2 file I/O is now separated into classes InputFile and OutputFile.
+    - Various code clean-ups: usage of std::string instead of buffers, etc..
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@461 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit c75ef671d7a375731a5c9ff220daae17792d37fd
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Jul 21 10:55:53 2010 +0000
+
+    Added ChangeLog.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@457 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 688ccc02b550654a244abbb9ab8b35f6b6c3a70b
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Jul 21 10:47:42 2010 +0000
+
+    - Added skipping example.
+    - Updated ssdistribute with some comments. Again using gzip to compress input file.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@456 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 681b4966b06a354e8860433d65cf82b3652dbd24
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Jul 7 10:18:01 2010 +0000
+
+    Modified scripts to use environment-caching version of the scripting service.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@450 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 7fd76ea1ae7c30e780dc67e2aa7ea8f299261cc2
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sun Jul 4 12:52:04 2010 +0000
+
+    Support for FreeBSD processing the simulation runs. Requires: "kldload linux"!
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@448 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 56fddebb073c4aad1b3cc24cc14136fc2a3b728c
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sun Jul 4 12:50:23 2010 +0000
+
+    make-environment now creates information about the used operating system and machine type.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@447 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit bbac2ff32d86cf41255d4d70bf8b49914d6655a9
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Jul 3 16:57:34 2010 +0000
+
+    ssdistribute has to use "-p" instead "--tempdir", in order to be compatible to older systems.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@444 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit fb78b1a879236f05ddeb62c043be7301936554c9
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Jul 3 16:40:08 2010 +0000
+
+    Replaced GZipped Tar archive of work package by plain Tar => signification overhead reduction for distributor to large pools.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@442 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit aeda4a7dff2978d8198b7c5988d92aadb787c51d
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Jul 3 16:22:48 2010 +0000
+
+    - Create temp directories within simulation directory, not in /tmp.
+    - Clean up temp directory before and after simulation runs
+     => avoids problems with remaining garbage when simulation is aborted.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@440 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 656869a7b24443ac0cb8fce6144d903547464088
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Jul 3 15:13:13 2010 +0000
+
+    Improved ssdistribute and ssrun.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@438 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 21ffc586fa437abc786d31904f2034df71b03095
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Jul 2 21:27:32 2010 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@437 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 933ec1fc128b55eda06668725338887d87c62c73
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Jul 2 19:02:12 2010 +0000
+
+    Improved demo4 example.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@429 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 45cfc65f8853745f05551ed44edf64c70ea976ee
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Jul 2 07:35:02 2010 +0000
+
+    Version update.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@428 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 67a6ec2e79e70b72b6924d358f3c612f4be8f3e2
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Jul 2 07:34:18 2010 +0000
+
+    Updated createsummary.cc to extended format of OMNeT++ 4.1.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@427 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 8c7d6e040c68a18379aa5fbda4cc4b6024d7fa4a
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Jul 2 07:33:49 2010 +0000
+
+    Updated demo for OMNeT++ 4.1.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@426 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit cec91f6e32d30bbfffdfdc281f819fc63b604b4e
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Jun 16 13:58:05 2010 +0000
+
+    Added curve numbering feature to plotter.R.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@408 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 22447c67ec4af37e8196e99d8bd6ef66320c542a
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Jun 16 13:57:34 2010 +0000
+
+    - Scalar combination bugfix in createsummary.cc.
+    - Fixed memory deallocation problem in createsummary.cc.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@407 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit e1e9e637e4886f27bc190609cbc719ed027b6f21
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Jun 16 13:20:11 2010 +0000
+
+    Added extractvectors and getrelativepath programs.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@404 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit f86c3a52269a5f07a1b817d67899a4dd1954d6ea
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Jun 16 13:18:30 2010 +0000
+
+    - Added scalar combination feature to createsummary.
+    Example: "Stream #1", "Stream #2" => Output of "Stream" with table row containing 1 or 2.
+    - Fixed memory leak in createsummary.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@403 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 151c80717c243e16d4eca28381be114d70c9bfca
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Jun 2 15:38:13 2010 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@395 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 7c8fbd4e4f92939bd12de7b053133482e9e1f7fa
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri May 28 18:17:23 2010 +0000
+
+    Version updates.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@390 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 7940e3b55f0f49139b0dd09e95dcced0802e662f
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Nov 14 23:00:32 2009 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@204 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 58e8749fca2468127a26ce04912ba4c6cc8ee922
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Sep 23 08:05:48 2009 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@143 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 47d816eb0f9a8c639c877350d0fe2c0713b63cd3
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Aug 5 20:47:02 2009 +0000
+
+    Must use "-l" for "make". Otherwise, the number of jobs is limited by system load.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@136 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 35e3c17d3c6f4d36523d0a6a4c6f3419e2e1a21e
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Jul 11 16:14:02 2009 +0000
+
+    Fixed buffer overflow in combinesummaries.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@129 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 559b1ef3b18bb48c1b69a4aad07da22b0bbe4a85
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Jun 23 14:23:01 2009 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@128 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 8596befced8e0505630e871dbdc6ca4a7ce3d8b1
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Jun 23 14:14:29 2009 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@127 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 9bc305c20b0686be566b74b42065eb46dfd78fca
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Jun 23 14:13:36 2009 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@126 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 5c7fc15e3606438797999b3553b69ea0bc530e5a
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Jun 23 13:48:15 2009 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@125 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit cb17b4a9342f320c73ef1c09afed731035d21090
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Jun 23 13:25:43 2009 +0000
+
+    Fixed plotter.R: When there are no A/B levels, do not make A/B layout. Fixed problem with reduced cex.
+    
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@124 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 95a2fc3d87da77f1d8f5d170597f8a15ebec50da
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu May 7 07:32:40 2009 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@123 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit fd34b3a475bd2c497d99053dfe705c3aef48dbfb
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Mon May 4 07:33:09 2009 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@121 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit b0b4f8e9850182d9f26b93f6742d9bf128b19f5f
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Mar 7 15:46:40 2009 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@112 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 0eafcc9c66ea7bee1b217a75e7a1568b76728a34
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Mar 5 10:49:30 2009 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@111 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit f4fa82dac033e87d544b640458684723a513bac8
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Jan 15 13:08:12 2009 +0000
+
+    Tools update.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@110 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 14ac9c30d867c906e75a1b4506faf5a44a3757d2
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Nov 27 11:13:55 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@109 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 142464d7746b54f7bdafaa726bd77fcc34b0fbcb
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Nov 13 10:34:08 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@108 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit a26bf18aeb45566543eb6c3aef2e978d5a6fb30a
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Tue Nov 11 21:38:23 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@107 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit c22158b1e1f58e3c3c78cc05f757a4d5f068e67c
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Nov 7 13:16:30 2008 +0000
+
+    Fixed bSet label bug in plotter.R.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@106 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 874665ebf7d763173605d04d533011f7269d2a4d
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Nov 6 18:07:36 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@105 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 7eaf76b302a9b23d57c8df0874172c1b699c8a80
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Oct 23 09:54:26 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@104 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit c41cedd3ffc8886c281699e9401831dc016ae934
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Oct 22 16:10:47 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@103 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit cf02fb396d17cb91d6e9905ae8bc019e3baeb950
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sun Aug 24 13:51:30 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@102 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 04920024615caa1e5321b739fb18f67e0fba5373
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Aug 23 14:16:37 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@101 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 99d9f0889ca20b79989d93914909b06a57d87e2c
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Aug 22 11:18:28 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@100 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit f751d0e397a1191692645b9deecb9efdf630c5b2
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Aug 22 10:34:16 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@99 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 515f1f616f5ada45d65cb8b501726b6c720fa8f4
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Wed Aug 20 09:56:52 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@98 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 11194c9d0770c26b3bc38a0ba1eec565f7d4158d
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Jul 24 08:20:02 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@97 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 3c50c6d0a7ef4a1e3a49a6c62ac977b23107449a
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Jul 11 19:23:47 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@96 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit b806c5de63e0d808bc6a0686c0a0fcb0ee109e76
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Jul 11 06:52:47 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@95 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit dfeaedb3c66eb66260b14194736dc8dcd6839870
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sun Jul 6 15:59:20 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@94 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit a6fe39b1ae5fe43a13ceeff1704312ce9a4a5fcb
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sun Jul 6 15:26:39 2008 +0000
+
+    Update to support .ned file transfer.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@93 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 9300d8718a318205f471e2e76c7e4c0f971cf091
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Jun 27 12:48:55 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@92 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit f3abdc77933a5e2c72702cc7d96bbeaf620ed46f
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Jun 27 09:37:44 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@91 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 09529a899a6eb17658c713ef71291bd262f77901
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Jun 27 09:03:30 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@90 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 2294f0d9ceb8b0335fa9a2e8fa64adb388d7b0eb
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Fri Jun 27 08:05:57 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@89 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 4858e18b73778f464e8a7b8bb07e7bddd3bc5681
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Jun 26 19:54:09 2008 +0000
+
+    ssrun: Using -u Cmdenv now.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@88 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit d29e68b4fe6b66ef64cb18592a3b4ef03a12c6f6
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Jun 26 19:53:40 2008 +0000
+
+    - Updated createsummary for OMNeT++ 4.0b2 compatibility.
+    - Updated simulation.R to support v4 (-u Cmdenv ...)
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@87 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 0e7d1a60b4bfec4b423facdbcc725e0c92104337
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Jun 26 12:15:18 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@86 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 1a4e96a3ba3077086fe49515ca196b6a4384a7e0
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Jun 26 12:12:46 2008 +0000
+
+    Added possibility to specify PU options (e.g. -cspserver=...).
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@85 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 37a8fd77c0237336e39dd54cba755764466ff841
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Jun 26 11:59:37 2008 +0000
+
+    createsummary now dynamically allocates memory for values, etc. => much less memory consumption.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@84 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit bffa39fcaaf89742611162975696927596d85c76
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Jun 26 11:57:06 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@83 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit f560dc3815a81d45925c2f4b9b1ea2435d23ab2a
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Thu Jun 26 10:14:58 2008 +0000
+
+    Add name of .ini file into output tables.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@82 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 35a977eb6d82ec2df20d2dc5707fe828a0566638
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Mar 15 11:29:11 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@81 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 09d6eeb0487c903780a553dbefffce82cde99a66
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Mar 15 11:28:28 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@80 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 45463a411a3d8510649f8a80e63b074a1158b155
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Mar 15 11:28:03 2008 +0000
+
+    SimProcTC cleanup.
+    
+    
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@79 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 0f972af7ab18847b451d67a7d642c73f0243e364
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Mar 15 11:19:34 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@78 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit f8e9a8a997c650ef4fc03413fb50a6cd78239bb9
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Mar 15 11:17:00 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@77 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit ef4acf1981301b26e3f3ce55c1b2658dd7240674
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Mar 15 11:12:00 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@76 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 987eb52959c8d0a62ee92ec5f65565cac5e94868
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Mar 15 11:10:55 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@75 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 8f6ee49c7a57b409a636c3c971a9be33c12f686a
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Mar 15 11:10:05 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@74 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit 7f1bfbe6fb8f0d1ed5b3cace781da721e59ba810
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Mar 15 11:08:21 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@73 6f377267-d4fd-0310-adf2-e6e4f864fedf
+
+commit c9a1214519e853d7332952584b400d309b7b59c7
+Author: dreibh <dreibh@6f377267-d4fd-0310-adf2-e6e4f864fedf>
+Date:   Sat Mar 15 11:02:58 2008 +0000
+
+    git-svn-id: file:///home/dreibh/tmp/essen-omnetpp/trunk@72 6f377267-d4fd-0310-adf2-e6e4f864fedf
