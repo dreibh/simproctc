@@ -436,7 +436,7 @@ finishMakefile <- function(makefile, dependencies, summaryCommand)
       if(distributionProcs > 0) {
          poolingInfo <- paste(sep="", ", distributing ", distributionProcs, " processes to pool \"", distributionPool, "\"")
       }
-      cat(sep="", "\t( echo \"Starting simulation ", simulationDirectory, " on `hostname`", poolingInfo, " ...\" | sendxmpp -i ", reportTo, " || true )\n", file=makefile)
+      cat(sep="", "\t( echo \"Starting simulation ", simulationDirectory, " on `hostname`", poolingInfo, " ...\" | sendxmpp --tls --interactive ", reportTo, " || true )\n", file=makefile)
    }
    cat(sep="", "\t( cd ", simCreatorSourcesDirectory, " && $(MAKE) )\n", file=makefile)
    cat(sep="", "\tif [ ! -e ", simCreatorSourcesDirectory, "/", simCreatorSimulationBinary, " ] ; then echo \"###### Did not find binary ", simCreatorSourcesDirectory, "/", simCreatorSimulationBinary, " -- Check your Makefile configuration (remove --make-so)! ######\" ; false ; fi\n\n", file=makefile)
@@ -475,7 +475,7 @@ finishMakefile <- function(makefile, dependencies, summaryCommand)
    cat(sep="", "\trm -rf ", gTempDirectoryName, "/*\n", file=makefile)
    cat(sep="", "\tdate >", gSimulationsCompletedName, "\n", file=makefile)
    if(reportTo != "") {
-      cat(sep="", "\t( echo \"Finished processing of runs for simulation ", simulationDirectory, " on `hostname`.\" | sendxmpp -i ", reportTo, " || true )\n", file=makefile)
+      cat(sep="", "\t( echo \"Finished processing of runs for simulation ", simulationDirectory, " on `hostname`.\" | sendxmpp --tls --interactive ", reportTo, " || true )\n", file=makefile)
    }
    cat(sep="", "\techo \"Simulation completed!\"\n\n", file=makefile)
 
@@ -485,7 +485,7 @@ finishMakefile <- function(makefile, dependencies, summaryCommand)
    cat(sep="", summaryCommand, "      &&      ", file=makefile)
    cat(sep="", "endTime=`date`      &&      ", file=makefile)
    if(reportTo != "") {
-      cat(sep="", "\t( echo \"Finished summary creation for simulation ", simulationDirectory, " on `hostname`.\" | sendxmpp -i ", reportTo, " 2>/dev/null & ) && ", file=makefile)
+      cat(sep="", "\t( echo \"Finished summary creation for simulation ", simulationDirectory, " on `hostname`.\" | sendxmpp --tls --interactive ", reportTo, " 2>/dev/null & ) && ", file=makefile)
    }
    cat(sep="", "echo \"Start: $$startTime\" >", gSimulationsCompletedName, " && ", file=makefile)
    cat(sep="", "echo \"End:   $$endTime\" >>", gSimulationsCompletedName, "\n", file=makefile)
@@ -567,7 +567,7 @@ executeMake <- function()
    writeLines(r)
 
    if(reportTo != "") {
-      cmd <- paste(sep="", "( ( echo \"Finished ", simulationDirectory, ".\" ; if [ -e ", gErrorName, " ] ; then echo \"Simulation processing has FAILED:\" ; echo \"----- Last Lines in Log -----\" ; cat ", gErrorName, " ; echo \"----- End of Log -----\" ; fi ) | sendxmpp -i ", reportTo, " 2>/dev/null & )")
+      cmd <- paste(sep="", "( ( echo \"Finished ", simulationDirectory, ".\" ; if [ -e ", gErrorName, " ] ; then echo \"Simulation processing has FAILED:\" ; echo \"----- Last Lines in Log -----\" ; cat ", gErrorName, " ; echo \"----- End of Log -----\" ; fi ) | sendxmpp --tls --interactive ", reportTo, " 2>/dev/null & )")
 
       # cat("\n\n",cmd,"\n\n")
       r <- readLines(pc <- pipe(cmd))

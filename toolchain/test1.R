@@ -37,6 +37,9 @@ simulationSummarySkipList <- c()
 distributionPool  <- "ScriptingPool"
 distributionProcs <- 0    # Set to 0 for to disable distribution!
 distributionPUOpt <- ""   # Add misc options for ScriptingPU here.
+# Jabber addess to report simulation startup/completion to
+# NOTE: sendxmpp is needed to send Jabber messages!
+reportTo <- ""
 # -------------------------------------
 
 # ###########################################################################
