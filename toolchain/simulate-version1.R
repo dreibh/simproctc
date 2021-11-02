@@ -38,7 +38,7 @@ demoWriteHeader <- function(iniFile, simulationRun, scalarName, vectorName, dura
    cat(sep="", "output-scalar-file = ", "run", simulationRun, "-scalars.sca\n", file=iniFile)
    cat(sep="", "output-vector-file = ", "run", simulationRun, "-vectors.vec\n", file=iniFile)
    cat(sep="", "cmdenv-express-mode = true\n", file=iniFile)
-   cat(sep="", "sim-time-limit = ", simCreatorSimulationStartup, " ", duration, "s 1ms\n", file=iniFile)
+   cat(sep="", "sim-time-limit = ", simCreatorSimulationStartup + duration + 0.001, "s\n", file=iniFile)
    cat(sep="", "\n\n", file=iniFile)
 
    if(simulationStoreVectors) {
@@ -50,7 +50,7 @@ demoWriteHeader <- function(iniFile, simulationRun, scalarName, vectorName, dura
    cat(sep="", "# NOTE: In OMNeT++ 4.0, this parameter has been named vector-recording-interval!\n", file=iniFile)
    cat(sep="", "# To use under OMNeT++ 4.0, check simulate-version1.R and replace:\n", file=iniFile)
    cat(sep="", "# vector-recording-intervals by vector-recording-interval!\n", file=iniFile)
-   cat(sep="", "**.vector-recording-intervals = ", simCreatorSimulationStartup, "..", simCreatorSimulationStartup, " ", duration, "s\n", file=iniFile)
+   cat(sep="", "**.vector-recording-intervals = ", simCreatorSimulationStartup, "s ..", simCreatorSimulationStartup + duration, "s\n", file=iniFile)
    cat(sep="", "\n", file=iniFile)
    cat(sep="", "\n", file=iniFile)
 }
@@ -109,7 +109,7 @@ simCreatorMiscFiles <- list()
 # The simulation network to be loaded.
 simCreatorSimulationNetwork <- "fragmenterScenario"
 
-simCreatorSimulationStartup     <- "5s"
+simCreatorSimulationStartup     <- 5   # in seconds
 simCreatorWriteHeader           <- demoWriteHeader
 simCreatorWriteParameterSection <- demoWriteParameterSection
 simCreatorAutoParameters        <- demoAutoParameters
