@@ -138,8 +138,8 @@ module IntermediateNode
     submodules:
         outputBuffer: Multiplexer {
             parameters:
-                outputRate     = outputRate;
-                maxQueueLength = maxQueueLength;
+                outputRate     = parent.outputRate;
+                maxQueueLength = parent.maxQueueLength;
                 @display("p=82,64;i=block/queue");
             gates:
                 inputGate[1];
@@ -162,9 +162,9 @@ module FragmenterScenario
         source: Source {
             parameters:
                 startupDelay     = 0s;
-                interarrivalTime = sourceInterarrivalTime;
-                payloadSize      = sourcePayloadSize;
-                headerSize       = sourceHeaderSize;
+                interarrivalTime = parent.sourceInterarrivalTime;
+                payloadSize      = parent.sourcePayloadSize;
+                headerSize       = parent.sourceHeaderSize;
                 id               = 1000;
                 destination      = 1;
                 @display("b=34,34;p=260,310;i=block/source");
@@ -183,8 +183,8 @@ module FragmenterScenario
         }
         nodeArray1[4]: IntermediateNode {
             parameters:
-                outputRate     = intermediateNodeOutputRate;
-                maxQueueLength = intermediateNodeMaxQueueLength;
+                outputRate     = parent.intermediateNodeOutputRate;
+                maxQueueLength = parent.intermediateNodeMaxQueueLength;
                 @display("b=32,30;p=60,60,row,100;i=block/queue");
         }
         defragmenter: Defragmenter {
@@ -197,8 +197,8 @@ module FragmenterScenario
         }
         nodeArray2[4]: IntermediateNode {
             parameters:
-                outputRate     = intermediateNodeOutputRate;
-                maxQueueLength = intermediateNodeMaxQueueLength;
+                outputRate     = parent.intermediateNodeOutputRate;
+                maxQueueLength = parent.intermediateNodeMaxQueueLength;
                 @display("p=60,460,row,100;i=block/queue");
         }
         sink2: Sink {
