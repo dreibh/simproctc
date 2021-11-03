@@ -464,7 +464,7 @@ finishMakefile <- function(makefile, dependencies, summaryCommand)
    cat(sep="", "\tcd tools && $(MAKE) getrelativepath && cd ..\n\n", file=makefile)
 
    # ------ First run of runtimeestimator -----------------------------------
-   cat(sep="", gRuntimeName, ":\n", file=makefile)
+   cat(sep="", gRuntimeName, ":\ttools/runtimeestimator\n", file=makefile)
    cat(sep="", "\ttools/runtimeestimator ",
                gRuntimeName, " ",
                gTotalSimulationRunLevels * gTotalSimulationRunsPerLevel,
