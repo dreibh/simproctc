@@ -1,3 +1,27 @@
+commit 48b5aa2a1f9b1a863575043b7ab77a961d9c295b
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Wed Nov 3 14:42:44 2021 +0100
+
+    Dependency fix in generated Makefile.
+
+commit b5296229e8baf960fc86673463f31a628009aaac
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Wed Nov 3 10:46:39 2021 +0100
+
+    Improved packaging script.
+
+commit 84a5a917f4c059c278c8bb6e85ddc08a20981f24
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Wed Nov 3 10:40:35 2021 +0100
+
+    Updated script.
+
+commit 9c12a19a6700366eea617414568ab4e8584f49e4
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Nov 2 18:01:45 2021 +0100
+
+    New release simproctc-2.0.0.
+
 commit bba1b4781bde7b938c5136b9d0631110fd7daa8c
 Author: Thomas Dreibholz <dreibh@simula.no>
 Date:   Tue Nov 2 18:01:07 2021 +0100
