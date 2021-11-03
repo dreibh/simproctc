@@ -32,6 +32,11 @@ if [ $# -gt 0 ] ; then
    fi
 fi
 
+if [ ! -e version ] ; then
+   echo >&2 "ERROR: Missing file \"version\"!"
+   exit 1
+fi
+
 PACKAGE="`cat version | awk '{ print $1 }'`"
 VERSION="`cat version | awk '{ print $2 }'`"
 CURRENT_BRANCH=`git branch --show-current`
