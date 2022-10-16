@@ -843,6 +843,11 @@ int main(int argc, char** argv)
    // ====== Handle command-line arguments ==================================
    if(argc > 1) {
       varNames = argv[1];
+      for(size_t i = 0; i < varNames.size(); i++) {
+         if(varNames[i] == ' ') {
+            varNames[i] = '\t';
+         }
+      }
       for(int i = 2;i < argc;i++) {
          if(!(strncmp(argv[i], "-compress=", 10))) {
             compressionLevel = atol((char*)&argv[i][10]);
