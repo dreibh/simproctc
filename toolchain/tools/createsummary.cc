@@ -822,7 +822,7 @@ int main(int argc, char** argv)
 {
    unsigned int compressionLevel       = 9;
    bool         interactiveMode        = true;
-   bool         addLineNumbers         = true;
+   bool         addLineNumbers         = false;
    bool         splitAll               = false;
    bool         quietMode              = false;
    bool         ignoreScalarFileErrors = false;
@@ -882,10 +882,11 @@ int main(int argc, char** argv)
 
 
    if(!quietMode) {
-      cout << "CreateSummary - Version 4.4.0" << endl
+      cout << "CreateSummary - Version 5.0.0" << endl
            << "=============================" << endl << endl
            << "Compression Level: " << compressionLevel << endl
            << "Interactive Mode:  " << (interactiveMode ? "on" : "off") << endl
+           << "Line Numbers:      " << (addLineNumbers  ? "on" : "off") << endl
            << endl;
    }
 
@@ -915,11 +916,21 @@ int main(int argc, char** argv)
          if(varNames[0] == '\"') {
             varNames = varNames.substr(1, varNames.size() - 2);
          }
+         for(size_t i = 0; i < varNames.size(); i++) {
+            if(varNames[i] == ' ') {
+               varNames[i] = '\t';
+            }
+         }
       }
       else if(!(strncmp(command, "--values=", 9))) {
          varValues = (const char*)&command[9];
          if(varValues[0] == '\"') {
             varValues = varValues.substr(1, varValues.size() - 2);
+         }
+         for(size_t i = 0; i < varValues.size(); i++) {
+            if(varValues[i] == ' ') {
+               varValues[i] = '\t';
+            }
          }
       }
       else if(!(strncmp(command, "--logfile=", 10))) {

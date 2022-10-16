@@ -1520,7 +1520,7 @@ loadResults <- function(name, customFilter="", customFormatter=applyFormatter, q
    if(!quiet) {
       cat(sep="", "Loading from pipe [", dataInputCommand, "] ...\n")
    }
-   data <- read.table(pipe(dataInputCommand))
+   data <- read.table(pipe(dataInputCommand), header = TRUE)
    data <- customFormatter(data)
    return(data)
 }
@@ -1887,7 +1887,7 @@ createPlots <- function(simulationDirectory,
                pSortAscending   = pSortAscending,
                prePlotFunction  = prePlotFunction,
                postPlotFunction = postPlotFunction,
-               hideCurves       = hideCurves)               
+               hideCurves       = hideCurves)
       if(plotOwnOutput) {
          dev.off()
       }
