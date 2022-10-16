@@ -632,7 +632,7 @@ static bool handleScalarFile(const std::string& varNames,
          }
       }
       else if(!(strncmp(buffer, "statistic ", 10))) {
-         // ====== Parse scalar lineNumber ========================================
+         // ====== Parse scalar line ========================================
          char* s = getWord((char*)&buffer[10], (char*)&statisticObjectName);
          if(s) {
             s = getWord(s, (char*)&statisticBlockName);
@@ -653,7 +653,7 @@ static bool handleScalarFile(const std::string& varNames,
          hasStatistic = true;
       }
       else if(buffer[0] == 0x00) {
-         // Empty lineNumber
+         // Empty line
       }
       else if(!(strncmp(buffer, "version", 7))) {
          // Skip this item
@@ -774,7 +774,7 @@ static void dumpScalars(const std::string& simulationsDirectory,
                exit(1);
             }
          }
-         if(outputFile.printf("%u\t%u\t\"%s\"\t%s\t\"%s\"\t%lf\n",
+         if(outputFile.printf("%u\t%u\t\"%s\"\t%s\t%s\t%lf\n",
                               (unsigned int)scalarNode->Run,
                               (unsigned int)valueNumber,
                               scalarNode->SplitName,
