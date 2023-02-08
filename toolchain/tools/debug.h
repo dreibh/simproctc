@@ -1,7 +1,7 @@
 /*
  * ==========================================================================
  *                  NetPerfMeter -- Network Performance Meter                 
- *                 Copyright (C) 2009-2021 by Thomas Dreibholz
+ *                 Copyright (C) 2009-2023 by Thomas Dreibholz
  * ==========================================================================
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact:  dreibh@iem.uni-due.de
- * Homepage: https://www.uni-due.de/~be0001/netperfmeter/
+ * Contact:  thomas.dreibholz@gmail.com
+ * Homepage: https://www.nntb.no/~dreibh/netperfmeter/
  */
 
 #ifndef DEBUG_H
