@@ -1,3 +1,57 @@
+commit 07d1b63c3917857936bca97bcb094bcc71e6ab08
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Wed Feb 8 10:48:40 2023 +0100
+
+    URL change from UDE to NNTB.
+
+commit 8c2cc7e56364eb954bd6c9efd94dd75f99912ce0
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Oct 16 13:42:40 2022 +0200
+
+    A fix.
+
+commit 70cb53096660712637cf9a166b985802cf48c533
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Oct 16 13:19:49 2022 +0200
+
+    Further improvements.
+
+commit a240df444aca78c1967c7a9919aaf8d023cd4d54
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Oct 16 13:00:50 2022 +0200
+
+    Some clean-ups.
+
+commit 5bc1a01d946d13f1f6d3b57802e80c71119b5a7b
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Oct 16 12:51:28 2022 +0200
+
+    Improved CreateSummary to write output compatible with data.table's fread().
+
+commit f442dde1ff7340d5ef591a39df96a82f431d81cd
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Feb 1 15:30:11 2022 +0100
+
+    Updated logo.
+
+commit 64890a7f4d345bccf2e94851c548886378aa86a8
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Feb 1 15:13:35 2022 +0100
+
+    Added logo.
+
+commit 539d727555dabc43ba14241694bf1f505fa05e3c
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Nov 7 14:27:37 2021 +0100
+
+    Updated build scripts.
+
+commit 840fee562a72c21f7e1c2c6da4d39952d2091e43
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Wed Nov 3 23:00:24 2021 +0100
+
+    New release simproctc-2.0.1.
+
 commit 48b5aa2a1f9b1a863575043b7ab77a961d9c295b
 Author: Thomas Dreibholz <dreibh@simula.no>
 Date:   Wed Nov 3 14:42:44 2021 +0100
