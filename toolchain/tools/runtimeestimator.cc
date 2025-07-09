@@ -1,7 +1,7 @@
 /*
  * ==========================================================================
  *                  NetPerfMeter -- Network Performance Meter
- *                 Copyright (C) 2009-2023 by Thomas Dreibholz
+ *                 Copyright (C) 2009-2025 by Thomas Dreibholz
  * ==========================================================================
  *
  * This program is free software: you can redistribute it and/or modify

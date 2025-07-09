@@ -1,7 +1,7 @@
 // ###########################################################################
 //                   A Very Simple Example Simulation for
 //             Thomas Dreibholz's R Simulation Scripts Collection
-//                  Copyright (C) 2008-2023 Thomas Dreibholz
+//                  Copyright (C) 2008-2025 Thomas Dreibholz
 //
 //               Author: Thomas Dreibholz, thomas.dreibholz@gmail.com
 // ###########################################################################
