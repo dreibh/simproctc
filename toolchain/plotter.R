@@ -1842,13 +1842,13 @@ createPlots <- function(simulationDirectory,
 
 
       # ------ Set x/y-axis ticks -------------------------------------------
-      if((length(xAxisTicks) < 2) || (is.na(xAxisTicks))) {
+      if(length(xAxisTicks) < 2) {
          xAxisTicks <- getUsefulTicks(xSet)
       }
-      if((length(yAxisTicks) < 2) || (is.na(yAxisTicks))) {
+      if(length(yAxisTicks) < 2) {
          yAxisTicks <- getUsefulTicks(ySet)
       }
-      if((length(legendPos) < 2) || (is.na(legendPos))) {
+      if(length(legendPos) < 2) {
          legendPos <- c(1,1)
       }
 
