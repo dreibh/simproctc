@@ -1,6 +1,12 @@
 /*
  * ==========================================================================
- *                  NetPerfMeter -- Network Performance Meter                 
+ *         _   _      _   ____            __ __  __      _
+ *        | \ | | ___| |_|  _ \ ___ _ __ / _|  \/  | ___| |_ ___ _ __
+ *        |  \| |/ _ \ __| |_) / _ \ '__| |_| |\/| |/ _ \ __/ _ \ '__|
+ *        | |\  |  __/ |_|  __/  __/ |  |  _| |  | |  __/ ||  __/ |
+ *        |_| \_|\___|\__|_|   \___|_|  |_| |_|  |_|\___|\__\___|_|
+ *
+ *                  NetPerfMeter -- Network Performance Meter
  *                 Copyright (C) 2009-2025 by Thomas Dreibholz
  * ==========================================================================
  *
@@ -17,7 +23,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact:  thomas.dreibholz@gmail.com
+ * Contact:  dreibh@simula.no
  * Homepage: https://www.nntb.no/~dreibh/netperfmeter/
  */
 
@@ -29,8 +35,8 @@
 // ###### Constructor #######################################################
 InputFile::InputFile()
 {
-   File      = NULL;
-   BZFile    = NULL;
+   File      = nullptr;
+   BZFile    = nullptr;
    ReadError = false;
    Line      = 0;
 }
@@ -53,7 +59,7 @@ bool InputFile::initialize(const char*           name,
    StoragePos = 0;
    Line       = 0;
    Format     = format;
-   if(name != NULL) {
+   if(name != nullptr) {
       Name = std::string(name);
    }
    else {
@@ -61,32 +67,30 @@ bool InputFile::initialize(const char*           name,
    }
 
    // ====== Initialize file ================================================
-   BZFile = NULL;
-   File = (name != NULL) ? fopen(name, "r") : tmpfile();
-   if(File == NULL) {
-      std::cerr << "ERROR: Unable to open input file <"
-                << Name << ">!" << std::endl;
+   BZFile = nullptr;
+   File = (name != nullptr) ? fopen(name, "r") : tmpfile();
+   if(File == nullptr) {
+      std::cerr << "ERROR: Unable to open input file <" << Name << ">!\n";
       ReadError = true;
-      return(false);
+      return false;
    }
 
    // ====== Initialize BZip2 compressor ====================================
    if(format == IFF_BZip2) {
       int bzerror;
-      BZFile = BZ2_bzReadOpen(&bzerror, File, 0, 0, NULL, 0);
+      BZFile = BZ2_bzReadOpen(&bzerror, File, 0, 0, nullptr, 0);
       if(bzerror != BZ_OK) {
-         std::cerr << "ERROR: Unable to initialize BZip2 compression on file <"
-                   << Name << ">!" << std::endl
-                   << "Reason: " << BZ2_bzerror(BZFile, &bzerror) << std::endl;
-         BZ2_bzWriteClose(&bzerror, BZFile, 0, NULL, NULL);
+         std::cerr << "ERROR: Unable to initialize BZip2 compression on file <" << Name << ">!\n"
+                   << "Reason: " << BZ2_bzerror(BZFile, &bzerror) << "\n";
+         BZ2_bzWriteClose(&bzerror, BZFile, 0, nullptr, nullptr);
          ReadError = true;
          finish();
-         return(false);
+         return false;
       }
    }
 
    ReadError = false;
-   return(true);
+   return true;
 }
 
 
@@ -97,20 +101,20 @@ bool InputFile::finish(const bool closeFile)
    if(BZFile) {
       int bzerror;
       BZ2_bzReadClose(&bzerror, BZFile);
-      BZFile = NULL;
+      BZFile = nullptr;
    }
 
    // ====== Close or rewind file ===========================================
    if(File) {
       if(closeFile) {
          fclose(File);
-         File = NULL;
+         File = nullptr;
       }
       else {
          rewind(File);
       }
    }
-   return(!ReadError);
+   return !ReadError;
 }
 
 
@@ -120,7 +124,7 @@ ssize_t InputFile::readLine(char* buffer, size_t bufferSize, bool& eof)
    eof = false;
 
    if(bufferSize < 1) {
-      return(-1);
+      return -1;
    }
    bufferSize--;  // Leave one byte for terminating 0x00 byte.
 
@@ -128,8 +132,8 @@ ssize_t InputFile::readLine(char* buffer, size_t bufferSize, bool& eof)
    for(;;) {
       if(StoragePos >= bufferSize) {
          std::cerr << "ERROR: Line " << Line << " of file <"
-                   << Name << "> is too long to fit into buffer!" << std::endl;
-         return(-1);
+                   << Name << "> is too long to fit into buffer!\n";
+         return -1;
       }
       memcpy(buffer, (const char*)&Storage, StoragePos);
       if(Format == IFF_BZip2) {
@@ -146,14 +150,14 @@ ssize_t InputFile::readLine(char* buffer, size_t bufferSize, bool& eof)
       }
 
       if(bytesRead < 0) {
-         return(bytesRead);   // Error.
+         return bytesRead;   // Error.
       }
       else {
          bytesRead += StoragePos;
          buffer[bytesRead] = 0x00;
          if(bytesRead == 0) {
             eof = true;
-            return(0);   // End of file.
+            return 0;   // End of file.
          }
 
          StoragePos = 0;
@@ -163,7 +167,7 @@ ssize_t InputFile::readLine(char* buffer, size_t bufferSize, bool& eof)
                memcpy((char*)&Storage, &buffer[i + 1], StoragePos);
                buffer[i] = 0x00;
                Line++;
-               return(i);   // A line has been read.
+               return i;   // A line has been read.
             }
          }
       }

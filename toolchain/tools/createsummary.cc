@@ -1,24 +1,31 @@
-// ###########################################################################
-//             Thomas Dreibholz's R Simulation Scripts Collection
-//                  Copyright (C) 2004-2019 Thomas Dreibholz
-//
-//           Author: Thomas Dreibholz, thomas.dreibholz@gmail.com
-// ###########################################################################
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY// without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-// Contact: thomas.dreibholz@gmail.com
+/*
+ * ==========================================================================
+ *         _   _      _   ____            __ __  __      _
+ *        | \ | | ___| |_|  _ \ ___ _ __ / _|  \/  | ___| |_ ___ _ __
+ *        |  \| |/ _ \ __| |_) / _ \ '__| |_| |\/| |/ _ \ __/ _ \ '__|
+ *        | |\  |  __/ |_|  __/  __/ |  |  _| |  | |  __/ ||  __/ |
+ *        |_| \_|\___|\__|_|   \___|_|  |_| |_|  |_|\___|\__\___|_|
+ *
+ *                  NetPerfMeter -- Network Performance Meter
+ *                 Copyright (C) 2009-2025 by Thomas Dreibholz
+ * ==========================================================================
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contact:  dreibh@simula.no
+ * Homepage: https://www.nntb.no/~dreibh/netperfmeter/
+ */
 
 #include <string.h>
 
@@ -30,9 +37,6 @@
 #include "simpleredblacktree.h"
 #include "inputfile.h"
 #include "outputfile.h"
-
-
-using namespace std;
 
 
 #define MAX_NAME_SIZE    256
@@ -60,7 +64,7 @@ class ScalarNode
    char*                         VarValues;
    size_t                        Run;
    size_t                        Entries;
-   vector<double>                ValueSet;
+   std::vector<double>           ValueSet;
 };
 
 
@@ -69,11 +73,11 @@ ScalarNode::ScalarNode()
 {
    Run        = 0;
    Entries    = 0;
-   ScalarName = NULL;
-   SplitName  = NULL;
-   VarValues  = NULL;
-   AggNames   = NULL;
-   AggValues  = NULL;
+   ScalarName = nullptr;
+   SplitName  = nullptr;
+   VarValues  = nullptr;
+   AggNames   = nullptr;
+   AggValues  = nullptr;
    simpleRedBlackTreeNodeNew(&Node);
 }
 
@@ -83,23 +87,23 @@ ScalarNode::~ScalarNode()
 {
    if(ScalarName) {
       free(ScalarName);
-      ScalarName = NULL;
+      ScalarName = nullptr;
    }
    if(SplitName) {
       free(SplitName);
-      SplitName = NULL;
+      SplitName = nullptr;
    }
    if(VarValues) {
       free(VarValues);
-      VarValues = NULL;
+      VarValues = nullptr;
    }
    if(AggNames) {
       free(AggNames);
-      AggNames = NULL;
+      AggNames = nullptr;
    }
    if(AggValues) {
       free(AggValues);
-      AggValues = NULL;
+      AggValues = nullptr;
    }
 }
 
@@ -108,7 +112,7 @@ ScalarNode::~ScalarNode()
 static inline ScalarNode* getScalarNodeFromStorageNode(struct SimpleRedBlackTreeNode* node)
 {
    const long offset = (long)(&((class ScalarNode*)node)->Node) - (long)node;
-   return( (class ScalarNode*)( (long)node - offset ));
+   return  (class ScalarNode*)( (long)node - offset );
 }
 
 
@@ -120,7 +124,7 @@ static void scalarNodePrintFunction(const void* node, FILE* fd)
            (unsigned int)scalarNode->Run, scalarNode->ScalarName, scalarNode->SplitName,
            scalarNode->AggValues, scalarNode->VarValues);
 
-   vector<double>::iterator valueIterator = scalarNode->ValueSet.begin();
+   std::vector<double>::iterator valueIterator = scalarNode->ValueSet.begin();
    while(valueIterator != scalarNode->ValueSet.end()) {
       fprintf(fd, "%f ", *valueIterator);
       valueIterator++;
@@ -137,34 +141,34 @@ static int scalarNodeComparisonFunction(const void* node1, const void* node2)
    const ScalarNode* scalarNode2 = getScalarNodeFromStorageNode((struct SimpleRedBlackTreeNode*)node2);
    int result = strcmp(scalarNode1->ScalarName, scalarNode2->ScalarName);
    if(result != 0) {
-      return(result);
+      return result;
    }
    result = strcmp(scalarNode1->SplitName, scalarNode2->SplitName);
    if(result != 0) {
-      return(result);
+      return result;
    }
    result = strcmp(scalarNode1->AggValues, scalarNode2->AggValues);
    if(result != 0) {
-      return(result);
+      return result;
    }
    result = strcmp(scalarNode1->VarValues, scalarNode2->VarValues);
    if(result != 0) {
-      return(result);
+      return result;
    }
    if(scalarNode1->Run < scalarNode2->Run) {
-      return(-1);
+      return -1;
    }
    if(scalarNode1->Run > scalarNode2->Run) {
-      return(1);
+      return 1;
    }
-   return(0);
+   return 0;
 }
 
 
 
 static struct SimpleRedBlackTree StatisticsStorage;
-static ScalarNode*               NextScalarNode = NULL;
-static SkipListNode*             SkipList       = NULL;
+static ScalarNode*               NextScalarNode = nullptr;
+static SkipListNode*             SkipList       = nullptr;
 
 
 
@@ -212,7 +216,7 @@ static void removeBrackets(char* str)
 static void removeScenarioName(char* str)
 {
    char* s1 = index(str, '.');
-   if(s1 != NULL) {
+   if(s1 != nullptr) {
       s1++;
       while(*s1 != 0x00) {
          *str++ = *s1++;
@@ -230,7 +234,7 @@ static int safestrcat(char* dest, const char* src, const size_t size)
 
    strncat(dest, src, size - l1 - 1);
    dest[size - 1] = 0x00;
-   return(l1 + l2 < size);
+   return l1 + l2 < size;
 }
 
 
@@ -263,7 +267,7 @@ static unsigned int getAggregate(char*        objectName,
    // ====== Get segment ====================================================
    unsigned int levels;
    char*        segment = rindex(objectName, '.');
-   if(segment == NULL) {
+   if(segment == nullptr) {
       segment       = objectName;
       scalarName[0] = 0x00;
       aggNames[0]   = 0x00;
@@ -291,7 +295,9 @@ static unsigned int getAggregate(char*        objectName,
       }
    }
    char aggregate[i + 2];
-   strncpy((char*)&aggregate, segment, i + 1);
+   if(i >= 0) {
+      strncpy((char*)&aggregate, segment, i + 1);
+   }
    aggregate[i + 1] = 0x00;
 
    // ------ Extract aggregate and its value --------------
@@ -328,7 +334,7 @@ static unsigned int getAggregate(char*        objectName,
          for(size_t i = 1;i < identifierLength;i++) {
             if(!isdigit(identifier[i])) {
                // Identifier is not a number -> skip it!
-               identifier = NULL;
+               identifier = nullptr;
                break;
             }
          }
@@ -354,7 +360,7 @@ static unsigned int getAggregate(char*        objectName,
    // printf("Level %u: scalarName=<%s> statName=<%s> aggNames=<%s> aggValues=<%s>\n",
    //        levels, scalarName, statName, aggNames, aggValues);
 
-   return(levels + 1);
+   return levels + 1;
 }
 
 
@@ -368,7 +374,7 @@ static char* getWord(char* str, char* word)
       n++;
    }
    if(str[n] == 0x00) {
-      return(NULL);
+      return nullptr;
    }
    if(str[n] == '\"') {
       quoted = true;
@@ -379,14 +385,14 @@ static char* getWord(char* str, char* word)
    while( ((quoted) && (str[n] != '\"')) ||
           ((!quoted) && (str[n] != ' ') && (str[n] != '\t')) ) {
       if( (quoted == true) && (str[n] == 0x00) ) {
-         return(NULL);
+         return nullptr;
       }
       word[i++] = str[n++];
    }
    word[i] = 0x00;
    n++;
 
-   return((char*)&str[n]);
+   return (char*)&str[n];
 }
 
 
@@ -403,10 +409,10 @@ static void addScalar(const char*  scalarName,
    // printf("addScalar: scalarName=<%s> splitName=<%s> aggN=<%s> aggV=<%s> varN=<%s> varV=<%s> run=%lu val=%f\n",
    //        scalarName, splitName, aggNames, aggValues, varNames, varValues, runNumber, value);
 
-   if(NextScalarNode == NULL) {
+   if(NextScalarNode == nullptr) {
       NextScalarNode = new ScalarNode;
-      if(NextScalarNode == NULL) {
-         cerr << "ERROR: Out of memory!" << endl;
+      if(NextScalarNode == nullptr) {
+         std::cerr << "ERROR: Out of memory!\n";
          exit(1);
       }
    }
@@ -427,22 +433,22 @@ static void addScalar(const char*  scalarName,
       NextScalarNode->AggNames   = strdup(aggNames);
       NextScalarNode->AggValues  = strdup(aggValues);
       NextScalarNode->VarValues  = strdup(varValues);
-      if( (NextScalarNode->ScalarName == NULL) ||
-          (NextScalarNode->SplitName  == NULL) ||
-          (NextScalarNode->AggNames   == NULL) ||
-          (NextScalarNode->AggValues  == NULL) ||
-          (NextScalarNode->VarValues  == NULL) ) {
-         cerr << "ERROR: Out of memory!" << endl;
+      if( (NextScalarNode->ScalarName == nullptr) ||
+          (NextScalarNode->SplitName  == nullptr) ||
+          (NextScalarNode->AggNames   == nullptr) ||
+          (NextScalarNode->AggValues  == nullptr) ||
+          (NextScalarNode->VarValues  == nullptr) ) {
+         std::cerr << "ERROR: Out of memory!\n";
          exit(1);
       }
-      NextScalarNode = NULL;
+      NextScalarNode = nullptr;
    }
    else {
-      NextScalarNode->ScalarName = NULL;
-      NextScalarNode->SplitName  = NULL;
-      NextScalarNode->AggNames   = NULL;
-      NextScalarNode->AggValues  = NULL;
-      NextScalarNode->VarValues  = NULL;
+      NextScalarNode->ScalarName = nullptr;
+      NextScalarNode->SplitName  = nullptr;
+      NextScalarNode->AggNames   = nullptr;
+      NextScalarNode->AggValues  = nullptr;
+      NextScalarNode->VarValues  = nullptr;
    }
 
    scalarNode->ValueSet.push_back(value);
@@ -461,9 +467,9 @@ static void handleScalar(const std::string& varNames,
                          const double       value)
 {
 /*
-   cout << "Object=" << objectName << endl;
-   cout << "Statistic=" << statName << endl;
-   cout << "Value=" << value << endl;
+   std::cout << "Object=" << objectName << "\n";
+   std::cout << "Statistic=" << statName << "\n";
+   std::cout << "Value=" << value << "\n";
 */
 
    // ====== Try to split scalar name =======================================
@@ -495,20 +501,20 @@ static void handleScalar(const std::string& varNames,
 
    // ====== Reconciliate with skip list ====================================
    SkipListNode* skipListNode = SkipList;
-   while(skipListNode != NULL) {
+   while(skipListNode != nullptr) {
       if(strncmp(scalarName, skipListNode->Prefix,
                  strlen(skipListNode->Prefix)) == 0) {
          break;
       }
       skipListNode = skipListNode->Next;;
    }
-   if(skipListNode == NULL) {
+   if(skipListNode == nullptr) {
       addScalar(scalarName, splitName, aggNames, aggValues,
                 varNames.c_str(), varValues.c_str(), run, value);
    }
    else {
       if(interactiveMode) {
-         cout << "Skipping entry " << scalarName << endl;
+         std::cout << "Skipping entry " << scalarName << "\n";
       }
    }
 }
@@ -530,7 +536,7 @@ static bool handleScalarFile(const std::string& varNames,
        inputFileFormat = IFF_BZip2;
    }
    if(inputFile.initialize(fileName.c_str(), inputFileFormat) == false) {
-      return(false);
+      return false;
    }
 
 
@@ -558,26 +564,26 @@ static bool handleScalarFile(const std::string& varNames,
           (!(strncmp(buffer, "scalar\t", 7))) ) {
          // ====== Parse scalar line ========================================
          char* s = getWord((char*)&buffer[7], (char*)&objectName);
-         if(s != NULL) {
+         if(s != nullptr) {
             s = getWord(s, (char*)&statName);
-            if(s != NULL) {
+            if(s != nullptr) {
                if(sscanf(s, "%lf", &value) != 1) {
-                  cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
-                       << " - Value expected!" << endl;
+                  std::cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
+                       << " - Value expected!\n";
                   success = false;
                   break;
                }
             }
             else {
-               cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
-                    << " - Statistics name expected for \"scalar\"!" << endl;
+               std::cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
+                    << " - Statistics name expected for \"scalar\"!\n";
                success = false;
                break;
             }
          }
          else {
-            cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
-                 << " - Object name expected for \"scalar\"!" << endl;
+            std::cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
+                 << " - Object name expected for \"scalar\"!\n";
             success = false;
             break;
          }
@@ -601,8 +607,8 @@ static bool handleScalarFile(const std::string& varNames,
             char* s = getWord((char*)&buffer[6], (char*)&fieldName);
             if(s) {
                if(sscanf(s, "%lf", &value) != 1) {
-                  cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
-                       << " - Value expected!" << endl;
+                  std::cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
+                       << " - Value expected!\n";
                   success = false;
                   break;
                }
@@ -625,8 +631,8 @@ static bool handleScalarFile(const std::string& varNames,
             }
          }
          else {
-            cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
-                 << " - \"field\" without \"statistic\"!" << endl;
+            std::cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
+                 << " - \"field\" without \"statistic\"!\n";
             success = false;
             break;
          }
@@ -636,16 +642,16 @@ static bool handleScalarFile(const std::string& varNames,
          char* s = getWord((char*)&buffer[10], (char*)&statisticObjectName);
          if(s) {
             s = getWord(s, (char*)&statisticBlockName);
-            if(s == NULL) {
-               cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
-                    << " - Statistics name expected for \"statistic\"!" << endl;
+            if(s == nullptr) {
+               std::cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
+                    << " - Statistics name expected for \"statistic\"!\n";
                success = false;
                break;
             }
          }
          else {
-            cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
-                 << " - Object name expected for \"statistic\"!" << endl;
+            std::cerr << "ERROR: File \"" << fileName << "\", line " << inputFile.getLine()
+                 << " - Object name expected for \"statistic\"!\n";
             success = false;
             break;
          }
@@ -659,8 +665,8 @@ static bool handleScalarFile(const std::string& varNames,
          // Skip this item
       }
       else {
-         cerr << "NOTE: " << fileName << ":" << inputFile.getLine()
-              << " - Ignoring line \"" << buffer << "\"" << endl;
+         std::cerr << "NOTE: " << fileName << ":" << inputFile.getLine()
+              << " - Ignoring line \"" << buffer << "\"\n";
          // Skip this item
       }
    }
@@ -668,7 +674,7 @@ static bool handleScalarFile(const std::string& varNames,
 
    // ====== Close input file ===============================================
    inputFile.finish();
-   return(success);
+   return success;
 }
 
 
@@ -692,12 +698,12 @@ static void closeOutputFile(OutputFile&              outputFile,
       totalLines += lineNumber;
       totalFiles++;
       if(interactiveMode) {
-         cout << " (" << lineNumber << " lines";
+         std::cout << " (" << lineNumber << " lines";
          if(in > 0) {
-            cout << ", " << in << " -> " << out << " - "
+            std::cout << ", " << in << " -> " << out << " - "
                   << ((double)out * 100.0 / in) << "%";
          }
-         cout << ")" << endl;
+         std::cout << ")\n";
       }
    }
 }
@@ -723,7 +729,7 @@ static void dumpScalars(const std::string& simulationsDirectory,
    // simpleRedBlackTreePrint(&StatisticsStorage, stdout);
 
    SimpleRedBlackTreeNode* node = simpleRedBlackTreeGetFirst(&StatisticsStorage);
-   while(node != NULL) {
+   while(node != nullptr) {
       ScalarNode* scalarNode = getScalarNodeFromStorageNode(node);
 
       if(strcmp(lastStatisticsName.c_str(), scalarNode->ScalarName) != 0) {
@@ -744,9 +750,9 @@ static void dumpScalars(const std::string& simulationsDirectory,
             fileName = resultsDirectory + "/" + scalarNode->ScalarName + ".data";
          }
          if(interactiveMode) {
-            cout << "Statistics \"" << scalarNode->ScalarName << "\" ...";
+            std::cout << "Statistics \"" << scalarNode->ScalarName << "\" ...";
          }
-         cout.flush();
+         std::cout.flush();
          if(outputFile.initialize(fileName.c_str(),
                                   (compressionLevel > 0) ? OFF_BZip2 : OFF_Plain,
                                   compressionLevel) == false) {
@@ -767,7 +773,7 @@ static void dumpScalars(const std::string& simulationsDirectory,
 
       // ====== Write table rows =========================================
       size_t valueNumber = 1;
-      vector<double>::iterator valueIterator = scalarNode->ValueSet.begin();
+      std::vector<double>::iterator valueIterator = scalarNode->ValueSet.begin();
       while(valueIterator != scalarNode->ValueSet.end()) {
          if(addLineNumbers) {
             if(outputFile.printf("%07llu\t", lineNumber) == false) {
@@ -797,22 +803,22 @@ static void dumpScalars(const std::string& simulationsDirectory,
                      interactiveMode);
 
    // ====== Display some compression information ===========================
-   cout << "Wrote " << totalLines << " lines into "
+   std::cout << "Wrote " << totalLines << " lines into "
         << totalFiles << " files";
    if(totalIn > 0) {
-      cout << ", "
+      std::cout << ", "
            << totalIn << " -> " << totalOut << " - "
            << ((double)totalOut * 100.0 / totalIn) << "%";
    }
-   cout << endl;
+   std::cout << "\n";
 }
 
 
 // ###### Print usage and exit ##############################################
 static void usage(const char* name)
 {
-   cerr << "Usage: "
-        << name << " [Var Names] {-compress=0-9} {-interactive|-batch} {-splitall} {-line-numbers|-no-line-numbers}" << endl;
+   std::cerr << "Usage: " << name
+             << " [Var Names] {-compress=0-9} {-interactive|-batch} {-splitall} {-line-numbers|-no-line-numbers}\n";
    exit(1);
 }
 
@@ -887,33 +893,33 @@ int main(int argc, char** argv)
 
 
    if(!quietMode) {
-      cout << "CreateSummary - Version 5.0.0" << endl
-           << "=============================" << endl << endl
-           << "Compression Level: " << compressionLevel << endl
-           << "Interactive Mode:  " << (interactiveMode ? "on" : "off") << endl
-           << "Line Numbers:      " << (addLineNumbers  ? "on" : "off") << endl
-           << endl;
+      std::cout << "CreateSummary - Version 5.1.0\n"
+           << "=============================\n\n"
+           << "Compression Level: " << compressionLevel << "\n"
+           << "Interactive Mode:  " << (interactiveMode ? "on" : "off") << "\n"
+           << "Line Numbers:      " << (addLineNumbers  ? "on" : "off") << "\n"
+           << "\n";
    }
 
 
    // ====== Handle interactiveMode commands ====================================
    if(interactiveMode) {
-      cout << "Ready> ";
-      cout.flush();
+      std::cout << "Ready> ";
+      std::cout.flush();
    }
    else {
-      cout << "Processing input ..." << endl;
+      std::cout << "Processing input ...\n";
    }
    bool scalarFileError = false;
    while((command = fgets((char*)&buffer, sizeof(buffer), stdin))) {
       command[strlen(command) - 1] = 0x00;
       if(command[0] == 0x00) {
-         cout << "*** End of File ***" << endl;
+         std::cout << "*** End of File ***\n";
          break;
       }
 
       if(interactiveMode) {
-         cout << command << endl;
+         std::cout << command << "\n";
       }
 
       if(!(strncmp(command, "--varnames=", 11))) {
@@ -946,16 +952,16 @@ int main(int argc, char** argv)
       }
       else if(!(strncmp(command, "--input=", 8))) {
          if(varValues == "") {
-            cerr << "ERROR: No values given (parameter --values=...)!" << endl;
+            std::cerr << "ERROR: No values given (parameter --values=...)!\n";
             exit(1);
          }
          if(!handleScalarFile(varNames, varValues, (char*)&command[8], interactiveMode, splitAll)) {
             scalarFileError = true;
             if(logFileName != "") {
-               cerr << " => see logfile " << logFileName << endl;
+               std::cerr << " => see logfile " << logFileName << "\n";
             }
             if(statusFileName != "") {
-               cerr << " Removing status file; restart simulation to re-create this run!" << endl;
+               std::cerr << " Removing status file; restart simulation to re-create this run!\n";
                unlink(statusFileName.c_str());
             }
          }
@@ -965,8 +971,8 @@ int main(int argc, char** argv)
       }
       else if(!(strncmp(command, "--skip=", 7))) {
          SkipListNode* skipListNode = new SkipListNode;
-         if(skipListNode == NULL) {
-            cerr << "ERROR: Out of memory!" << endl;
+         if(skipListNode == nullptr) {
+            std::cerr << "ERROR: Out of memory!\n";
             exit(1);
          }
          skipListNode->Next = SkipList;
@@ -990,42 +996,42 @@ int main(int argc, char** argv)
          // Deprecated, ignore ...
       }
       else {
-         cerr << "ERROR: Invalid command \"" << command << "\"!" << endl
-              << "Examples:" << endl
-              << "   --skip=calcAppServer" << endl
-              << "   --simulationsdirectory=MySimulationsDirectory" << endl
-              << "   --resultsdirectory=MySimulationsDirectory/Results" << endl
-              << "   --skip=calcAppServer" << endl
-              << "   --varnames=Alpha Beta Gamma" << endl
-              << "   --values=alpha100 beta200 gamma300" << endl
-              << "   --input=simulations/scalar-file.sca.bz2" << endl
-              << "   (Ctrl-D, EOF)" << endl;
+         std::cerr << "ERROR: Invalid command \"" << command << "\"!\n"
+              << "Examples:\n"
+              << "   --skip=calcAppServer\n"
+              << "   --simulationsdirectory=MySimulationsDirectory\n"
+              << "   --resultsdirectory=MySimulationsDirectory/Results\n"
+              << "   --skip=calcAppServer\n"
+              << "   --varnames=Alpha Beta Gamma\n"
+              << "   --values=alpha100 beta200 gamma300\n"
+              << "   --input=simulations/scalar-file.sca.bz2\n"
+              << "   (Ctrl-D, EOF)\n";
          if(!interactiveMode) {
             exit(1);
          }
       }
 
       if(interactiveMode) {
-         cout << "Ready> ";
-         cout.flush();
+         std::cout << "Ready> ";
+         std::cout.flush();
       }
    }
 
 
    // ====== Write results ==================================================
    if(interactiveMode) {
-      cout << endl << endl;
+      std::cout << "\n" << "\n";
    }
    if(scalarFileError) {
       if(ignoreScalarFileErrors == false) {
-         cerr << "ERROR: Not all scalar files have been read -> aborting!" << endl;
+         std::cerr << "ERROR: Not all scalar files have been read -> aborting!\n";
          exit(1);
       }
       else {
-         cerr << "WARNING: Not all scalar files have been read -> continuing!" << endl;
+         std::cerr << "WARNING: Not all scalar files have been read -> continuing!\n";
       }
    }
-   cout << "Writing scalar files..." << endl;
+   std::cout << "Writing scalar files...\n";
    dumpScalars(simulationsDirectory, resultsDirectory, varNames,
                compressionLevel, interactiveMode, addLineNumbers);
 
@@ -1033,7 +1039,7 @@ int main(int argc, char** argv)
    // ====== Clean up =======================================================
    if(NextScalarNode) {
       delete NextScalarNode;
-      NextScalarNode = NULL;
+      NextScalarNode = nullptr;
    }
    ScalarNode* scalarNode = (ScalarNode*)simpleRedBlackTreeGetFirst(&StatisticsStorage);
    while(scalarNode) {
@@ -1042,5 +1048,5 @@ int main(int argc, char** argv)
       scalarNode = (ScalarNode*)simpleRedBlackTreeGetFirst(&StatisticsStorage);
    }
    simpleRedBlackTreeDelete(&StatisticsStorage);
-   return(0);
+   return 0;
 }

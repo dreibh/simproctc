@@ -1,24 +1,31 @@
-// ###########################################################################
-//             Thomas Dreibholz's R Simulation Scripts Collection
-//                  Copyright (C) 2004-2019 Thomas Dreibholz
-//
-//           Author: Thomas Dreibholz, thomas.dreibholz@gmail.com
-// ###########################################################################
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY// without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-// Contact: thomas.dreibholz@gmail.com
+/*
+ * ==========================================================================
+ *         _   _      _   ____            __ __  __      _
+ *        | \ | | ___| |_|  _ \ ___ _ __ / _|  \/  | ___| |_ ___ _ __
+ *        |  \| |/ _ \ __| |_) / _ \ '__| |_| |\/| |/ _ \ __/ _ \ '__|
+ *        | |\  |  __/ |_|  __/  __/ |  |  _| |  | |  __/ ||  __/ |
+ *        |_| \_|\___|\__|_|   \___|_|  |_| |_|  |_|\___|\__\___|_|
+ *
+ *                  NetPerfMeter -- Network Performance Meter
+ *                 Copyright (C) 2009-2025 by Thomas Dreibholz
+ * ==========================================================================
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contact:  dreibh@simula.no
+ * Homepage: https://www.nntb.no/~dreibh/netperfmeter/
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -92,7 +99,7 @@ int main(int argc, char** argv)
    // ====== Process arguments ==============================================
    if(argc < 3) {
       std::cerr << "Usage: " << argv[0]
-                << " [Output File] [Var Names] {-compress=0-9} {-quiet}" << std::endl;
+                << " [Output File] [Var Names] {-compress=0-9} {-quiet}\n";
       exit(1);
    }
    for(int i = 3;i < argc;i++) {
@@ -110,8 +117,8 @@ int main(int argc, char** argv)
 
    // ====== Print information ==============================================
    if(!quiet) {
-      std::cout << "CombineSummaries - Version 2.20" << std::endl
-                << "===============================" << std::endl << std::endl;
+      std::cout << "CombineSummaries - Version 2.30\n"
+                << "===============================\n\n";
    }
 
 
@@ -144,11 +151,11 @@ int main(int argc, char** argv)
    while((command = fgets((char*)&commandBuffer, sizeof(commandBuffer), stdin))) {
       command[strlen(command) - 1] = 0x00;
       if(command[0] == 0x00) {
-         std::cout << "*** End of File ***" << std::endl;
+         std::cout << "*** End of File ***\n";
          break;
       }
       if(!quiet) {
-         std::cout << command << std::endl;
+         std::cout << command << "\n";
       }
 
       if(!(strncmp(command, "--values=", 9))) {
@@ -159,7 +166,7 @@ int main(int argc, char** argv)
       }
       else if(!(strncmp(command, "--input=", 8))) {
          if(varValues[0] == 0x00) {
-            std::cerr << "ERROR: No values given (parameter --values=...)!" << std::endl;
+            std::cerr << "ERROR: No values given (parameter --values=...)!\n";
             exit(1);
          }
          addDataFile(outputFile, outputLineNumber,
@@ -170,7 +177,7 @@ int main(int argc, char** argv)
          simulationsDirectory = (const char*)&simulationsDirectory[23];
       }
       else {
-         std::cerr << "ERROR: Invalid command!" << std::endl;
+         std::cerr << "ERROR: Invalid command!\n";
          exit(1);
       }
 
@@ -187,13 +194,13 @@ int main(int argc, char** argv)
       exit(1);
    }
    if(!quiet) {
-      std::cout << std::endl << "Wrote " << outputLineNumber << " lines";
+      std::cout << "\n" << "Wrote " << outputLineNumber << " lines";
       if(in > 0) {
          std::cout << " (" << in << " -> " << out << " - "
                    << ((double)out * 100.0 / in) << "%)";
       }
-      std::cout << std::endl;
+      std::cout << "\n";
    }
 
-   return(0);
+   return 0;
 }

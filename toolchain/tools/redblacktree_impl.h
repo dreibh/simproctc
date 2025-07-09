@@ -1,6 +1,12 @@
 /*
  * ==========================================================================
- *                  NetPerfMeter -- Network Performance Meter                 
+ *         _   _      _   ____            __ __  __      _
+ *        | \ | | ___| |_|  _ \ ___ _ __ / _|  \/  | ___| |_ ___ _ __
+ *        |  \| |/ _ \ __| |_) / _ \ '__| |_| |\/| |/ _ \ __/ _ \ '__|
+ *        | |\  |  __/ |_|  __/  __/ |  |  _| |  | |  __/ ||  __/ |
+ *        |_| \_|\___|\__|_|   \___|_|  |_| |_|  |_|\___|\__\___|_|
+ *
+ *                  NetPerfMeter -- Network Performance Meter
  *                 Copyright (C) 2009-2025 by Thomas Dreibholz
  * ==========================================================================
  *
@@ -17,7 +23,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact:  thomas.dreibholz@gmail.com
+ * Contact:  dreibh@simula.no
  * Homepage: https://www.nntb.no/~dreibh/netperfmeter/
  */
 
@@ -77,7 +83,7 @@ void RB_FUNCTION(RedBlackTreeNodeDelete)(
 int RB_FUNCTION(RedBlackTreeNodeIsLinked)(
        const struct RB_DEFINITION(RedBlackTreeNode)* node)
 {
-   return(node->LeftSubtree != NULL);
+   return node->LeftSubtree != NULL;
 }
 
 
@@ -211,7 +217,7 @@ void RB_FUNCTION(RedBlackTreePrint)(
 int RB_FUNCTION(RedBlackTreeIsEmpty)(
        const struct RB_DEFINITION(RedBlackTree)* rbt)
 {
-   return(rbt->NullNode.LeftSubtree == &rbt->NullNode);
+   return rbt->NullNode.LeftSubtree == &rbt->NullNode;
 }
 
 
@@ -222,9 +228,9 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetFirst)(
 #ifdef USE_LEAFLINKED
    struct DoubleLinkedRingListNode* node = rbt->List.Node.Next;
    if(node != rbt->List.Head) {
-      return((struct RB_DEFINITION(RedBlackTreeNode)*)node);
+      return (struct RB_DEFINITION(RedBlackTreeNode)*)node;
    }
-   return(NULL);
+   return NULL;
 #else
    const struct RB_DEFINITION(RedBlackTreeNode)* node = rbt->NullNode.LeftSubtree;
    if(node == &rbt->NullNode) {
@@ -234,9 +240,9 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetFirst)(
       node = node->LeftSubtree;
    }
    if(node != &rbt->NullNode) {
-      return((struct RB_DEFINITION(RedBlackTreeNode)*)node);
+      return (struct RB_DEFINITION(RedBlackTreeNode)*)node;
    }
-   return(NULL);
+   return NULL;
 #endif
 }
 
@@ -248,9 +254,9 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetLast)(
 #ifdef USE_LEAFLINKED
    struct DoubleLinkedRingListNode* node = rbt->List.Node.Prev;
    if(node != rbt->List.Head) {
-      return((struct RB_DEFINITION(RedBlackTreeNode)*)node);
+      return (struct RB_DEFINITION(RedBlackTreeNode)*)node;
    }
-   return(NULL);
+   return NULL;
 #else
    const struct RB_DEFINITION(RedBlackTreeNode)* node = rbt->NullNode.RightSubtree;
    if(node == &rbt->NullNode) {
@@ -260,9 +266,9 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetLast)(
       node = node->RightSubtree;
    }
    if(node != &rbt->NullNode) {
-      return((struct RB_DEFINITION(RedBlackTreeNode)*)node);
+      return (struct RB_DEFINITION(RedBlackTreeNode)*)node;
    }
-   return(NULL);
+   return NULL;
 #endif
 }
 
@@ -275,16 +281,16 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetPrev)(
 #ifdef USE_LEAFLINKED
    struct DoubleLinkedRingListNode* prev = node->ListNode.Prev;
    if(prev != rbt->List.Head) {
-      return((struct RB_DEFINITION(RedBlackTreeNode)*)prev);
+      return (struct RB_DEFINITION(RedBlackTreeNode)*)prev;
    }
-   return(NULL);
+   return NULL;
 #else
    struct RB_DEFINITION(RedBlackTreeNode)* result;
    result = RB_FUNCTION(RedBlackTreeInternalFindPrev)(rbt, node);
    if(result != &rbt->NullNode) {
-      return(result);
+      return result;
    }
-   return(NULL);
+   return NULL;
 #endif
 }
 
@@ -297,16 +303,16 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetNext)(
 #ifdef USE_LEAFLINKED
    struct DoubleLinkedRingListNode* next = node->ListNode.Next;
    if(next != rbt->List.Head) {
-      return((struct RB_DEFINITION(RedBlackTreeNode)*)next);
+      return (struct RB_DEFINITION(RedBlackTreeNode)*)next;
    }
-   return(NULL);
+   return NULL;
 #else
    struct RB_DEFINITION(RedBlackTreeNode)* result;
    result = RB_FUNCTION(RedBlackTreeInternalFindNext)(rbt, node);
    if(result != &rbt->NullNode) {
-      return(result);
+      return result;
    }
-   return(NULL);
+   return NULL;
 #endif
 }
 
@@ -342,21 +348,21 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetNearestPrev)(
          nodePtr   = &(*nodePtr)->RightSubtree;
       }
       if(cmpResult == 0) {
-         return(RB_FUNCTION(RedBlackTreeGetPrev)(rbt, *nodePtr));
+         return RB_FUNCTION(RedBlackTreeGetPrev)(rbt, *nodePtr);
       }
    }
 
    if(parentPtr == NULL) {
       if(cmpResult > 0) {
-         return(rbt->NullNode.LeftSubtree);
+         return rbt->NullNode.LeftSubtree;
       }
-      return(NULL);
+      return NULL;
    }
    else {
       /* The new node would be the right child of its parent.
          => The parent is the nearest previous node! */
       if(nodePtr == &(*parentPtr)->RightSubtree) {
-         return(*parentPtr);
+         return *parentPtr;
       }
       else {
          parent = *parentPtr;
@@ -369,7 +375,7 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetNearestPrev)(
                node = node->RightSubtree;
             }
             if(node != &rbt->NullNode) {
-               return((struct RB_DEFINITION(RedBlackTreeNode)*)node);
+               return (struct RB_DEFINITION(RedBlackTreeNode)*)node;
             }
          }
 
@@ -383,12 +389,12 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetNearestPrev)(
                parent = parent->Parent;
             }
             if(parent != &rbt->NullNode) {
-               return((struct RB_DEFINITION(RedBlackTreeNode)*)parent);
+               return (struct RB_DEFINITION(RedBlackTreeNode)*)parent;
             }
          }
       }
    }
-   return(NULL);
+   return NULL;
 }
 
 
@@ -423,21 +429,21 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetNearestNext)(
          nodePtr   = &(*nodePtr)->RightSubtree;
       }
       if(cmpResult == 0) {
-         return(RB_FUNCTION(RedBlackTreeGetNext)(rbt, *nodePtr));
+         return RB_FUNCTION(RedBlackTreeGetNext)(rbt, *nodePtr);
       }
    }
 
    if(parentPtr == NULL) {
       if(cmpResult < 0) {
-         return(rbt->NullNode.LeftSubtree);
+         return rbt->NullNode.LeftSubtree;
       }
-      return(NULL);
+      return NULL;
    }
    else {
       /* The new node would be the left child of its parent.
          => The parent is the nearest next node! */
       if(nodePtr == &(*parentPtr)->LeftSubtree) {
-         return(*parentPtr);
+         return *parentPtr;
       }
       else {
          parent = *parentPtr;
@@ -450,7 +456,7 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetNearestNext)(
                node = node->LeftSubtree;
             }
             if(node != &rbt->NullNode) {
-               return((struct RB_DEFINITION(RedBlackTreeNode)*)node);
+               return (struct RB_DEFINITION(RedBlackTreeNode)*)node;
             }
          }
 
@@ -464,12 +470,12 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetNearestNext)(
                parent = parent->Parent;
             }
             if(parent != &rbt->NullNode) {
-               return((struct RB_DEFINITION(RedBlackTreeNode)*)parent);
+               return (struct RB_DEFINITION(RedBlackTreeNode)*)parent;
             }
          }
       }
    }
-   return(NULL);
+   return NULL;
 }
 
 
@@ -477,7 +483,7 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetNearestNext)(
 size_t RB_FUNCTION(RedBlackTreeGetElements)(
           const struct RB_DEFINITION(RedBlackTree)* rbt)
 {
-   return(rbt->Elements);
+   return rbt->Elements;
 }
 
 
@@ -493,7 +499,7 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeInternalFindPrev
       while(node->RightSubtree != &rbt->NullNode) {
          node = node->RightSubtree;
       }
-      return((struct RB_DEFINITION(RedBlackTreeNode)*)node);
+      return (struct RB_DEFINITION(RedBlackTreeNode)*)node;
    }
    else {
       node   = cmpNode;
@@ -502,7 +508,7 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeInternalFindPrev
          node   = parent;
          parent = parent->Parent;
       }
-      return((struct RB_DEFINITION(RedBlackTreeNode)*)parent);
+      return (struct RB_DEFINITION(RedBlackTreeNode)*)parent;
    }
 }
 
@@ -519,7 +525,7 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeInternalFindNext
       while(node->LeftSubtree != &rbt->NullNode) {
          node = node->LeftSubtree;
       }
-      return((struct RB_DEFINITION(RedBlackTreeNode)*)node);
+      return (struct RB_DEFINITION(RedBlackTreeNode)*)node;
    }
    else {
       node   = cmpNode;
@@ -528,7 +534,7 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeInternalFindNext
          node   = parent;
          parent = parent->Parent;
       }
-      return((struct RB_DEFINITION(RedBlackTreeNode)*)parent);
+      return (struct RB_DEFINITION(RedBlackTreeNode)*)parent;
    }
 }
 
@@ -548,7 +554,7 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeFind)(
    while(node != &rbt->NullNode) {
       const int cmpResult = rbt->ComparisonFunction(cmpNode, node);
       if(cmpResult == 0) {
-         return(node);
+         return node;
       }
       else if(cmpResult < 0) {
          node = node->LeftSubtree;
@@ -557,7 +563,7 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeFind)(
          node = node->RightSubtree;
       }
    }
-   return(NULL);
+   return NULL;
 }
 
 
@@ -565,7 +571,7 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeFind)(
 RedBlackTreeNodeValueType RB_FUNCTION(RedBlackTreeGetValueSum)(
                              const struct RB_DEFINITION(RedBlackTree)* rbt)
 {
-   return(rbt->NullNode.LeftSubtree->ValueSum);
+   return rbt->NullNode.LeftSubtree->ValueSum;
 }
 
 
@@ -748,7 +754,7 @@ finished:
 #ifdef VERIFY
    RB_FUNCTION(RedBlackTreeVerify)(rbt);
 #endif
-   return(result);
+   return result;
 }
 
 
@@ -921,7 +927,7 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeRemove)(
 #ifdef VERIFY
     RB_FUNCTION(RedBlackTreeVerify)(rbt);
 #endif
-   return(node);
+   return node;
 }
 
 
@@ -955,9 +961,9 @@ struct RB_DEFINITION(RedBlackTreeNode)* RB_FUNCTION(RedBlackTreeGetNodeByValue)(
    }
 
    if(node !=  &rbt->NullNode) {
-      return((struct RB_DEFINITION(RedBlackTreeNode)*)node);
+      return (struct RB_DEFINITION(RedBlackTreeNode)*)node;
    }
-   return(NULL);
+   return NULL;
 }
 
 
@@ -1054,12 +1060,12 @@ static size_t RB_FUNCTION(RedBlackTreeInternalVerify)(
       if(node->Color == Red) {
          CHECK(node->LeftSubtree->Color == Black);
          CHECK(node->RightSubtree->Color == Black);
-         return(leftHeight);
+         return leftHeight;
       }
       CHECK(node->Color == Black);
-      return(leftHeight + 1);
+      return leftHeight + 1;
    }
-   return(1);
+   return 1;
 }
 
 

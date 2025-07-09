@@ -1,5 +1,11 @@
 /*
  * ==========================================================================
+ *         _   _      _   ____            __ __  __      _
+ *        | \ | | ___| |_|  _ \ ___ _ __ / _|  \/  | ___| |_ ___ _ __
+ *        |  \| |/ _ \ __| |_) / _ \ '__| |_| |\/| |/ _ \ __/ _ \ '__|
+ *        | |\  |  __/ |_|  __/  __/ |  |  _| |  | |  __/ ||  __/ |
+ *        |_| \_|\___|\__|_|   \___|_|  |_| |_|  |_|\___|\__\___|_|
+ *
  *                  NetPerfMeter -- Network Performance Meter
  *                 Copyright (C) 2009-2025 by Thomas Dreibholz
  * ==========================================================================
@@ -17,7 +23,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact:  thomas.dreibholz@gmail.com
+ * Contact:  dreibh@simula.no
  * Homepage: https://www.nntb.no/~dreibh/netperfmeter/
  */
 
@@ -31,7 +37,7 @@
 static unsigned long long getMicroTime()
 {
   struct timeval tv;
-  gettimeofday(&tv,NULL);
+  gettimeofday(&tv,nullptr);
   return(((unsigned long long)tv.tv_sec * (unsigned long long)1000000) +
          (unsigned long long)tv.tv_usec);
 }
@@ -59,13 +65,14 @@ int main(int argc, char** argv)
 
    if(currentRun == 0) {
       FILE* fh = fopen(argv[1], "w");
-      if(fh == NULL) {
+      if(fh == nullptr) {
          fprintf(stderr, "ERROR: Unable to create file <%s>!\n", argv[1]);
          exit(1);
       }
       unsigned long long now = getMicroTime();
       if(fwrite((void*)&now, sizeof(now), 1, fh) != 1) {
          fprintf(stderr, "ERROR: Unable to write timestamp to file <%s>!\n", argv[1]);
+         fclose(fh);
          exit(1);
       }
       fclose(fh);
@@ -74,12 +81,13 @@ int main(int argc, char** argv)
    else {
       unsigned long long startTimeStamp;
       FILE* fh = fopen(argv[1], "r");
-      if(fh == NULL) {
+      if(fh == nullptr) {
          fprintf(stderr, "ERROR: Unable to open file <%s>!\n", argv[1]);
          exit(1);
       }
       if(fread((void*)&startTimeStamp, sizeof(startTimeStamp), 1, fh) != 1) {
          fprintf(stderr, "ERROR: Unable to read timestamp from file <%s>!\n", argv[1]);
+         fclose(fh);
          exit(1);
       }
       fclose(fh);

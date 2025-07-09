@@ -1,6 +1,12 @@
 /*
  * ==========================================================================
- *                  NetPerfMeter -- Network Performance Meter                 
+ *         _   _      _   ____            __ __  __      _
+ *        | \ | | ___| |_|  _ \ ___ _ __ / _|  \/  | ___| |_ ___ _ __
+ *        |  \| |/ _ \ __| |_) / _ \ '__| |_| |\/| |/ _ \ __/ _ \ '__|
+ *        | |\  |  __/ |_|  __/  __/ |  |  _| |  | |  __/ ||  __/ |
+ *        |_| \_|\___|\__|_|   \___|_|  |_| |_|  |_|\___|\__\___|_|
+ *
+ *                  NetPerfMeter -- Network Performance Meter
  *                 Copyright (C) 2009-2025 by Thomas Dreibholz
  * ==========================================================================
  *
@@ -17,7 +23,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact:  thomas.dreibholz@gmail.com
+ * Contact:  dreibh@simula.no
  * Homepage: https://www.nntb.no/~dreibh/netperfmeter/
  */
 
@@ -41,7 +47,7 @@
 #define CHECK(cond) if(!(cond)) { fprintf(stderr, "INTERNAL ERROR in %s, line %u: condition %s is not satisfied!\n", __FILE__, __LINE__, #cond); abort(); }
 #endif
 
-#if NDEBUG != 0
+#if defined(SIM_IMPORT) || defined(OMNETPPLIBS_IMPORT)
 #define OPP_CHECK(cond) if(!(cond)) { throw new cException("INTERNAL ERROR in %s, line %u: condition %s is not satisfied!\n", __FILE__, __LINE__, #cond); }
 #else
 #define OPP_CHECK(cond) if(!(cond)) { fprintf(stderr, "INTERNAL ERROR in %s, line %u: condition %s is not satisfied!\n", __FILE__, __LINE__, #cond); abort(); }

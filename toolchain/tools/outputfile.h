@@ -1,6 +1,12 @@
 /*
  * ==========================================================================
- *                  NetPerfMeter -- Network Performance Meter                 
+ *         _   _      _   ____            __ __  __      _
+ *        | \ | | ___| |_|  _ \ ___ _ __ / _|  \/  | ___| |_ ___ _ __
+ *        |  \| |/ _ \ __| |_) / _ \ '__| |_| |\/| |/ _ \ __/ _ \ '__|
+ *        | |\  |  __/ |_|  __/  __/ |  |  _| |  | |  __/ ||  __/ |
+ *        |_| \_|\___|\__|_|   \___|_|  |_| |_|  |_|\___|\__\___|_|
+ *
+ *                  NetPerfMeter -- Network Performance Meter
  *                 Copyright (C) 2009-2025 by Thomas Dreibholz
  * ==========================================================================
  *
@@ -17,7 +23,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Contact:  thomas.dreibholz@gmail.com
+ * Contact:  dreibh@simula.no
  * Homepage: https://www.nntb.no/~dreibh/netperfmeter/
  */
 
@@ -50,28 +56,28 @@ class OutputFile
                    const OutputFileFormat format,
                    const unsigned int     compressionLevel = 9);
    bool finish(const bool          closeFile    = true,
-               unsigned long long* bytesIn      = NULL,
-               unsigned long long* bytesOut     = NULL);
+               unsigned long long* bytesIn      = nullptr,
+               unsigned long long* bytesOut     = nullptr);
    bool printf(const char* str, ...);
    bool write(const char* buffer, const size_t bufferLength);
 
    inline bool exists() const {
-      return(File || BZFile);
+      return File || BZFile;
    }
    inline OutputFileFormat getFormat() const {
-      return(Format);
+      return Format;
    }
    inline FILE* getFile() const {
-      return(File);
+      return File;
    }
    inline const std::string& getName() const {
-      return(Name);
+      return Name;
    }
    inline unsigned long long getLine() const {
-      return(Line);
+      return Line;
    }
    inline unsigned long long nextLine() {
-      return(Line++);
+      return Line++;
    }
 
    // ====== Private Data ===================================================

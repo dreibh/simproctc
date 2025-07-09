@@ -1,24 +1,31 @@
-// ###########################################################################
-//             Thomas Dreibholz's R Simulation Scripts Collection
-//                  Copyright (C) 2004-2019 Thomas Dreibholz
-//
-//           Author: Thomas Dreibholz, thomas.dreibholz@gmail.com
-// ###########################################################################
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY// without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-// Contact: thomas.dreibholz@gmail.com
+/*
+ * ==========================================================================
+ *         _   _      _   ____            __ __  __      _
+ *        | \ | | ___| |_|  _ \ ___ _ __ / _|  \/  | ___| |_ ___ _ __
+ *        |  \| |/ _ \ __| |_) / _ \ '__| |_| |\/| |/ _ \ __/ _ \ '__|
+ *        | |\  |  __/ |_|  __/  __/ |  |  _| |  | |  __/ ||  __/ |
+ *        |_| \_|\___|\__|_|   \___|_|  |_| |_|  |_|\___|\__\___|_|
+ *
+ *                  NetPerfMeter -- Network Performance Meter
+ *                 Copyright (C) 2009-2025 by Thomas Dreibholz
+ * ==========================================================================
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contact:  dreibh@simula.no
+ * Homepage: https://www.nntb.no/~dreibh/netperfmeter/
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -77,7 +84,7 @@ static unsigned long long extractVectors(InputFile&               inputFile,
             (sscanf(inBuffer, "version %u", &version) == 1)) {
             if(version != 2) {
                std::cerr << "ERROR: Got unknown version number "
-                         << version << " (expected 2)" << std::endl;
+                         << version << " (expected 2)\n";
                exit(1);
             }
             versionOkay = true;
@@ -85,8 +92,7 @@ static unsigned long long extractVectors(InputFile&               inputFile,
                      "Time Event Object Vector Split Value\n");
          }
          else {
-            std::cerr << "ERROR: Missing \"version\" entry in input file!"
-                      << std::endl;
+            std::cerr << "ERROR: Missing \"version\" entry in input file!\n";
             exit(1);
          }
       }
@@ -144,11 +150,11 @@ static unsigned long long extractVectors(InputFile&               inputFile,
                         }
                      }
                      std::cout << "Adding vector \"" << vectorName << "\", split \""
-                               << splitName << "\" of object " << objectName << " ..." << std::endl;
+                               << splitName << "\" of object " << objectName << " ...\n";
                   }
                   else {
                      std::cout << "Adding vector \"" << vectorName << "\" of object "
-                               << objectName << " ..." << std::endl;
+                               << objectName << " ...\n";
                   }
 
                   vectorToNameMap.insert(std::pair<unsigned int, const std::string>(
@@ -161,7 +167,7 @@ static unsigned long long extractVectors(InputFile&               inputFile,
             }
             else {
                std::cerr << "ERROR: Unexpected vector definition on input file "
-                         << inputFile.getLine() << "!" << std::endl;
+                         << inputFile.getLine() << "!\n";
                exit(1);
             }
          }
@@ -181,10 +187,10 @@ static unsigned long long extractVectors(InputFile&               inputFile,
    if( (foundVectors < vectorsToExtract.size()) &&
        (vectorsToExtract.size() != 0) ) {
       std::cerr << "WARNING: Found only " << foundVectors << " of "
-                << vectorsToExtract.size() << " specified!" << std::endl;
+                << vectorsToExtract.size() << " specified!\n";
    }
 
-   return(outputLine);
+   return outputLine;
 }
 
 
@@ -200,7 +206,7 @@ int main(int argc, char** argv)
    if(argc < 4) {
       std::cerr << "Usage: " << argv[0]
                 << " [Input File] [Output File] {-quiet} {-splitall} {-compress=}"
-                   " {{-split}  {Vector Name Prefix} ...}" << std::endl;
+                   " {{-split}  {Vector Name Prefix} ...}\n";
       exit(1);
    }
    for(int i = 3;i < argc;i++) {
@@ -223,8 +229,8 @@ int main(int argc, char** argv)
 
 
    if(!quiet) {
-      std::cout << "ExtractVectors - Version 1.20" << std::endl
-                << "=============================" << std::endl << std::endl;
+      std::cout << "ExtractVectors - Version 1.30\n"
+                << "=============================\n\n";
    }
 
 
@@ -265,8 +271,7 @@ int main(int argc, char** argv)
             splitAll = true;
          }
          else {
-            std::cerr << "ERROR: Bad parameter \"" << argv[i] << "\"!"
-                      << std::endl;
+            std::cerr << "ERROR: Bad parameter \"" << argv[i] << "\"!\n";
             exit(1);
          }
       }
@@ -295,8 +300,8 @@ int main(int argc, char** argv)
          std::cout << " (" << in << " -> " << out << " - "
                      << ((double)out * 100.0 / in) << "%)";
       }
-      std::cout << std::endl;
+      std::cout << "\n";
    }
 
-   return(0);
+   return 0;
 }
