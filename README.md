@@ -15,6 +15,35 @@ In order to efficiently perform simulations using my [RSPSIM RSerPool simulation
 Further details about SimProcTC can be found in Appendix&nbsp;B of «[Evaluation and Optimisation of Multi-Path Transport using the Stream Control Transmission Protocol](https://duepublico2.uni-due.de/servlets/MCRFileNodeServlet/duepublico_derivate_00029737/Dre2012_final.pdf#appendix.B)»!
 
 
+# 💾 Build from Sources
+
+SimProcTC is released under the [GNU General Public Licence&nbsp;(GPL)](https://www.gnu.org/licenses/gpl-3.0.en.html#license-text).
+
+Please use the issue tracker at [https://github.com/dreibh/simproctc/issues](https://github.com/dreibh/simproctc/issues) to report bugs and issues!
+
+## Development Version
+
+The Git repository of the SimProcTC sources can be found at [https://github.com/dreibh/simproctc](https://github.com/dreibh/simproctc):
+
+<pre>
+git clone https://github.com/dreibh/simproctc
+cd simproctc
+cd tools &amp;&amp; make &amp;&amp; cd ..
+</pre>
+
+Contributions:
+
+* Issue tracker: [https://github.com/dreibh/simproctc/issues](https://github.com/dreibh/simproctc/issues).
+  Please submit bug reports, issues, questions, etc. in the issue tracker!
+
+* Pull Requests for SimProcTC: [https://github.com/dreibh/simproctc/pulls](https://github.com/dreibh/simproctc/pulls).
+  Your contributions to SimProcTC are always welcome!
+
+## Release Versions
+
+See [https://www.nntb.no/~dreibh/omnetpp/#current-stable-release](https://www.nntb.no/~dreibh/omnetpp/#current-stable-release) for release packages!
+
+
 # 📦 Installation of OMNeT++, SimProcTC and a Demo Simulation
 
 The following items are a step-by-step installation guide for SimProcTC.
@@ -82,9 +111,7 @@ In order to compile tool-chain and examples, call the following commands in the 
 <pre>
 opp_makemake -f
 make
-cd tools
-make
-cd ..
+cd tools &amp;&amp; make &amp;&amp; cd ..
 </pre>
 
 Make sure that everything compiles successfully. Otherwise, the tool-chain will not work properly! After compilation, you can start the demo simulation by calling:
@@ -256,7 +283,7 @@ If everything went well, a status file is created. The existence of this status 
 * Finding out what is going wrong with the remote execution can be difficult sometimes. In such a case, only start a single instance of <tt>rspserver</tt> and use the parameter <tt>-sskeeptempdirs</tt>. This parameter results in not deleting the temporary session directory after shutdown of the session. That is, you can dissect the directory's contents for troubleshooting. The name of the directory for each session is shown in the output of <tt>rspserver</tt>.
 
 
-# 🔧 Adapting SimProcTC to your own simulation
+# 🔧 Adapting SimProcTC to Your Own Simulation
 
 In order to use SimProcTC with your own model, perform the following tasks:
 
@@ -275,36 +302,6 @@ SimProcTC and related BibTeX entries can be found in [AllReferences.bib](https:/
 * [Dreibholz, Thomas](https://www.nntb.no/~dreibh/): «[Evaluation and Optimisation of Multi-Path Transport using the Stream Control Transmission Protocol](https://duepublico2.uni-due.de/servlets/MCRFileNodeServlet/duepublico_derivate_00029737/Dre2012_final.pdf)» ([PDF](https://duepublico2.uni-due.de/servlets/MCRFileNodeServlet/duepublico_derivate_00029737/Dre2012_final.pdf), 36779&nbsp;KiB, 264&nbsp;pages, 🇬🇧), Habilitation Treatise, University of Duisburg-Essen, Faculty of Economics, Institute for Computer Science and Business Information Systems, URN&nbsp;[urn:nbn:de:hbz:464-20120315-103208-1](https://nbn-resolving.org/urn:nbn:de:hbz:464-20120315-103208-1), March&nbsp;13, 2012.
 * [Dreibholz, Thomas](https://www.nntb.no/~dreibh/); [Zhou, Xing](https://web.archive.org/web/20210517200550/https://hd.hainanu.edu.cn/scscs/info/1019/1029.htm) and [Rathgeb, Erwin Paul](https://web.archive.org/web/20241126012608/https://tdr.informatik.uni-due.de/en/team/erwin-p-rathgeb/): «[SimProcTC – The Design and Realization of a Powerful Tool-Chain for OMNeT++ Simulations](https://www.wiwi.uni-due.de/fileadmin/fileupload/I-TDR/ReliableServer/Publications/OMNeT__Workshop2009.pdf)» ([PDF](https://www.wiwi.uni-due.de/fileadmin/fileupload/I-TDR/ReliableServer/Publications/OMNeT__Workshop2009.pdf), 552&nbsp;KiB, 8&nbsp;pages, 🇬🇧), in *Proceedings of the 2nd ACM/ICST International Workshop on OMNeT++*, pp.&nbsp;1–8, DOI&nbsp;[10.4108/ICST.SIMUTOOLS2009.5517](https://dx.doi.org/10.4108/ICST.SIMUTOOLS2009.5517), ISBN&nbsp;978-963-9799-45-5, Rome/Italy, March&nbsp;6, 2009.
 * [Dreibholz, Thomas](https://www.nntb.no/~dreibh/) and [Rathgeb, Erwin Paul](https://web.archive.org/web/20241126012608/https://tdr.informatik.uni-due.de/en/team/erwin-p-rathgeb/): «[A Powerful Tool-Chain for Setup, Distributed Processing, Analysis and Debugging of OMNeT++ Simulations](https://www.wiwi.uni-due.de/fileadmin/fileupload/I-TDR/ReliableServer/Publications/OMNeTWorkshop2008.pdf)» ([PDF](https://www.wiwi.uni-due.de/fileadmin/fileupload/I-TDR/ReliableServer/Publications/OMNeTWorkshop2008.pdf), 558&nbsp;KiB, 8&nbsp;pages, 🇬🇧), in *Proceedings of the 1st ACM/ICST International Workshop on OMNeT++*, DOI&nbsp;[10.4108/ICST.SIMUTOOLS2008.2990](https://dx.doi.org/10.4108/ICST.SIMUTOOLS2008.2990), ISBN&nbsp;978-963-9799-20-2, Marseille, Bouches-du-Rhône/France, March&nbsp;7, 2008.
-
-
-# 💾 Build from Sources
-
-SimProcTC is released under the [GNU General Public Licence&nbsp;(GPL)](https://www.gnu.org/licenses/gpl-3.0.en.html#license-text).
-
-Please use the issue tracker at [https://github.com/dreibh/simproctc/issues](https://github.com/dreibh/simproctc/issues) to report bugs and issues!
-
-## Development Version
-
-The Git repository of the SimProcTC sources can be found at [https://github.com/dreibh/simproctc](https://github.com/dreibh/simproctc):
-
-<pre>
-git clone https://github.com/dreibh/simproctc
-cd simproctc/tools
-make
-cd ..
-</pre>
-
-Contributions:
-
-* Issue tracker: [https://github.com/dreibh/simproctc/issues](https://github.com/dreibh/simproctc/issues).
-  Please submit bug reports, issues, questions, etc. in the issue tracker!
-
-* Pull Requests for SimProcTC: [https://github.com/dreibh/simproctc/pulls](https://github.com/dreibh/simproctc/pulls).
-  Your contributions to SimProcTC are always welcome!
-
-## Release Versions
-
-See [https://www.nntb.no/~dreibh/omnetpp/#current-stable-release](https://www.nntb.no/~dreibh/omnetpp/#current-stable-release) for release packages!
 
 
 # 🔗 Useful Links
