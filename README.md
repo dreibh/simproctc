@@ -304,7 +304,7 @@ Contributions:
 
 ## Release Versions
 
-See [https://www.nntb.no/~dreibh/simproctc/#current-stable-release](https://www.nntb.no/~dreibh/simproctc/#current-stable-release) for release packages!
+See [https://www.nntb.no/~dreibh/omnetpp/#current-stable-release](https://www.nntb.no/~dreibh/omnetpp/#current-stable-release) for release packages!
 
 
 # 🔗 Useful Links
