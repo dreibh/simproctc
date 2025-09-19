@@ -10,7 +10,7 @@
 
 # 💡 What is SimProcTC (Simulation Processing Tool-Chain)?
 
-In order to efficiently perform simulations using my [RSPSIM RSerPool simulation model](https://www.nntb.no/~dreibh/rserpool/) as well as simulations with the [CMT-SCTP model in the INET Framework](https://www.wiwi.uni-due.de/fileadmin/fileupload/I-TDR/SCTP/Paper/OMNeT__Workshop2010-SCTP.pdf), I have also developed a model-independent, flexible and powerful tool-chain for the setup, parallel run execution, results aggregation, data analysis and debugging – completely based on Open Source software: SimProcTC (Simulation Processing Tool-Chain). Due to its independence of a specific model, it may also be useful for many more users of OMNeT++.
+In order to efficiently perform simulations using my [RSPSIM RSerPool simulation model](https://www.nntb.no/~dreibh/rserpool/) as well as simulations with the [CMT-SCTP model in the INET Framework](https://www.wiwi.uni-due.de/fileadmin/fileupload/I-TDR/SCTP/Paper/OMNeT__Workshop2010-SCTP.pdf), I have also developed a model-independent, flexible and powerful tool-chain for the setup, parallel run execution, results aggregation, data analysis and debugging of [OMNeT++](https://omnetpp.org/) discrete event simulations – completely based on Open Source software: SimProcTC (Simulation Processing Tool-Chain). Due to its independence of a specific model, it may also be useful for many more users of [OMNeT++](https://omnetpp.org/).
 
 Further details about SimProcTC can be found in Appendix&nbsp;B of «[Evaluation and Optimisation of Multi-Path Transport using the Stream Control Transmission Protocol](https://duepublico2.uni-due.de/servlets/MCRFileNodeServlet/duepublico_derivate_00029737/Dre2012_final.pdf#appendix.B)»!
 
@@ -98,7 +98,7 @@ Get the simulation tool-chain package from the [Build from Sources](#build-from-
 * Run Distribution Code:
   - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt>: Shell script to distribute runs in a computation pool
   - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun">ssrun</a></tt>: Shell script to perform a simulation run (on a remote pool PC)
-* example-simulation/ Sub-Directory:
+* <tt><a href="https://github.com/dreibh/simproctc/blob/master/example-simulation/">example-simulation</a></tt> Sub-Directory:
     This directory contains the simple example model "example-simulation" for OMNeT++ 5.x/6.x.
   - <tt><a href="https://github.com/dreibh/simproctc/blob/master/example-simulation/scenario.ned">scenario.ned</a></tt>: NED file
   - <tt><a href="https://github.com/dreibh/simproctc/blob/master/example-simulation/messages.msg">messages.msg</a></tt>: Messages file
