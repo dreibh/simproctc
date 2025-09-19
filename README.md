@@ -200,10 +200,10 @@ General Parameters:
 Scripting Parameters:
    Keep Temp Dirs          = no
    Verbose Mode            = no
-   Transmit Timeout        = 30000 \[ms\]
-   Keep-Alive Interval     = 15000 \[ms\]
-   Keep-Alive Timeout      = 10000 \[ms\]
-   Cache Max Size          = 131072 \[KiB\]
+   Transmit Timeout        = 30000 [ms]
+   Keep-Alive Interval     = 15000 [ms]
+   Keep-Alive Timeout      = 10000 [ms]
+   Cache Max Size          = 131072 [KiB]
    Cache Max Entries       = 16
    Cache Directory         =
    Keyring                 =
