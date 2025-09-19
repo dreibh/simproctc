@@ -10,7 +10,7 @@
 
 # 💡 What is SimProcTC (Simulation Processing Tool-Chain)?
 
-In order to efficiently perform simulations using my [RSPSIM RSerPool simulation model](https://www.nntb.no/~dreibh/rserpool/) as well as simulations with the [CMT-SCTP model in the INET Framework](https://www.wiwi.uni-due.de/fileadmin/fileupload/I-TDR/SCTP/Paper/OMNeT__Workshop2010-SCTP.pdf), I have also developed a model-independent, flexible and powerful tool-chain for the setup, parallel run execution, results aggregation, data analysis and debugging – completely based on Open Source software: SimProcTC (Simulation Processing Tool-Chain). Due to its independence of a specific model, it may also be useful for many more users of OMNeT++. Therefore, I have released this tool-chain as Open Source under GPLv3 license.
+In order to efficiently perform simulations using my [RSPSIM RSerPool simulation model](https://www.nntb.no/~dreibh/rserpool/) as well as simulations with the [CMT-SCTP model in the INET Framework](https://www.wiwi.uni-due.de/fileadmin/fileupload/I-TDR/SCTP/Paper/OMNeT__Workshop2010-SCTP.pdf), I have also developed a model-independent, flexible and powerful tool-chain for the setup, parallel run execution, results aggregation, data analysis and debugging – completely based on Open Source software: SimProcTC (Simulation Processing Tool-Chain). Due to its independence of a specific model, it may also be useful for many more users of OMNeT++.
 
 Further details about SimProcTC can be found in Appendix&nbsp;B of «[Evaluation and Optimisation of Multi-Path Transport using the Stream Control Transmission Protocol](https://duepublico2.uni-due.de/servlets/MCRFileNodeServlet/duepublico_derivate_00029737/Dre2012_final.pdf#appendix.B)»!
 
