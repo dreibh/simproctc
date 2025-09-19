@@ -15,7 +15,7 @@ In order to efficiently perform simulations using my RSerPool simulation model R
 Further details about SimProcTC can be found in Appendix&nbsp;B of «[Evaluation and Optimisation of Multi-Path Transport using the Stream Control Transmission Protocol](https://duepublico2.uni-due.de/servlets/MCRFileNodeServlet/duepublico_derivate_00029737/Dre2012_final.pdf#appendix.B)»!
 
 
-# 📦 Installation
+# 📦 Installation of OMNeT++, SimProcTC and a Demo Simulation
 
 The following items are a step-by-step installation guide for SimProcTC.
 
