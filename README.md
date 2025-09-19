@@ -94,7 +94,7 @@ Make sure that everything compiles successfully. Otherwise, the tool-chain will 
 
 # 🏃 Running the Demo Simulation
 
-The example simulation packaged with SimProcTC simply presents the effects of fragmenting large packets into cells and forwarding them: the delays will significantly reduce at the price of increased overhead. Have a look into scenario.ned to see the parameters of the model:
+The example simulation packaged with SimProcTC simply presents the effects of fragmenting large packets into cells and forwarding them: the delays will significantly reduce at the price of increased overhead. Take a look into <tt><a href="https://github.com/dreibh/simproctc/blob/master/example-simulation/scenario.ned">scenario.ned</a></tt> to see the parameters of the model:
 
 * fragmenterScenario.fragmenter.cellHeaderSize
 * fragmenterScenario.fragmenter.cellPayloadSize
@@ -105,7 +105,7 @@ The example simulation packaged with SimProcTC simply presents the effects of fr
 
 An example simulation for this model is defined in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt>: for each parameter of the model, the list "simulationConfigurations" contains a list with the parameter name as first element and its value(s) as further elements. For example, list("sourcePayloadSize", 1000, 2500) means that the parameter "sourcePayloadSize" should be used with the values 1000&nbsp;bytes and 2500&nbsp;bytes. For each parameter combination, a separate run will be created. Furthermore, the variable "simulationRuns" specifies how many different seeds should be used. That is, for simulationRuns=3, runs for each parameter combinations are created with 3&nbsp;different seeds (i.e. tripling the number of runs!).
 
-The actual output of <tt>.ini</tt> files is realized in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt>. Have a look over this file first, it should be quite self-explaining! In the function demoWriteParameterSection(), the actual lines for the parameters above are written for each simulation run. "simCreatorAdditionalActiveVariables" defines for which variables a table row should always be written. For example, if you always use cellHeaderSize=4, the <tt>createsummary</tt> tool would neglect this parameter in the output table. Since it may be useful for your post-processing, you can add it to "simCreatorAdditionalActiveVariables". Note, that "simCreatorWriteParameterSection" is set to "demoWriteParameterSection". In the generic <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R">simulation.R</a></tt> script, always the names simCreator_XXX_ instead of demo_XXX_ are used. In order to be model-independent, it is necessary to set these variables to the actual model-dependent functions in simulate-version1.R! When you adapt the tool-chain to you own model, you only have to create your own <tt>simulation-version<em>X</em>.R</tt> script and leave the other scripts unmodified.
+The actual output of <tt>.ini</tt> files is realized in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt>. Take a look over this file first, it should be quite self-explaining! In the function demoWriteParameterSection(), the actual lines for the parameters above are written for each simulation run. "simCreatorAdditionalActiveVariables" defines for which variables a table row should always be written. For example, if you always use cellHeaderSize=4, the <tt>createsummary</tt> tool would neglect this parameter in the output table. Since it may be useful for your post-processing, you can add it to "simCreatorAdditionalActiveVariables". Note, that "simCreatorWriteParameterSection" is set to "demoWriteParameterSection". In the generic <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R">simulation.R</a></tt> script, always the names simCreator_XXX_ instead of demo_XXX_ are used. In order to be model-independent, it is necessary to set these variables to the actual model-dependent functions in simulate-version1.R! When you adapt the tool-chain to you own model, you only have to create your own <tt>simulation-version<em>X</em>.R</tt> script and leave the other scripts unmodified.
 
 The variables "distributionPool" and "distributionProcs" in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt> are used to control the request distribution. They will be explained later. For now, make sure that distributionProcs is set to&nbsp;0! This setting means that all runs are processed on the local machine.
 
@@ -214,7 +214,7 @@ In particular, take care of the "Identifier" line. This is the ID of the pool el
 
 With the environment variables above set correctly, the CSP monitor should show the PE.
 
-Have a look into the script ssdistribute. Ensure that the variable setting for _SIMULATION_POOLUSER_ points to the executable scriptingclient of the RSPLIB package (if installed from the Ubuntu/Debian package: <tt>/usr/bin/scriptingclient</tt>).
+Take a look into the script <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt>. Ensure that the variable setting for _SIMULATION_POOLUSER_ points to the program <tt>scriptingclient</tt> of the RSPLIB package (if installed from the Ubuntu/Debian package: <tt>/usr/bin/scriptingclient</tt>).
 
 <pre>
 SIMULATION_POOLUSER=/usr/bin/scriptingclient
@@ -232,7 +232,7 @@ In <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.
 R --vanilla < test1.R
 </pre>
 
-Have a look at the output of <tt>rspserver</tt>: it should receive jobs and process them. Also, have a look at the log output:
+Take a look at the output of <tt>rspserver</tt>: it should receive jobs and process them. Also, have a look at the log output:
 
 <pre>
 tail -f test1/make.log
