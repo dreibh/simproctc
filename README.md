@@ -212,7 +212,7 @@ Registration:
    Identifier              = $249c7176
 </pre>
 
-In particular, take care of the "Identifier" line. This is the ID of the pool element under which it has been registered. If there are error messages saying that registration has failed, etc., have a look into the RSPLIB handbook. Usually, this means a small configuration problem which can be solved easily! It may also be helpful to use [Wireshark](https://www.wireshark.org/) for debugging network issues; it has dissectors for the RSerPool protocols as well as for CSP and the Scripting Service protocols!
+In particular, take care of the "Identifier" line. This is the ID of the pool element under which it has been registered. If there are error messages saying that registration has failed, etc., have a look into the [RSPLIB documentation](https://www.nntb.no/~dreibh/rserpool/). Usually, this means a small configuration problem which can be solved easily! It may also be helpful to use [Wireshark](https://www.wireshark.org/) for debugging network issues; it has dissectors for the RSerPool protocols as well as for CSP and the Scripting Service protocols!
 
 With the environment variables above set correctly, the CSP monitor should show the PE.
 
