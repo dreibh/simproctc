@@ -1,3 +1,0 @@
-For the latest documentation, please have a look at:
-
-https://www.nntb.no/~dreibh/omnetpp/
