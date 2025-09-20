@@ -26,20 +26,22 @@ if [ $# -lt 1 ] ; then
    exit 1
 fi
 
-PROGRAM=$1
+PROGRAM="$1"
 if [ $# -gt 1 ] ; then
-   LIBSDIR=$2
+   LIBSDIR="$2"
 else
-   LIBSDIR=lib.$PROGRAM
+   LIBSDIR="lib.$PROGRAM"
 fi
 
 
 # ====== Get library names ==================================================
-env LANG=C ldd "$PROGRAM" >"$PROGRAM".ldd || exit 1
+lddFile="$(mktemp -t get-libs.XXXXXXXXXX)"
+trap 'rm -f $lddFile' EXIT
+env LANG=C ldd "$PROGRAM" >"$lddFile" || exit 1
 
-LIBS_NOT_FOUND=$(cat "$PROGRAM".ldd | awk -F " " '{ if( ($3 == "not") && ($4 == "found")) { print $1 } }')
-LIBS=$(cat "$PROGRAM".ldd | awk -F " " '{ if(length($3)>length($1)) { print $3 } }')
-LOADER=$(cat "$PROGRAM".ldd | awk -F " " '{ if(length($3)==0) { print $1 } }' | grep -v linux-vdso.so)
+LIBS_NOT_FOUND=$(awk -F " " '{ if( ($3 == "not") && ($4 == "found")) { print $1 } }' <"$lddFile")
+LIBS=$(awk -F " " '{ if(length($3)>length($1)) { print $3 } }' <"$lddFile")
+LOADER=$(awk -F " " '{ if(length($3)==0) { print $1 } }' <"$lddFile" | grep -v linux-vdso.so)
 
 if [ "$LIBS_NOT_FOUND" != "" ] ; then
    echo >&2 "ERROR: Some shared libraries have not been found:"
@@ -47,19 +49,21 @@ if [ "$LIBS_NOT_FOUND" != "" ] ; then
    exit 1
 fi
 
-NUM_ENTRIES=$(cat "$PROGRAM".ldd | grep -v linux-vdso.so | wc --lines)
+NUM_ENTRIES=$(grep -cv linux-vdso.so "$lddFile")
 NUM_LIBS=$(echo "$LIBS" | xargs -n1 | wc --lines)
 NUM_LOADER=$(echo "$LOADER" | xargs -n1 | wc --lines)
 
-USED_ENTRIES=$(($NUM_LIBS + $NUM_LOADER))
+USED_ENTRIES=$((NUM_LIBS + NUM_LOADER))
 
-if [ "$NUM_LOADER" -ne 1 -o $USED_ENTRIES -ne "$NUM_ENTRIES" ] ; then
-   echo >&2 "ERROR: Something went wrong with shared library collection! Got unexpected ldd output!"
-   echo >&2 "-----"
-   cat "$PROGRAM".ldd >&2
-   echo "NUM_LOADER=$NUM_LOADER" >&2
-   echo "NUM_LIBS=$NUM_LIBS" >&2
-   echo >&2 "-----"
+if [ "$NUM_LOADER" -ne 1 ] || [ $USED_ENTRIES -ne "$NUM_ENTRIES" ] ; then
+   (
+      echo "ERROR: Something went wrong with shared library collection! Got unexpected ldd output!"
+      echo "-----"
+      cat "$lddFile"
+      echo "NUM_LOADER=$NUM_LOADER"
+      echo "NUM_LIBS=$NUM_LIBS"
+      echo "-----"
+   ) >&2
    exit 1
 fi
 
