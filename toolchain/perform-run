@@ -50,6 +50,7 @@ else
 fi
 
 # ====== Check whether run still has to be performed ========================
+# shellcheck disable=SC3013
 if [ "$RUN_DIRECTORY/$INI_FILE" -ot "$RUN_DIRECTORY/$STATUS_FILE" ] || \
    [ -e "$RUN_DIRECTORY/$STATUS_FILE" ] ; then
    exit 0   # Run has already been processed
@@ -68,10 +69,13 @@ if [ "$POOLHANDLE" = "" ] ; then
    SCALAR_FILE="$RUN_PREFIX-scalars.sca"
    OUTPUT_FILE="$RUN_PREFIX-output.txt"
    (
-      echo "+ $(date) Cloning environment ..." && \
-      rm -rf "$RUN_DIRECTORY/$RUN_ENVIRONMENT" && \
-      mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT" && \
-      find "$SIMULATION_DIRECTORY/Environment" -type d -printf "%P\n" | xargs -I{} mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT/{}" && \
+      echo "+ $(date) Cloning environment ..."
+      if [ "$RUN_DIRECTORY" != "" ] && [ "$RUN_ENVIRONMENT" != "" ] ; then
+         # shellcheck disable=SC2115
+         rm -rf "$RUN_DIRECTORY/$RUN_ENVIRONMENT"
+      fi
+      mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT"
+      find "$SIMULATION_DIRECTORY/Environment" -type d -printf "%P\n" | xargs -I{} mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT/{}"
       find "$SIMULATION_DIRECTORY/Environment" -type f -printf "%P\n" | xargs -I{} ln "$SIMULATION_DIRECTORY/Environment/{}" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/{}"
    ) || exit 1
 
@@ -83,6 +87,7 @@ if [ "$POOLHANDLE" = "" ] ; then
    echo "   - Running configuration stages:"
    for stage in $CONFIG_STAGES ; do
       echo "      o Using $stage ..."
+      # shellcheck disable=SC1090
       . "$stage" || exit 1
    done
 
@@ -112,7 +117,7 @@ if [ "$POOLHANDLE" = "" ] ; then
    fi
    if [ "$XML_FILE" != "" ] ; then
       if [ ! -e "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$XML_FILE" ] ; then
-         ln "$RUN_DIRECTORY/$XML_FILE $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$XML_FILE" || exit 11
+         ln "$RUN_DIRECTORY/$XML_FILE" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$XML_FILE" || exit 11
       fi
    fi
    if [ ! -e "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_PROGRAM" ] ; then
