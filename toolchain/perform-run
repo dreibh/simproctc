@@ -71,19 +71,19 @@ if [ "$POOLHANDLE" = "" ] ; then
       echo "+ $(date) Cloning environment ..." && \
       rm -rf "$RUN_DIRECTORY/$RUN_ENVIRONMENT" && \
       mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT" && \
-      find "$SIMULATION_DIRECTORY/Environment" -type d -printf "%P\n" | xargs -i§ mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT/§" && \
-      find "$SIMULATION_DIRECTORY/Environment" -type f -printf "%P\n" | xargs -i§ ln "$SIMULATION_DIRECTORY/Environment/§" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/§"
+      find "$SIMULATION_DIRECTORY/Environment" -type d -printf "%P\n" | xargs -I{} mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT/{}" && \
+      find "$SIMULATION_DIRECTORY/Environment" -type f -printf "%P\n" | xargs -I{} ln "$SIMULATION_DIRECTORY/Environment/{}" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/{}"
    ) || exit 1
 
 
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
    # ====== Get configuration ===============================================
    echo "+ $(date) Loading configuration (in $SIMULATION_DIRECTORY/Environment) ..."
-   CONFIG_STAGES="$(ls $SIMULATION_DIRECTORY/Environment/simulation.config-stage?)" || exit 1
+   CONFIG_STAGES="$(ls "$SIMULATION_DIRECTORY"/Environment/simulation.config-stage?)" || exit 1
    echo "   - Running configuration stages:"
    for stage in $CONFIG_STAGES ; do
       echo "      o Using $stage ..."
-      . $stage || exit 1
+      . "$stage" || exit 1
    done
 
    echo "   - Run directory: $RUN_DIRECTORY"
@@ -138,7 +138,7 @@ if [ "$POOLHANDLE" = "" ] ; then
 
    # ====== Save results and clean up =======================================
    echo "+ $(date) Cleaning up ..."
-   find $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR -maxdepth 1 -type f -name "*.bz2" -or -name "*.txt" | xargs --no-run-if-empty -i§ mv § $RUN_DIRECTORY || exit 1
+   find $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR -maxdepth 1 -type f -name "*.bz2" -or -name "*.txt" | xargs --no-run-if-empty -I{} mv {} $RUN_DIRECTORY || exit 1
    rm -rf $RUN_DIRECTORY/$RUN_ENVIRONMENT || exit 20
 
 
