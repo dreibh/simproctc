@@ -62,9 +62,9 @@ After installing OMNeT++, make sure that it is working properly.
 Install [GNU&nbsp;R](https://www.r-project.org/). Usually, it will be available for your Linux distribution as installation package. However, if you decide to install it from source, you can download the source [here](https://www.r-project.org/).
 Under Ubuntu/Debian Linux, you can download and install GNU&nbsp;R using the following command line:
 
-<pre>
-sudo apt-get install r-base r-base-html r-base-dev r-doc-info r-doc-pdf r-doc-html r-mathlib
-</pre>
+* Ubuntu/Debian: ```sudo apt-get install r-base```
+* Fedora: ```sudo dnf install R-base```
+* FreeBSD: ```sudo pkg install R```
 
 After installation, you can start GNU&nbsp;R by:
 
@@ -76,12 +76,19 @@ You can quit GNU&nbsp;R using Ctrl+D.
 
 ## Install libbz2
 
-The simulation tool-chain requires libbz2 for compression and decompression of files. In particular, also the developer files (include files) of this library are required to compile the tool-chain. Usually, it will be available for your Linux distribution as installation package. However, if you decide to install it from source, you can download the source from [bzip2: Home](https://sourceware.org/bzip2/).
-Under Ubuntu/Debian Linux, you can download and install libbz2 using the following command line:
+The simulation tool-chain requires libbz2 for compression and decompression of files, including the development headers. In particular, also the developer files (include files) of this library are required to compile the tool-chain. Usually, it will be available for your Linux distribution as installation package. However, if you decide to install it from source, you can download the source from [bzip2: Home](https://sourceware.org/bzip2/). In most cases, it can be installed by the operating system’s package management:
 
-<pre>
-sudo apt-get install libbz2-dev
-</pre>
+* Ubuntu/Debian: ```sudo apt-get install bzip2 libbz2-dev```
+* Fedora: ```sudo dnf install bzip2 bzip2-devel```
+* FreeBSD: ```sudo pkg install bzip2```
+
+## Install chrpath
+
+<tt>chrpath</tt> is a shell tool to modify the path to look for shared libraries in executables, which is needed for run distribution. If not already installed, it can be installed by the operating system's package management:
+
+* Ubuntu/Debian: ```sudo apt-get install chrpath```
+* Fedora: ```sudo dnf install chrpath```
+* FreeBSD: ```sudo pkg install chrpath```
 
 ## Install the Simulation Tool-Chain
 
@@ -92,6 +99,7 @@ Get the simulation tool-chain package from the [Build from Sources](#build-from-
   - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt>: Model-specific simulation tool-chain code.
   - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/hashfunctions.R">hashfunctions.R</a></tt>: GNU R functions to calculate MD5 and SHA1 hashes.
   - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plotter.R">plotter.R</a></tt>: GNU R functions for plotting.
+  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/make-environment">make-environment</a></tt>: Shell script to collect all files to create the environment file.
   - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs">get-libs</a></tt>: Shell script to collect all shared libraries needed by the model.
   - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds">get-neds</a></tt>: Shell script to collect all NED files needed by the model.
   - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt>: Example simulation script.
@@ -286,11 +294,11 @@ With the environment variables above set correctly, the CSP monitor should show 
 
 The workload distribution system works as follows:
 
-* The <tt>Makefile</tt> first generates a Tar/BZip2 file <tt>simulation-environment.tar.bz2</tt> in the simulation directory. It contains the simulation binary, all shared libraries it needs (found out by the <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs">get-libs</a></tt> script), all <tt>.ned</tt> files it needs (found out by the <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds">get-neds</a></tt> script) and the script <tt>simulation.config-stage0</tt> which sets two environment variables: _SIMULATION_PROGRAM_ contains the name of the binary, _SIMULATION_LIBS_ contains the location of the libraries. If your simulation needs additional files, they can be specified by the variable _simulationMiscFiles_ in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt>.
+* First, the <tt>Makefile</tt> calls <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/make-environment">make-environment</a></tt> to generate Tar/BZip2 file <tt>simulation-environment.tar.bz2</tt> in the simulation directory. It contains the simulation binary, all shared libraries it needs (found out by the <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs">get-libs</a></tt> script), all <tt>.ned</tt> files it needs (found out by the <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds">get-neds</a></tt> script) and the script <tt>simulation.config-stage0</tt> which sets two environment variables: _SIMULATION_PROGRAM_ contains the name of the binary, _SIMULATION_LIBS_ contains the location of the libraries. If your simulation needs additional files, they can be specified by the variable _simulationMiscFiles_ in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt>.
 
 * <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt> – which is called to actually distribute a run to a pool – creates the Tar/GZip file for the run. This file includes the environment file (i.e.&nbsp;usually <tt>simulation-environment.tar.bz2</tt>) specified by the variable _SIMULATION_ENVIRONMENT_ and additional configuration files like <tt>simulation.config-stage0</tt> (but named <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.config-stage1">simulation.config-stage1</a></tt>, <tt>simulation.config-stage2</tt>, ...) specified by the environment variable _SIMULATION_CONFIGS_. You have to set these two environment variables in the <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt> script. Furthermore, the Tar/GZip file of the run contains the <tt>.ini</tt> file for the run.
 
-* <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun">ssrun</a></tt> performs a run on a (usually) remote node. First, it finds all <tt>simulation.config-stage*</tt> scripts and executes them in alphabetical order. That is, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.config-stage1">simulation.config-stage1</a></tt> may overwrite settings of <tt>simulation.config-stage0</tt> and so on. After that, it looks for <tt>.ini</tt> files. For each <tt>.ini</tt> file, it runs the program specified by the environemnt variable _SIMULATION_PROGRAM_. If the variable _SIMULATION_LIBS_ is set, does not call the binary directly but tells the shared library loader to do this and use the specified set of shared libraries.
+* <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun">ssrun</a></tt> performs a run on a (usually) remote node. First, it finds all <tt>simulation.config-stage*</tt> scripts and executes them in alphabetical order. That is, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.config-stage1">simulation.config-stage1</a></tt> may overwrite settings of <tt>simulation.config-stage0</tt> and so on. After that, it looks for <tt>.ini</tt> files. For each <tt>.ini</tt> file, it runs the program specified by the environment variable _SIMULATION_PROGRAM_. If the variable _SIMULATION_LIBS_ is set, does not call the binary directly but tells the shared library loader to do this and use the specified set of shared libraries.
 If everything went well, a status file is created. The existence of this status file means that the run has been successful.
 
 * Finding out what is going wrong with the remote execution can be difficult sometimes. In such a case, only start a single instance of <tt>rspserver</tt> and use the parameter <tt>-sskeeptempdirs</tt>. This parameter results in not deleting the temporary session directory after shutdown of the session. That is, you can dissect the directory's contents for troubleshooting. The name of the directory for each session is shown in the output of <tt>rspserver</tt>.
@@ -300,10 +308,10 @@ If everything went well, a status file is created. The existence of this status 
 
 In order to use SimProcTC with your own model, perform the following tasks:
 
-* Copy the SimProcTC files to your model's directory: <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun">ssrun</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R">simulation.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/hashfunctions.R">hashfunctions.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plotter.R">plotter.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs">get-libs</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds">get-neds</a></tt>.
-* Create a model-specifiy <tt>.ini</tt> file generation script (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt> of the demo simulation as a template).
-* Create a simulation definition script (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt> of the demo simulation as a template).
-* Create a plot script for your simulation (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R">plot-test1.R</a></tt> of the demo simulation as a template).
+1. Copy the SimProcTC files to your model's directory: <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun">ssrun</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R">simulation.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/hashfunctions.R">hashfunctions.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plotter.R">plotter.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/make-environment">make-environment</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs">get-libs</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds">get-neds</a></tt>.
+2. Create a model-specific <tt>.ini</tt> file generation script (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt> of the demo simulation as a template).
+3. Create a simulation definition script (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt> of the demo simulation as a template).
+4. Create a plot script for your simulation (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R">plot-test1.R</a></tt> of the demo simulation as a template).
 
 Before using the RSerPool-based run distribution, first test your simulation on your local machine! This makes finding problems much easier. If everything works, you can continue with run distribution.
 
