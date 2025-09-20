@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -eu
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
 #                  Copyright (C) 2005-2025 Thomas Dreibholz
@@ -24,7 +24,7 @@
 
 # ====== Recursively collect files in $2 matching pattern given in $1 =======
 collectFiles() {
-   if [ ! -e "$SOURCES_DIRECTORY"/"$2" ] ; then
+   if [ ! -e "$SOURCES_DIRECTORY/$2" ] ; then
       echo >&2 "==================================================="
       echo >&2 "ERROR: $SOURCES_DIRECTORY/$2 does not exit!"
       echo >&2 "==================================================="
@@ -32,31 +32,27 @@ collectFiles() {
    fi
 
    # ------ Add single file -------------------------------------------------
-   if [ -f "$SOURCES_DIRECTORY"/"$2" ] ; then
+   if [ -f "$SOURCES_DIRECTORY/$2" ] ; then
       echo "   -> Adding $2 ..."
-      (
-         FULL="$2" && \
-         FILE=$(find "$SOURCES_DIRECTORY" -wholename "$SOURCES_DIRECTORY"/"$2" -printf "%f\n" | grep --invert-match "tdtoolchain/") && \
-         DIR=$(echo "$FULL" | sed -e "s/\/$FILE\$//g") && \
-         mkdir -p "$DIR" && cp "$SOURCES_DIRECTORY"/"$2" "$DIR"
-         if [ "x$3" != "x" ] ; then
-            echo "$DIR" >>"$3"
-         fi
-      ) || exit 1
+      FULL="$2"
+      FILE=$(find "$SOURCES_DIRECTORY" -wholename "$SOURCES_DIRECTORY/$2" -printf "%f\n" | grep --invert-match "tdtoolchain/")
+      DIR=$(echo "$FULL" | sed -e "s/\/$FILE\$//g")
+      mkdir -p "$DIR" && cp "$SOURCES_DIRECTORY/$2" "$DIR"
+      if [ "$3" != "" ] ; then
+         echo "$DIR" >>"$3"
+      fi
    # ------ Recursive lookup ------------------------------------------------
    else
       echo "   -> Collecting $1 in $2 recursively ..."
-      (
-         rm -f collect.tar && \
-         find "$SOURCES_DIRECTORY"/"$2" -name "$1" -printf "%P\n" | grep --invert-match "tdtoolchain/" | tar cf collect.tar -C "$SOURCES_DIRECTORY"/"$2" -T - && \
-         mkdir -p "$2" && \
-         echo -n "      Files: " && \
-         tar xvf collect.tar -C "$2" | wc --lines && \
-         rm -f collect.tar
-         if [ "x$3" != "x" ] ; then
-            echo "$2" >>"$3"
-         fi
-      ) || exit 1
+      rm -f collect.tar
+      find "$SOURCES_DIRECTORY/$2" -name "$1" -printf "%P\n" | grep --invert-match "tdtoolchain/" | tar cf collect.tar -C "$SOURCES_DIRECTORY/$2" -T -
+      mkdir -p "$2"
+      printf "      Files: "
+      tar xvf collect.tar -C "$2" | wc --lines
+      rm -f collect.tar
+      if [ "$3" != "" ] ; then
+         echo "$2" >>"$3"
+      fi
    fi
 }
 
@@ -97,7 +93,7 @@ if [ ! -e "$SOURCES_DIRECTORY" ] ; then
    echo >&2 "==================================================="
    exit 1
 fi
-if [ ! -e "$SOURCES_DIRECTORY"/"$SIMULATION_BASEDIR" ] ; then
+if [ ! -e "$SOURCES_DIRECTORY/$SIMULATION_BASEDIR" ] ; then
    echo >&2 "==================================================="
    echo >&2 "ERROR: Sources base directory $SOURCES_DIRECTORY/$SIMULATION_BASEDIR not found!"
    echo >&2 "==================================================="
@@ -116,34 +112,35 @@ cd "$SIMULATION_DIRECTORY"/Environment || exit 1
 
 # ====== Copy simulation binary =============================================
 echo "+ $(date) Copying simulation binary $SOURCES_DIRECTORY/$SIMULATION_BINARY ..."
-cp "$SOURCES_DIRECTORY"/"$SIMULATION_BINARY" simulation-binary || exit 1
+cp "$SOURCES_DIRECTORY/$SIMULATION_BINARY" simulation-binary || exit 1
 chrpath -d simulation-binary || {
-   echo >&2 "===================================================" && \
-   echo >&2 "ERROR: chrpath not found -- please install chrpath!" && \
-   echo >&2 "===================================================" && \
+   echo >&2 "==================================================="
+   echo >&2 "ERROR: chrpath not found -- please install chrpath!"
+   echo >&2 "==================================================="
    exit 1
 }
 
 
 # ====== Collect libraries for simulation binary ============================
 echo "+ $(date) Collecting libraries ..."
-"$TOOLCHAINDIR"/get-libs "$SOURCES_DIRECTORY"/"$SIMULATION_BINARY" lib || exit 1
+"$TOOLCHAINDIR"/get-libs "$SOURCES_DIRECTORY/$SIMULATION_BINARY" lib || exit 1
 
 
 # ====== Copy other files ===================================================
-while [ "x$1" != "x" ] ; do
+NED_PATHS=""
+while [ $# -gt 0 ] ; do
    # ====== Collect NED files ===============================================
    if [ "$1" = "-n" ] ; then
       echo "+ $(date) Collecting NED files in $SOURCES_DIRECTORY/$2 ..."
       collectFiles "*.ned" "$2" "nedpaths.lst" || exit 1
-      if [ -d "$SOURCES_DIRECTORY"/"$2" ] ; then
-         if [ "x$NED_PATHS" != "x" ] ; then
+      if [ -d "$SOURCES_DIRECTORY/$2" ] ; then
+         if [ "$NED_PATHS" != "" ] ; then
             NED_PATHS="$NED_PATHS $2"
          else
             NED_PATHS="$2"
          fi
       else
-         if [ "x$NED_PATHS" != "x" ] ; then
+         if [ "$NED_PATHS" != "" ] ; then
             NED_PATHS="$NED_PATHS $DIR"
          else
             NED_PATHS="$DIR"
@@ -171,7 +168,7 @@ done
 # We need relative paths from the view of the directory the simulation binary
 # is executed in!
 echo "+ $(date) Getting relative NED paths for simulation execution ..."
-OLD_NED_PATHS=$(cat nedpaths.lst | xargs echo)
+OLD_NED_PATHS=$(xargs echo < nedpaths.lst)
 NEW_NED_PATHS=""
 echo "   -> Absolute paths: $OLD_NED_PATHS"
 
@@ -202,8 +199,8 @@ echo "+ $(date) Writing configuration ..."
 
 # ====== Archive environment ================================================
 echo "+ $(date) Archiving environment ..."
-cd "$TOOLCHAINDIR"/"$SIMULATION_DIRECTORY" || exit
+cd "$TOOLCHAINDIR/$SIMULATION_DIRECTORY" || exit
 echo "   -> $TOOLCHAINDIR/$SIMULATION_DIRECTORY/simulation-environment.tar.bz2"
 tar chjf simulation-environment.tar.bz2 Environment || exit 1
-echo -n "      "
+printf "      "
 wc --bytes simulation-environment.tar.bz2
