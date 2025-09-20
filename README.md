@@ -306,8 +306,15 @@ SimProcTC and related BibTeX entries can be found in [AllReferences.bib](https:/
 
 # 🔗 Useful Links
 
-*   [OMNeT++ Simulation Toolkit Community Site](https://omnetpp.org/)
-*   [The R Project for Statistical Computing](https://www.r-project.org)
-*   [Thomas Dreibholz's Reliable Server Pooling (RSerPool) Page](https://www.nntb.no/~dreibh/rserpool/index.html)
-*   [Thomas Dreibholz's Little Ubuntu Linux Installation Guide](https://www.nntb.no/~dreibh/ubuntu/index.html)
-*   [Wireshark](https://www.wireshark.org/)
+## Simulation and Data Processing Software
+
+* [OMNeT++ Simulation Toolkit Community Site](https://omnetpp.org/)
+* [The R Project for Statistical Computing](https://www.r-project.org)
+
+## Other Resources
+
+* [Thomas Dreibholz's Reliable Server Pooling (RSerPool) Page](https://www.nntb.no/~dreibh/rserpool/index.html)
+* [Thomas Dreibholz's SCTP Page](https://www.nntb.no/~dreibh/sctp/index.html)
+* [Thomas Dreibholz's Multi-Path TCP (MPTCP) Page](https://www.nntb.no/~dreibh/mptcp/index.html)
+* [Thomas Dreibholz's Little Ubuntu Linux Installation Guide](https://www.nntb.no/~dreibh/ubuntu/index.html)
+* [Wireshark](https://www.wireshark.org/)
