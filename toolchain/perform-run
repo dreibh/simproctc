@@ -27,16 +27,22 @@ if [ $# -lt 3 ] ; then
    exit 1
 fi
 
-SIMULATION_DIRECTORY=`pwd`/$1   # e.g.: `pwd`/test1
-RUN_DIRECTORY=$2                # e.g.: test1/Simulations/Set-1234
-RUN_NUMBER=$3                   # e.g.: 1
-POOLHANDLE="$4"                 # e.g.: ScriptingPool
-PU_MISCOPT="$5"                 # e.g.: "-cspserver=... ..."
+SIMULATION_DIRECTORY="$(pwd)/$1"   # e.g.: `pwd`/test1
+RUN_DIRECTORY=$2                   # e.g.: test1/Simulations/Set-1234
+RUN_NUMBER=$3                      # e.g.: 1
+POOLHANDLE=""
+PU_MISCOPT=""
+if [ $# -ge 4 ] ; then
+   POOLHANDLE="$4"                 # e.g.: ScriptingPool
+fi
+if [ $# -ge 5 ] ; then
+   PU_MISCOPT="$5"                 # e.g.: "-cspserver=... ..."
+fi
 
 
-RUN_PREFIX=run$RUN_NUMBER
-STATUS_FILE=$RUN_PREFIX-status.txt
-INI_FILE=$RUN_PREFIX-parameters.ini
+RUN_PREFIX="run$RUN_NUMBER"
+STATUS_FILE="$RUN_PREFIX-status.txt"
+INI_FILE="$RUN_PREFIX-parameters.ini"
 if [ -e "scenario$RUN_NUMBER.xml" ] ; then
    XML_FILE="scenario$RUN_NUMBER.xml"
 else
@@ -44,7 +50,8 @@ else
 fi
 
 # ====== Check whether run still has to be performed ========================
-if [ $RUN_DIRECTORY/$INI_FILE -ot $RUN_DIRECTORY/$STATUS_FILE -o -e $RUN_DIRECTORY/$STATUS_FILE ] ; then
+if [ "$RUN_DIRECTORY/$INI_FILE" -ot "$RUN_DIRECTORY/$STATUS_FILE" ] || \
+   [ -e "$RUN_DIRECTORY/$STATUS_FILE" ] ; then
    exit 0   # Run has already been processed
 fi
 
@@ -52,27 +59,27 @@ fi
 echo "Performing run $RUN_PREFIX ..."
 
 # ====== Perform run locally ================================================
-if [ "x$POOLHANDLE" = "x" ] ; then
+if [ "$POOLHANDLE" = "" ] ; then
 
    # ====== Clone environment ===============================================
    RESULT=0
-   RUN_ENVIRONMENT=$RUN_PREFIX-Environment
-   VECTOR_FILE=$RUN_PREFIX-vectors.vec
-   SCALAR_FILE=$RUN_PREFIX-scalars.sca
-   OUTPUT_FILE=$RUN_PREFIX-output.txt
+   RUN_ENVIRONMENT="$RUN_PREFIX-Environment"
+   VECTOR_FILE="$RUN_PREFIX-vectors.vec"
+   SCALAR_FILE="$RUN_PREFIX-scalars.sca"
+   OUTPUT_FILE="$RUN_PREFIX-output.txt"
    (
-      echo "+ `date` Cloning environment ..." && \
-      rm -rf $RUN_DIRECTORY/$RUN_ENVIRONMENT && \
-      mkdir $RUN_DIRECTORY/$RUN_ENVIRONMENT && \
-      find $SIMULATION_DIRECTORY/Environment -type d -printf "%P\n" | xargs -i§ mkdir $RUN_DIRECTORY/$RUN_ENVIRONMENT/§ && \
-      find $SIMULATION_DIRECTORY/Environment -type f -printf "%P\n" | xargs -i§ ln $SIMULATION_DIRECTORY/Environment/§ $RUN_DIRECTORY/$RUN_ENVIRONMENT/§
+      echo "+ $(date) Cloning environment ..." && \
+      rm -rf "$RUN_DIRECTORY/$RUN_ENVIRONMENT" && \
+      mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT" && \
+      find "$SIMULATION_DIRECTORY/Environment" -type d -printf "%P\n" | xargs -i§ mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT/§" && \
+      find "$SIMULATION_DIRECTORY/Environment" -type f -printf "%P\n" | xargs -i§ ln "$SIMULATION_DIRECTORY/Environment/§" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/§"
    ) || exit 1
 
 
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
    # ====== Get configuration ===============================================
-   echo "+ `date` Loading configuration (in $SIMULATION_DIRECTORY/Environment) ..."
-   CONFIG_STAGES=`ls $SIMULATION_DIRECTORY/Environment/simulation.config-stage?` || exit 1
+   echo "+ $(date) Loading configuration (in $SIMULATION_DIRECTORY/Environment) ..."
+   CONFIG_STAGES="$(ls $SIMULATION_DIRECTORY/Environment/simulation.config-stage?)" || exit 1
    echo "   - Running configuration stages:"
    for stage in $CONFIG_STAGES ; do
       echo "      o Using $stage ..."
@@ -87,7 +94,7 @@ if [ "x$POOLHANDLE" = "x" ] ; then
    echo "      o Simulation program:        $SIMULATION_PROGRAM"
    nedArgs=""
    for n in $SIMULATION_NEDS ; do
-      if [ "x$nedArgs" = "x" ] ; then
+      if [ "$nedArgs" = "" ] ; then
          nedArgs="$n"
       else
          nedArgs="$nedArgs:$n"
@@ -99,7 +106,7 @@ if [ "x$POOLHANDLE" = "x" ] ; then
 
 
    # ====== Execute binary ==================================================
-   echo "+ `date` Executing simulation run ..."
+   echo "+ $(date) Executing simulation run ..."
    if [ ! -e $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$INI_FILE ] ; then
       ln $RUN_DIRECTORY/$INI_FILE $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$INI_FILE || exit 11
    fi
@@ -117,20 +124,20 @@ if [ "x$POOLHANDLE" = "x" ] ; then
 
    (
       cd $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR && \
-      startTime=`date` && \
+      startTime=$(date) && \
       rm -f $RUN_DIRECTORY/$SCALAR_FILE.bz2 $RUN_DIRECTORY/$VECTOR_FILE.bz2 $RUN_DIRECTORY/$OUTPUT_FILE.bz2 && \
       echo "   -> $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS" && \
       chmod 700 ./$SIMULATION_PROGRAM && \
       $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS >$OUTPUT_FILE 2>&1 && \
       find . -name $OUTPUT_FILE -or -name $VECTOR_FILE -or -name $SCALAR_FILE | xargs --no-run-if-empty bzip2 -f && \
-      endTime=`date` && \
+      endTime=$(date) && \
       ( echo "Start: $startTime" && echo "End:   $endTime" ) >$STATUS_FILE
    ) || RESULT=15
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
 
 
    # ====== Save results and clean up =======================================
-   echo "+ `date` Cleaning up ..."
+   echo "+ $(date) Cleaning up ..."
    find $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR -maxdepth 1 -type f -name "*.bz2" -or -name "*.txt" | xargs --no-run-if-empty -i§ mv § $RUN_DIRECTORY || exit 1
    rm -rf $RUN_DIRECTORY/$RUN_ENVIRONMENT || exit 20
 
