@@ -28,17 +28,17 @@ fi
 
 
 MAKE=$(ps ax | grep "$1" | grep "make -k" | awk '{ print $1 }')
-echo make:            "$MAKE"
+echo "make:            $MAKE"
 echo "$MAKE" | xargs -r -n1 kill
 
 PERFORM_RUN=$(ps ax | grep "$1" | grep perform-run | awk '{ print $1 }')
-echo perform-run:     "$PERFORM_RUN"
+echo "perform-run:     $PERFORM_RUN"
 echo "$PERFORM_RUN" | xargs -r -n1 kill
 
 SSDISTRIBUTE=$(ps ax | grep "$1" | grep ssdistribute | awk '{ print $1 }')
-echo ssdistribute:    "$SSDISTRIBUTE"
+echo "ssdistribute:    $SSDISTRIBUTE"
 echo "$SSDISTRIBUTE" | xargs -r -n1 kill
 
 SCRIPTINGCLIENTS=$(ps ax | grep "$1" | grep scriptingclient | awk '{ print $1 }')
-echo scriptingclient: 
+echo "scriptingclient: "
 echo "$SCRIPTINGCLIENTS" | xargs -r -n1 kill

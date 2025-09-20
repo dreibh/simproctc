@@ -35,7 +35,7 @@ fi
 echo "Finding obsolete runs ..."
 
 # Generate an SED script to remove in-use file prefixes from file prefix list ...
-cat "$SIMULATION/dependencies.list" | xargs -r -i§ echo "s|^§-.*$||g" >"$SIMULATION/purge.sed"
+xargs -r -I{} echo "s|^{}-.*$||g" < "$SIMULATION/dependencies.list" >"$SIMULATION/purge.sed"
 # cat "$SIMULATION/purge.sed"
 
 # Get list of obsolete file prefixes
@@ -48,9 +48,9 @@ find "$SIMULATION/Simulations/" -type f -and -name "run[0-9]*-*" | \
 
 echo "Removing obsolete runs ..."
 
-cat "$SIMULATION/purge.list" | xargs -r -i§ rm -f "§"
-find "$SIMULATION/Simulations/" -mindepth 1 -maxdepth 1 -and -type d | xargs -r -i§ rmdir --ignore-fail-on-non-empty "§"
-find "$SIMULATION/Simulations/" -name "Shortcut-*" | xargs -r -i§ rm -f "§"
+xargs -r -I{} rm -f "{}" <"$SIMULATION/purge.list"
+find "$SIMULATION/Simulations/" -mindepth 1 -maxdepth 1 -and -type d -print0 | xargs -0 -r -I{} rmdir --ignore-fail-on-non-empty "{}"
+find "$SIMULATION/Simulations/" -name "Shortcut-*" -print0 | xargs -0 -r -I{} rm -f "{}"
 rm -f "$SIMULATION/purge.list" "$SIMULATION/purge.sed" "$SIMULATION/make.log"
 
 
