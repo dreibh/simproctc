@@ -27,18 +27,22 @@ if [ ! -e "$1".R ] ; then
 fi
 
 
+# shellcheck disable=SC2009
 MAKE=$(ps ax | grep "$1" | grep "make -k" | awk '{ print $1 }')
 echo "make:            $MAKE"
 echo "$MAKE" | xargs -r -n1 kill
 
+# shellcheck disable=SC2009
 PERFORM_RUN=$(ps ax | grep "$1" | grep perform-run | awk '{ print $1 }')
 echo "perform-run:     $PERFORM_RUN"
 echo "$PERFORM_RUN" | xargs -r -n1 kill
 
+# shellcheck disable=SC2009
 SSDISTRIBUTE=$(ps ax | grep "$1" | grep ssdistribute | awk '{ print $1 }')
 echo "ssdistribute:    $SSDISTRIBUTE"
 echo "$SSDISTRIBUTE" | xargs -r -n1 kill
 
+# shellcheck disable=SC2009
 SCRIPTINGCLIENTS=$(ps ax | grep "$1" | grep scriptingclient | awk '{ print $1 }')
 echo "scriptingclient: "
 echo "$SCRIPTINGCLIENTS" | xargs -r -n1 kill
