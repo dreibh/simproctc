@@ -35,9 +35,10 @@ if [ ! -e "$1" ] ; then
 fi
 
 
-DESTINATION=$2
-if [ "$DESTINATION" = "" ] ; then
-   DESTINATION=.
+if [ $# -gt 1 ] ; then
+   DESTINATION="$2"
+else
+   DESTINATION="."
 fi
 
 

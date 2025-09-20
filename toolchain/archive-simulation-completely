@@ -35,10 +35,12 @@ if [ ! -e "$1" ] ; then
 fi
 
 
-DESTINATION=$2
-if [ "$DESTINATION" = "" ] ; then
-   DESTINATION=.
+if [ $# -gt 1 ] ; then
+   DESTINATION="$2"
+else
+   DESTINATION="."
 fi
+
 
 R --vanilla <plot-"$1".R && \
 echo "Step 1: Archiving results only to $DESTINATION/$1.tar.bz2 ..." && \
