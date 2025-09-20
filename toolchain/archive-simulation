@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -eu
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
 #                  Copyright (C) 2005-2025 Thomas Dreibholz
@@ -21,26 +21,26 @@
 #
 # Contact: thomas.dreibholz@gmail.com
 
-if [ ! -e $1.R ] ; then
+if [ ! -e "$1".R ] ; then
    echo "ERROR: $1.R does not exist!"
    exit
 fi
-if [ ! -e plot-$1.R ] ; then
+if [ ! -e plot-"$1".R ] ; then
    echo "ERROR: plot-$1.R does not exist!"
    exit
 fi
-if [ ! -e $1 ] ; then
+if [ ! -e "$1" ] ; then
    echo "ERROR: $1 directory does not exist!"
    exit
 fi
 
 
 DESTINATION=$2
-if [ x$DESTINATION = "x" ] ; then
+if [ "$DESTINATION" = "" ] ; then
    DESTINATION=.
 fi
 
 
 echo "Archiving to $DESTINATION/$1.tar.bz2 ..." && \
-R --vanilla <plot-$1.R && \
-tar cjf $DESTINATION/$1.tar.bz2 $1.R plot-$1.R $1.pdf $1/Results
+R --vanilla <plot-"$1".R && \
+tar cjf "$DESTINATION"/"$1".tar.bz2 "$1".R plot-"$1".R "$1".pdf "$1"/Results

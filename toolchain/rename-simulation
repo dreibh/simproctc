@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -eu
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
 #                  Copyright (C) 2005-2025 Thomas Dreibholz
@@ -21,4 +21,4 @@
 #
 # Contact: thomas.dreibholz@gmail.com
 
-git mv $1.R $2.R && git mv plot-$1.R plot-$2.R && mv $1 $2
+git mv "$1".R "$2".R && git mv plot-"$1".R plot-"$2".R && mv "$1" "$2"
