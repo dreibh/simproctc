@@ -68,19 +68,18 @@ if [ "$POOLHANDLE" = "" ] ; then
    VECTOR_FILE="$RUN_PREFIX-vectors.vec"
    SCALAR_FILE="$RUN_PREFIX-scalars.sca"
    OUTPUT_FILE="$RUN_PREFIX-output.txt"
-   (
-      echo "+ $(date) Cloning environment ..."
-      if [ "$RUN_DIRECTORY" != "" ] && [ "$RUN_ENVIRONMENT" != "" ] ; then
-         # shellcheck disable=SC2115
-         rm -rf "$RUN_DIRECTORY/$RUN_ENVIRONMENT"
-      fi
-      mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT"
-      find "$SIMULATION_DIRECTORY/Environment" -type d -printf "%P\n" | xargs -I{} mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT/{}"
-      find "$SIMULATION_DIRECTORY/Environment" -type f -printf "%P\n" | xargs -I{} ln "$SIMULATION_DIRECTORY/Environment/{}" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/{}"
-   ) || exit 1
 
+   echo "+ $(date) Cloning environment ..."
+   if [ "$RUN_DIRECTORY" != "" ] && [ "$RUN_ENVIRONMENT" != "" ] ; then
+      # shellcheck disable=SC2115
+      rm -rf "$RUN_DIRECTORY/$RUN_ENVIRONMENT"
+   fi
+   mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT"
+   find "$SIMULATION_DIRECTORY/Environment" -type d -printf "%P\n" | xargs -I{} mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT/{}"
+   find "$SIMULATION_DIRECTORY/Environment" -type f -printf "%P\n" | xargs -I{} ln "$SIMULATION_DIRECTORY/Environment/{}" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/{}"
 
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
+
    # ====== Get configuration ===============================================
    echo "+ $(date) Loading configuration (in $SIMULATION_DIRECTORY/Environment) ..."
    CONFIG_STAGES="$(ls "$SIMULATION_DIRECTORY"/Environment/simulation.config-stage?)" || exit 1
@@ -127,23 +126,26 @@ if [ "$POOLHANDLE" = "" ] ; then
       ln -s "$SIMULATION_DIRECTORY/Environment/$SIMULATION_LIBS" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_LIBS" || exit 13
    fi
 
-   (
-      cd $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR && \
-      startTime=$(date) && \
-      rm -f $RUN_DIRECTORY/$SCALAR_FILE.bz2 $RUN_DIRECTORY/$VECTOR_FILE.bz2 $RUN_DIRECTORY/$OUTPUT_FILE.bz2 && \
-      echo "   -> $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS" && \
-      chmod 700 ./$SIMULATION_PROGRAM && \
-      $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS >$OUTPUT_FILE 2>&1 && \
-      find . -name $OUTPUT_FILE -or -name $VECTOR_FILE -or -name $SCALAR_FILE | xargs --no-run-if-empty bzip2 -f && \
-      endTime=$(date) && \
-      ( echo "Start: $startTime" && echo "End:   $endTime" ) >$STATUS_FILE
-   ) || RESULT=15
+   workDirectory="$(pwd)"
+
+   cd "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR"
+   startTime="$(date)"
+   rm -f "$RUN_DIRECTORY/$SCALAR_FILE.bz2" "$RUN_DIRECTORY/$VECTOR_FILE.bz2" "$RUN_DIRECTORY/$OUTPUT_FILE.bz2"
+   echo "   -> $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS"
+   chmod 700 ./$SIMULATION_PROGRAM
+   $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS >$OUTPUT_FILE 2>&1
+   find . -name $OUTPUT_FILE -or -name $VECTOR_FILE -or -name $SCALAR_FILE | xargs -r bzip2 -f
+   endTime="$(date)"
+   ( echo "Start: $startTime" && echo "End:   $endTime" ) >$STATUS_FILE
+
+   cd "$workDirectory"
+
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
 
 
    # ====== Save results and clean up =======================================
    echo "+ $(date) Cleaning up ..."
-   find $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR -maxdepth 1 -type f -name "*.bz2" -or -name "*.txt" | xargs --no-run-if-empty -I{} mv {} $RUN_DIRECTORY || exit 1
+   find $RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR -maxdepth 1 -type f -name "*.bz2" -or -name "*.txt" | xargs -r -I{} mv {} $RUN_DIRECTORY || exit 1
    rm -rf $RUN_DIRECTORY/$RUN_ENVIRONMENT || exit 20
 
 
@@ -158,9 +160,9 @@ if [ "$POOLHANDLE" = "" ] ; then
       echo "#########################################################"
       echo ""
 
-      echo "INI file:    $RUN_DIRECTORY/$INI_FILE"
-      echo "Scenario file:    $RUN_DIRECTORY/$XML_FILE"
-      echo "Output file: $RUN_DIRECTORY/$OUTPUT_FILE"
+      echo "INI file:      $RUN_DIRECTORY/$INI_FILE"
+      echo "Scenario file: $RUN_DIRECTORY/$XML_FILE"
+      echo "Output file:   $RUN_DIRECTORY/$OUTPUT_FILE"
       echo "----- SIMULATION RUN FAILED -----"
    fi
 
