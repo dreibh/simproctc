@@ -30,11 +30,11 @@ fi
 SIM_DIRECTORY="$(pwd)/$1"        # e.g.: <path>/test1
 TMP_DIRECTORY="$(pwd)/$1/Temp"   # e.g.: <path>/test1/Temp
 RUN_DIRECTORY="$(pwd)/$2"        # e.g.: <path>/test1/Simulations/Set-XXXX
-INI_NAME="$3"                   # e.g.: run1-parameters.ini
-POOLHANDLE="$4"                 # e.g.: ScriptingPool
-PU_MISCOPT="$5"                 # e.g.: "-cspserver=... ..."
+INI_NAME="$3"                    # e.g.: run1-parameters.ini
+POOLHANDLE="$4"                  # e.g.: ScriptingPool
+PU_MISCOPT="$5"                  # e.g.: "-cspserver=... ..."
 XML_NAME="$6"
-MAX_RETRY=10                    # After a remote-side error, retry how many times?
+MAX_RETRIES=10                   # After a remote-side error, retry how many times?
 
 
 # ###########################################################################
@@ -86,7 +86,7 @@ echo "Distributing and processing [$UNIQUE_ID] ..."
 RESULT=0
 # shellcheck disable=SC2086
 $VALGRIND $SIMULATION_POOLUSER \
-   -runid="$UNIQUE_ID" -quiet -maxretry=$MAX_RETRY \
+   -runid="$UNIQUE_ID" -quiet -maxretry=$MAX_RETRIES \
    -environment="$SIM_DIRECTORY/$SIMULATION_ENVIRONMENT" \
    -input="$INPUT_ARCHIVE" -output="$OUTPUT_ARCHIVE" \
    -logfile="$PU_LOGFILE" -loglevel=$PU_LOGLEVEL \
