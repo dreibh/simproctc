@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -eu
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
 #                  Copyright (C) 2005-2025 Thomas Dreibholz
@@ -24,12 +24,12 @@
 
 # ====== Check parameters ===================================================
 if [ $# -lt 4 ] ; then
-   echo "Usage: ssdistribute [Simulation Directory] [Run Directory] [.ini File Name] [Pool Handle] {Misc Options to PU}"
+   echo >&2 "Usage: $0 [Simulation Directory] [Run Directory] [.ini File Name] [Pool Handle] {Misc Options to PU}"
    exit 1
 fi
-SIM_DIRECTORY="`pwd`/$1"        # e.g.: <path>/test1
-TMP_DIRECTORY="`pwd`/$1/Temp"   # e.g.: <path>/test1/Temp
-RUN_DIRECTORY="`pwd`/$2"        # e.g.: <path>/test1/Simulations/Set-XXXX
+SIM_DIRECTORY="$(pwd)/$1"        # e.g.: <path>/test1
+TMP_DIRECTORY="$(pwd)/$1/Temp"   # e.g.: <path>/test1/Temp
+RUN_DIRECTORY="$(pwd)/$2"        # e.g.: <path>/test1/Simulations/Set-XXXX
 INI_NAME="$3"                   # e.g.: run1-parameters.ini
 POOLHANDLE="$4"                 # e.g.: ScriptingPool
 PU_MISCOPT="$5"                 # e.g.: "-cspserver=... ..."
@@ -66,14 +66,17 @@ if [ ! -e "$SIMULATION_POOLUSER" ] ; then
    echo >&2 "==================================================="
    exit 1
 fi
-INPUT_ARCHIVE="`mktemp -t -p $TMP_DIRECTORY input-XXXXXXXXXX`"
-OUTPUT_ARCHIVE="`mktemp -t -p $TMP_DIRECTORY output-XXXXXXXXXX`"
+INPUT_ARCHIVE="$(mktemp -t -p "$TMP_DIRECTORY" input-XXXXXXXXXX)"
+OUTPUT_ARCHIVE="$(mktemp -t -p "$TMP_DIRECTORY" output-XXXXXXXXXX)"
 
 
 # ====== Create input archive ===============================================
 echo "Preparing input [$UNIQUE_ID] ..."
 # Using "nice" here, since there may be many sessions ...
-nice tar czhf $INPUT_ARCHIVE -C. ssrun $SIMULATION_CONFIGS -C$SIM_DIRECTORY -C$RUN_DIRECTORY/$DIRECTORY $INI_NAME $XML_NAME || exit 1
+# shellcheck disable=SC2086
+nice tar czhf "$INPUT_ARCHIVE" \
+   -C.                ssrun $SIMULATION_CONFIGS \
+   -C"$RUN_DIRECTORY" "$INI_NAME" $XML_NAME
 
 
 # ====== Start PU for job distribution ======================================
@@ -81,17 +84,24 @@ echo "Distributing and processing [$UNIQUE_ID] ..."
 # Not using "nice" here, in order to ensure quick upload/download ...
 # NOTE: At least rsplib 2.7.6 is required!
 RESULT=0
-$VALGRIND $SIMULATION_POOLUSER -runid=$UNIQUE_ID -quiet -maxretry=$MAX_RETRY -environment=$SIM_DIRECTORY/$SIMULATION_ENVIRONMENT -input=$INPUT_ARCHIVE -output=$OUTPUT_ARCHIVE -poolhandle=$POOLHANDLE $PU_MISCOPT -logfile=$PU_LOGFILE -loglevel=$PU_LOGLEVEL || RESULT=1
+# shellcheck disable=SC2086
+$VALGRIND $SIMULATION_POOLUSER \
+   -runid="$UNIQUE_ID" -quiet -maxretry=$MAX_RETRY \
+   -environment="$SIM_DIRECTORY/$SIMULATION_ENVIRONMENT" \
+   -input="$INPUT_ARCHIVE" -output="$OUTPUT_ARCHIVE" \
+   -logfile="$PU_LOGFILE" -loglevel=$PU_LOGLEVEL \
+   -poolhandle="$POOLHANDLE" \
+   $PU_MISCOPT || RESULT=1
 # >vg$RANDOM.txt 2>&1 || RESULT=1
-if [ -e $PU_LOGFILE ] ; then
-   rm -f $PU_LOGFILE.bz2
-   bzip2 $PU_LOGFILE
+if [ -e "$PU_LOGFILE" ] ; then
+   rm -f "$PU_LOGFILE".bz2
+   bzip2 "$PU_LOGFILE"
 fi
 
 
 # ====== Extract results archive ============================================
 echo "Extracting [$UNIQUE_ID] ..."
-cd $RUN_DIRECTORY || exit 1
+cd "$RUN_DIRECTORY"
 if [ ! -s "$OUTPUT_ARCHIVE" ] ; then
    echo >&2 "==================================================="
    echo >&2 "ERROR: No results have been created in directory $RUN_DIRECTORY!"
@@ -100,8 +110,8 @@ if [ ! -s "$OUTPUT_ARCHIVE" ] ; then
 fi
 
 # Using "nice" here, since there may be many sessions ...
-( nice tar xzhvf "$OUTPUT_ARCHIVE" | xargs touch ) || exit 1   # This will also update the time stamp!
-rm -f $INPUT_ARCHIVE $OUTPUT_ARCHIVE
+nice tar xzhvf "$OUTPUT_ARCHIVE" | xargs touch   # This will also update the time stamp!
+rm -f "$INPUT_ARCHIVE" "$OUTPUT_ARCHIVE"
 
 # Print error, if run has not been completed successfully ...
 if [ $RESULT -ne 0 ] ; then
@@ -109,10 +119,10 @@ if [ $RESULT -ne 0 ] ; then
    echo "----- SIMULATION RUN FAILED -----"
    echo ""
 
-   OUTPUT_NAME=`echo $INI_NAME | sed -e "s/-parameters.ini$/-output.txt.bz2/g"`
+   OUTPUT_NAME=$(echo "$INI_NAME" | sed -e "s/-parameters.ini$/-output.txt.bz2/g")
    if [ -e "$RUN_DIRECTORY/$OUTPUT_NAME" ] ; then
       echo "#########################################################"
-      bzgrep "^<\!> Error " $RUN_DIRECTORY/$OUTPUT_NAME
+      bzgrep "^<\!> Error " "$RUN_DIRECTORY/$OUTPUT_NAME"
       echo "#########################################################"
       echo ""
    fi
