@@ -21,9 +21,10 @@
 #
 # Contact: thomas.dreibholz@gmail.com
 
+# ====== Check parameters ===================================================
 if [ $# -lt 3 ] ; then
-   echo >&2 "Usage: perform-run [Simulation Directory] [Run Directory] [Run Number] {Pool Handle} {PU Misc Options}"
-   echo >&2 "Example: perform-run   test1 test1/Simulations/Set-1234 1   ScriptingPool \"-cspserver=127.0.0.1\""
+   echo >&2 "Usage: $0 [Simulation Directory] [Run Directory] [Run Number] {Pool Handle} {PU Misc Options}"
+   echo >&2 "Example: $0   test1 test1/Simulations/Set-1234 1   ScriptingPool \"-cspserver=127.0.0.1\""
    exit 1
 fi
 

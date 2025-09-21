@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -eu
 
 # ###########################################################################
 # You can set environment variables here.

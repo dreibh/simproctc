@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -eu
 # ###########################################################################
 #             Thomas Dreibholz's R Simulation Scripts Collection
 #                  Copyright (C) 2005-2025 Thomas Dreibholz
@@ -21,6 +21,7 @@
 #
 # Contact: thomas.dreibholz@gmail.com
 
+# ====== Check parameters ===================================================
 if [ $# -lt 1 ] ; then
    echo >&2 "Usage: get-libs [Program] [Libs Directory]"
    exit 1

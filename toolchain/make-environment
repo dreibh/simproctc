@@ -58,7 +58,10 @@ collectFiles() {
 
 
 
-if [ $# -lt 3 ] ; then
+# ###### Main program #######################################################
+
+# ====== Check parameters ===================================================
+if [ $# -lt 4 ] ; then
    echo >&2 "Usage: make-environment [Simulation Directory] [Sources Directory] [Simulation Binary] [Simulation Base Directory] {-n [NED directory (relative to base)]} ..."
    echo >&2 "Example: make-environment test1 ~/src/INET6 src/inet -n src -n examples/sctp -misc \"*.mrt\" examples/sctp"
    exit 1
@@ -68,9 +71,9 @@ SIMULATION_DIRECTORY=$1
 SOURCES_DIRECTORY=$2
 SIMULATION_BINARY=$3
 SIMULATION_BASEDIR=$4
-shift ; shift ; shift ; shift
+shift 4
 
-TOOLCHAINDIR=$(pwd)
+TOOLCHAINDIR="$(pwd)"
 
 
 # ====== Check configuration ================================================
