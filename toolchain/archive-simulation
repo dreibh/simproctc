@@ -21,6 +21,11 @@
 #
 # Contact: thomas.dreibholz@gmail.com
 
+# ====== Check parameters ===================================================
+if [ $# -lt 1 ] ; then
+   echo >&2 "Usage: $0 [Simulation]"
+   exit 1
+fi
 if [ ! -e "$1".R ] ; then
    echo "ERROR: $1.R does not exist!"
    exit
