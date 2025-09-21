@@ -1,3 +1,279 @@
+commit 45c1940845be8ddde50ab51337c7a9825b33fd24
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Sep 21 14:58:32 2025 +0200
+
+    Formatting fixes.
+
+commit 7ae1bfbb2c5fac5c431fad638aec5da784bd3415
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Sep 21 14:48:31 2025 +0200
+
+    Minor documentation update.
+
+commit 9b3a77be946fbb4bd36a90c1977349649daa227f
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Sep 21 13:45:18 2025 +0200
+
+    Minor clean-ups.
+
+commit 07940baf9d7a210a01dc951177e12a293b011777
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Sep 21 11:05:52 2025 +0200
+
+    Last set of ShellCheck clean-ups and small improvements.
+
+commit 063270673991e7747bdcb1c6b7410e88dee0090f
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Sep 21 10:46:21 2025 +0200
+
+    Some more clean-ups.
+
+commit 044c1949f3d612856d53333e2e06ce6d072ba576
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Sep 21 10:43:48 2025 +0200
+
+    Minor clean-ups.
+
+commit 692725661310e62520417604d4d71ab63938a5a3
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Sep 21 10:32:47 2025 +0200
+
+    Small improvements.
+
+commit 029f02f8c1813a5e84570643d528cf953d9505f5
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Sep 21 10:32:24 2025 +0200
+
+    ShellCheck clean-ups and some improvements.
+
+commit b1a953e5d7756b90057e28d60428da2e67bb5091
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 18:51:56 2025 +0200
+
+    Minor clean-ups.
+
+commit 3e7b8367e9053816bc4a67812fccff1ec475606a
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 18:47:21 2025 +0200
+
+    Another set of ShellCheck clean-ups.
+
+commit 56330345d14ea49a2919ece3041ae8f2420e3e9f
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 18:10:09 2025 +0200
+
+    Further progress.
+
+commit 53882251954e2100bce9e004ba3dfbacb81e3fe9
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 17:52:52 2025 +0200
+
+    Some progress.
+
+commit 4bb4401f74c0b99f0bc6dab2c0cd209072383f60
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 17:23:06 2025 +0200
+
+    Further ShellCheck clean-ups.
+
+commit ec9e1a66a3a9cf387c3782780d70a29bc66798f8
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 17:15:41 2025 +0200
+
+    Yet another set of clean-ups.
+
+commit c20627646989e2be42e434511140e8140d451e42
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 17:08:05 2025 +0200
+
+    Another set of clean-ups.
+
+commit 869f7b82590dff21585e7fd9fbc080fd052ff0a3
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 16:57:33 2025 +0200
+
+    Further ShellCheck clean-ups.
+
+commit 1999885eba327e6e3b5805efb7c893030808d025
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 16:21:43 2025 +0200
+
+    Some clean-ups and improvements.
+
+commit 173671b45445a03a48bb479309d962241c2e6f21
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 16:06:48 2025 +0200
+
+    Some improvements.
+
+commit 6824cdc4a1b54e23afd8e4e2648e638d06d2f6ae
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 15:50:45 2025 +0200
+
+    Further clean-ups.
+
+commit 6adb3381c167cfe420ff3ff2ba7c1086712490e5
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 15:45:40 2025 +0200
+
+    Merged createsummary.cc update from NetPerfMeter.
+
+commit 8ce976012be40c327ea4d6c43465ec00106acf58
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 15:45:09 2025 +0200
+
+    ShellCheck clean-ups for some more scripts.
+
+commit bbafe3b37e8a3e05ebbc2e426dc4816c29c983b6
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 15:35:02 2025 +0200
+
+    Some simple ShellCheck clean-ups.
+
+commit 992206cdfb3dc64e2b470effb40ab52a9c92b448
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 15:25:27 2025 +0200
+
+    Shebang update.
+
+commit 253cf4a5e3329ebaf0632888a8a162251a16d309
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 15:24:28 2025 +0200
+
+    ShellCheck clean-ups in packaging script.
+
+commit 89196ffed25d9813d1738e5ca8f0450c4c1c9e7c
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 15:22:05 2025 +0200
+
+    Some more documentation improvements.
+
+commit d21f90be311a52a8482296073d78a462ed8ccf62
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 15:00:55 2025 +0200
+
+    Further documentation improvements.
+
+commit 5c8251aec3c09c72801a788ca2ac06ba3b08ef9d
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Sep 20 11:30:03 2025 +0200
+
+    Improved Links section in documentation.
+
+commit f9cda5b6ffdccb4804c85e6a927e4727ff5b99df
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Sep 19 23:30:57 2025 +0200
+
+    Added some more links.
+
+commit e30136d8af90ee68a57c7b8decebd625025c1e2a
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Sep 19 23:19:20 2025 +0200
+
+    Further documentation improvements.
+
+commit abb0a1298db94cf8b627fac8236216bbe2b0648b
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Sep 19 23:01:05 2025 +0200
+
+    A fix.
+
+commit 50dd990fc034b87ff26037fb1c6d6b3fa4072f8d
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Sep 19 23:00:00 2025 +0200
+
+    Added link.
+
+commit f8865842660af80edf62ecd31bb7616084575a81
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Sep 19 22:54:13 2025 +0200
+
+    Yet another update.
+
+commit 775568aa6bc4b145f101f0946deb016e7f8b7946
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Sep 19 22:51:32 2025 +0200
+
+    Fixed URLs.
+
+commit 4e14192dcec75f4a7628728a93ad419beb4d1aee
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Sep 19 22:45:04 2025 +0200
+
+    Added link.
+
+commit 229bf3dd2aa7e0ab7e5645d03fef41c9b20fb5de
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Sep 19 22:40:45 2025 +0200
+
+    Fixed URL.
+
+commit 336b76fe467a6dcb64ad59132d98701e549e7efa
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Sep 19 22:35:48 2025 +0200
+
+    Minor update.
+
+commit afd3304a27431e83055d8264c5e192cb3ec999b0
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Sep 19 22:31:46 2025 +0200
+
+    Improved documentation.
+
+commit e8cc4d7135fba8430c02487f62046c4bac2b0774
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Sep 19 22:03:14 2025 +0200
+
+    Further documentation improvements.
+
+commit 3773558fbff255ccc0411460a8ff48b45e5a5724
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Sep 19 22:00:23 2025 +0200
+
+    Improved documentation.
+
+commit f677657024da30209db736fdbd48f2791f489b7c
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Sep 19 19:30:21 2025 +0200
+
+    Moved logo and added conversion script.
+
+commit 08146cd6224678d4e8013708d65a4c8f9c3f1d0b
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Wed Jul 9 13:37:07 2025 +0200
+
+    Version bump.
+
+commit 252286bc48d4771eb606821a7506c6b80b77fdbd
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Wed Jul 9 13:32:18 2025 +0200
+
+    Updated tools.
+
+commit b76cc51f5432d478e4881d1cc6bc3520eaf47b0a
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Wed Jul 9 13:32:08 2025 +0200
+
+    A fix.
+
+commit c3330bd34fe7613b381ccecb1e2572ba4b721204
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Wed Jul 9 13:31:38 2025 +0200
+
+    Header updates.
+
+commit 45cc00e3abc5f5ff456916e866b6fa7275b1262e
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Wed Jul 9 13:31:28 2025 +0200
+
+    Build script update and clean-ups.
+
+commit 6a6c16930e428865c8692c070b253acf62720cb7
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Wed Feb 8 11:46:20 2023 +0100
+
+    New release simproctc-2.0.2.
+
 commit 07d1b63c3917857936bca97bcb094bcc71e6ab08
 Author: Thomas Dreibholz <dreibh@simula.no>
 Date:   Wed Feb 8 10:48:40 2023 +0100
