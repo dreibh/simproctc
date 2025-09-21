@@ -119,7 +119,7 @@ In order to compile tool-chain and examples, call the following commands in the 
 <pre>
 cd toolchain/tools &amp;&amp; make &amp;&amp; cd ../.. && \
 cd example-simulation && \
-opp_makemake -f && \
+opp_makemake -I . -f && \
 make
 </pre>
 
