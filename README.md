@@ -117,9 +117,9 @@ Get the simulation tool-chain package from the [Build from Sources](#build-from-
 In order to compile tool-chain and examples, call the following commands in the SimProcTC main directory:
 
 <pre>
-cd toolchain/tools &amp;&amp; make &amp;&amp; cd ../.. && \
-cd example-simulation && \
-opp_makemake -I . -f && \
+cd toolchain/tools &amp;&amp; make &amp;&amp; cd ../.. &amp;&amp; \
+cd example-simulation &amp;&amp; \
+opp_makemake -I . -f &amp;&amp; \
 make
 </pre>
 
@@ -308,10 +308,10 @@ If everything went well, a status file is created. The existence of this status 
 
 In order to use SimProcTC with your own model, perform the following tasks:
 
-1. Copy the SimProcTC files to your model's directory: <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun">ssrun</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R">simulation.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/hashfunctions.R">hashfunctions.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plotter.R">plotter.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/make-environment">make-environment</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs">get-libs</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds">get-neds</a></tt>.
-2. Create a model-specific <tt>.ini</tt> file generation script (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt> of the demo simulation as a template).
-3. Create a simulation definition script (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt> of the demo simulation as a template).
-4. Create a plot script for your simulation (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R">plot-test1.R</a></tt> of the demo simulation as a template).
+* Copy the SimProcTC files to your model's directory: <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun">ssrun</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R">simulation.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/hashfunctions.R">hashfunctions.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plotter.R">plotter.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/make-environment">make-environment</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs">get-libs</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds">get-neds</a></tt>.
+* Create a model-specific <tt>.ini</tt> file generation script (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt> of the demo simulation as a template).
+* Create a simulation definition script (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt> of the demo simulation as a template).
+* Create a plot script for your simulation (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R">plot-test1.R</a></tt> of the demo simulation as a template).
 
 Before using the RSerPool-based run distribution, first test your simulation on your local machine! This makes finding problems much easier. If everything works, you can continue with run distribution.
 
