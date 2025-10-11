@@ -1,12 +1,11 @@
-#!/bin/sh
+#!/bin/sh -eu
 
-make createsummary && \
-( echo "--skip=tsb.nameServerArray.enrpServer" && \
-  echo "--simulationsdirectory=." && \
-  echo "--resultsdirectory=/tmp" && \
-  echo "--values=Three" && echo "--input=scalars.sca" && \
+make createsummary
+( echo "--skip=tsb.nameServerArray.enrpServer"
+  echo "--simulationsdirectory=."
+  echo "--resultsdirectory=/tmp"
+  echo "--values=Three" && echo "--input=scalars.sca"
   echo "--skip=KeepAlive" ) | \
 ./createsummary MyVarName
-# G_SLICE=always-malloc valgrind  -v --tool=memcheck --leak-check=yes --show-reachable=no --leak-resolution=high --num-callers=40 --freelist-vol=4000000 ./createsummary MyVarName
 
-# ./createsummary MyVarName
+# G_SLICE=always-malloc valgrind  -v --tool=memcheck --leak-check=yes --show-reachable=no --leak-resolution=high --num-callers=40 --freelist-vol=4000000 ./createsummary MyVarName
