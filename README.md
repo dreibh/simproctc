@@ -25,11 +25,10 @@ Please use the issue tracker at [https://github.com/dreibh/simproctc/issues](htt
 
 The Git repository of the SimProcTC sources can be found at [https://github.com/dreibh/simproctc](https://github.com/dreibh/simproctc):
 
-```bash
-git clone https://github.com/dreibh/simproctc
-cd simproctc
-cd toolchain/tools && make && cd ..
-```
+<pre><code><span class="fu">git</span> clone <a href="https://github.com/dreibh/simproctc">https://github.com/dreibh/simproctc</a>
+<span class="bu">cd</span> simproctc
+<span class="bu">cd</span> toolchain/tools &amp;&amp; make <span class="fu">&amp;&amp;</span> <span class="bu">cd</span> ..
+</code></pre>
 
 Contributions:
 
