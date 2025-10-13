@@ -25,11 +25,11 @@ Please use the issue tracker at [https://github.com/dreibh/simproctc/issues](htt
 
 The Git repository of the SimProcTC sources can be found at [https://github.com/dreibh/simproctc](https://github.com/dreibh/simproctc):
 
-<pre>
+```bash
 git clone https://github.com/dreibh/simproctc
 cd simproctc
-cd toolchain/tools &amp;&amp; make &amp;&amp; cd ..
-</pre>
+cd toolchain/tools && make && cd ..
+```
 
 Contributions:
 
@@ -52,7 +52,7 @@ The following items are a step-by-step installation guide for SimProcTC.
 
 Get the latest version of OMNeT++ [here](https://omnetpp.org/download/) and install it under Linux. See the [OMNeT++ Installation Guide](https://doc.omnetpp.org/omnetpp/InstallGuide.pdf) for details!
 
-If you do not have Linux installed already, you may find my [Little Ubuntu Linux Installation Guide](https://www.nntb.no/~dreibh/ubuntu/index.html) helpful. This installation guide also provides help on how to install OMNeT++ on an Ubuntu system.
+If you do not have Linux installed already, you may find my [Little Ubuntu Linux Installation Guide](https://www.nntb.no/~dreibh/ubuntu/) helpful. This installation guide also provides help on how to install OMNeT++ on an Ubuntu system.
 Note that while OMNeT++ also works under Microsoft Windows, my tool-chain has not been tested under this operating system, yet. In particular, run distribution using RSerPool will not work under Windows unless you port the [RSPLIB RSerPool implementation](https://www.nntb.no/~dreibh/rserpool/) to Windows.
 
 After installing OMNeT++, make sure that it is working properly.
@@ -62,15 +62,24 @@ After installing OMNeT++, make sure that it is working properly.
 Install [GNU&nbsp;R](https://www.r-project.org/). Usually, it will be available for your Linux distribution as installation package. However, if you decide to install it from source, you can download the source [here](https://www.r-project.org/).
 Under Ubuntu/Debian Linux, you can download and install GNU&nbsp;R using the following command line:
 
-* Ubuntu/Debian: ```sudo apt-get install r-base```
-* Fedora: ```sudo dnf install R-base```
-* FreeBSD: ```sudo pkg install R```
+* Ubuntu/Debian:
+  ```bash
+  sudo apt-get install r-base
+  ```
+* Fedora:
+  ```bash
+  sudo dnf install R-base
+  ```
+* FreeBSD:
+  ```bash
+  sudo pkg install R
+  ```
 
 After installation, you can start GNU&nbsp;R by:
 
-<pre>
+```bash
 R --vanilla
-</pre>
+```
 
 You can quit GNU&nbsp;R using Ctrl+D.
 
@@ -78,17 +87,35 @@ You can quit GNU&nbsp;R using Ctrl+D.
 
 The simulation tool-chain requires libbz2 for compression and decompression of files, including the development headers. In particular, also the developer files (include files) of this library are required to compile the tool-chain. Usually, it will be available for your Linux distribution as installation package. However, if you decide to install it from source, you can download the source from [bzip2: Home](https://sourceware.org/bzip2/). In most cases, it can be installed by the operating system’s package management:
 
-* Ubuntu/Debian: ```sudo apt-get install bzip2 libbz2-dev```
-* Fedora: ```sudo dnf install bzip2 bzip2-devel```
-* FreeBSD: ```sudo pkg install bzip2```
+* Ubuntu/Debian:
+  ```bash
+  sudo apt-get install bzip2 libbz2-dev
+  ```
+* Fedora:
+  ```bash
+  sudo dnf install bzip2 bzip2-devel
+  ```
+* FreeBSD:
+  ```bash
+  sudo pkg install bzip2
+  ```
 
 ## Install chrpath
 
 <tt>chrpath</tt> is a shell tool to modify the path to look for shared libraries in executables, which is needed for run distribution. If not already installed, it can be installed by the operating system's package management:
 
-* Ubuntu/Debian: ```sudo apt-get install chrpath```
-* Fedora: ```sudo dnf install chrpath```
-* FreeBSD: ```sudo pkg install chrpath```
+* Ubuntu/Debian:
+  ```bash
+  sudo apt-get install chrpath
+  ```
+* Fedora:
+  ```bash
+  sudo dnf install chrpath
+  ```
+* FreeBSD:
+  ```bash
+  sudo pkg install chrpath
+  ```
 
 ## Install the Simulation Tool-Chain
 
@@ -116,20 +143,20 @@ Get the simulation tool-chain package from the [Build from Sources](#build-from-
 
 In order to compile tool-chain and examples, call the following commands in the SimProcTC main directory:
 
-<pre>
-cd toolchain/tools &amp;&amp; make &amp;&amp; cd ../.. &amp;&amp; \
-cd example-simulation &amp;&amp; \
-opp_makemake -I . -f &amp;&amp; \
+```bash
+cd toolchain/tools && make && cd ../.. && \
+cd example-simulation && \
+opp_makemake -I . -f && \
 make
-</pre>
+```
 
 Notes:
 
 * Make sure to compile in the OMNeT++ Python environment (see the [OMNeT++ Installation Guide](https://doc.omnetpp.org/omnetpp/InstallGuide.pdf)), i.e.:
 
-  <pre>
-  source &lt;<em>PATH_TO_OMNET++_DIRECTORY</em>&gt;/setenv
-  </pre>
+  ```bash
+  source <PATH_TO_OMNET++_DIRECTORY>/setenv
+  ```
 
   If <tt>opp_makemake</tt> is not found, this step is likely missing!
 
@@ -137,9 +164,9 @@ Notes:
 
 After compilation, you can start the demo simulation by calling:
 
-<pre>
+```bash
 ./example-simulation
-</pre>
+```
 
 
 # 🏃 Running the Demo Simulation
@@ -161,15 +188,15 @@ The variables _distributionPool_ and _distributionProcs_ in <tt><a href="https:/
 
 Now, in order to perform the simulation defined in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt>, simply execute <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt> using R:
 
-<pre>
+```bash
 R --vanilla < test1.R
-</pre>
+```
 
 The script will now create an <tt>.ini</tt> file for each run and a <tt>Makefile</tt> containing all runs. Finally, <tt>make</tt> will be called to process the created <tt>Makefile</tt>. <tt>make</tt> will already be called with the <tt>-j</tt> parameter corresponding to your number of CPUs/cores, so that it fully utilises the computation power of your machine. You can observe the progress of the simulation processing by monitoring the log file:
 
-<pre>
+```bash
 tail -f test1/make.log
-</pre>
+```
 
 You can abort the simulation processing and continue later. Only the run(s) currently in progress are lost and have to be re-processed upon resumption. Already completed runs are saved and no re-processing is necessary.
 
@@ -178,9 +205,9 @@ You can abort the simulation processing and continue later. Only the run(s) curr
 
 After processing the simulation defined by <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt>, you can plot the results using <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R">plot-test1.R</a></tt>:
 
-<pre>
+```bash
 R --vanilla < plot-test1.R
-</pre>
+```
 
 The results will be written to <tt>test1.pdf</tt> (the file name will be the simulation output directory + <tt>.pdf</tt>). You can view it with any PDF reader, e.g.&nbsp;[Okular](https://okular.kde.org/). The plotter settings at the head of <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R">plot-test1.R</a></tt> should be almost self-explaining. For _colorMode_, you can also use _cmBlackAndWhite_ or _cmGreyScale_. Setting _plotOwnOutput_ to TRUE results in an own output file for each plot (instead of a single PDF file). _plotConfigurations_ contains the definitions for each plot, in particular title, output file name for _plotOwnOutput_, x- and y-axis ticks, legend position and the results data for each axis given by a template. A set of model-specific templates is already defined in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt>, you can add additional ones there or to _plotVariables_ in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R">plot-test1.R</a></tt>. See also the paper for more details on templates.
 
@@ -189,42 +216,42 @@ The results will be written to <tt>test1.pdf</tt> (the file name will be the sim
 
 Make sure that the previous steps (performing simulations and plotting) work. If they are not working properly, the run distribution will also fail! First, it is necessary to install the [RSPLIB RSerPool implementation](https://www.nntb.no/~dreibh/rserpool/). On a Ubuntu/Debian system, RSPLIB can be installed directly:
 
-<pre>
+```bash
 sudo apt-get install rsplib-registrar rsplib-services rsplib-tools
-</pre>
+```
 
 In case of a need for a manual installation, also see the [RSPLIB documentation](https://www.nntb.no/~dreibh/rserpool/)!
 
 One one computer, run CSP monitor to display the status of the other components:
 
-<pre>
+```bash
 cspmonitor
-</pre>
+```
 
 Note the IP address of this system. The CSP monitor runs on UDP port&nbsp;2960.
 
 For the other components to be started, define environment variables:
 
-<pre>
-export CSP_SERVER=&lt;IP_OF_CSP_MONITOR&gt;:2960
+```bash
+export CSP_SERVER=<IP_OF_CSP_MONITOR>:2960
 export CSP_INTERVAL=333
-</pre>
+```
 
 You can put these commands e.g.&nbsp;into <tt>$HOME/.bashrc</tt>, so that the variables are available in all new shell sessions!
 
 In your network, start at least one RSerPool Pool Registrar&nbsp;(PR):
 
-<pre>
+```bash
 rspregistrar
-</pre>
+```
 
 With the environment variables above set correctly, the CSP monitor should show the registrar.
 
 Then, start a Scripting Service Pool Element&nbsp;(PE) in another shell.
 
-<pre>
+```bash
 rspserver -scripting -policy=LeastUsed -ssmaxthreads=4
-</pre>
+```
 
 The parameter <tt>-ssmaxthreads</tt> specifies the number of parallel sessions; use the number of cores/CPUs in your machine). The output of <tt>rspserver</tt> should look as follows:
 
@@ -266,27 +293,27 @@ With the environment variables above set correctly, the CSP monitor should show 
 
 Take a look into the script <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt>. Ensure that the variable setting for _SIMULATION_POOLUSER_ points to the program <tt>scriptingclient</tt> of the RSPLIB package (if installed from the Ubuntu/Debian package: <tt>/usr/bin/scriptingclient</tt>).
 
-<pre>
+```bash
 SIMULATION_POOLUSER=/usr/bin/scriptingclient
-</pre>
+```
 
 If <tt>scriptingclient</tt> is located else where, e.g.&nbsp;<tt>$HOME/src/rsplib-3.5.4/src</tt> in your home directory, the line should be:
 
-<pre>
+```bash
 SIMULATION_POOLUSER=~/src/rsplib-3.5.4/src/scriptingclient
-</pre>
+```
 
 In <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt>, set _distributionProcs_ to the maximum number of simultaneous sessions (at least&nbsp;1; if you later start 5&nbsp;pool elements with 2&nbsp;cores each, you should use&nbsp;10). It is safe to use&nbsp;1 for the following test. After modifying _distributionProcs_, increase _simulationRuns_ e.g.&nbsp;by&nbsp;1. Otherwise, since you have already performed the run of <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt> before, no more runs would be necessary (since their results are already there!). Now, run <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt> again:
 
-<pre>
+```bash
 R --vanilla < test1.R
-</pre>
+```
 
 Take a look at the output of <tt>rspserver</tt>: it should receive jobs and process them. Also, take a look at the log output:
 
-<pre>
+```bash
 tail -f test1/make.log
-</pre>
+```
 
 When the job distribution is working properly, you can start more pool elements and set up your simulation computation pool. Do not forget to increase _distributionProcs_ accordingly!
 
@@ -334,8 +361,8 @@ SimProcTC and related BibTeX entries can be found in [AllReferences.bib](https:/
 
 ## Other Resources
 
-* [Thomas Dreibholz's Reliable Server Pooling (RSerPool) Page](https://www.nntb.no/~dreibh/rserpool/index.html)
-* [Thomas Dreibholz's SCTP Page](https://www.nntb.no/~dreibh/sctp/index.html)
-* [Thomas Dreibholz's Multi-Path TCP (MPTCP) Page](https://www.nntb.no/~dreibh/mptcp/index.html)
-* [Thomas Dreibholz's Little Ubuntu Linux Installation Guide](https://www.nntb.no/~dreibh/ubuntu/index.html)
+* [Thomas Dreibholz's Reliable Server Pooling (RSerPool) Page](https://www.nntb.no/~dreibh/rserpool/)
+* [Thomas Dreibholz's SCTP Page](https://www.nntb.no/~dreibh/sctp/)
+* [Thomas Dreibholz's Multi-Path TCP (MPTCP) Page](https://www.nntb.no/~dreibh/mptcp/)
+* [Thomas Dreibholz's Little Ubuntu Linux Installation Guide](https://www.nntb.no/~dreibh/ubuntu/)
 * [Wireshark](https://www.wireshark.org/)
