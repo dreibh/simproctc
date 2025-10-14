@@ -101,7 +101,7 @@ The simulation tool-chain requires libbz2 for compression and decompression of f
 
 ## Install chrpath
 
-<tt>chrpath</tt> is a shell tool to modify the path to look for shared libraries in executables, which is needed for run distribution. If not already installed, it can be installed by the operating system's package management:
+`chrpath` is a shell tool to modify the path to look for shared libraries in executables, which is needed for run distribution. If not already installed, it can be installed by the operating system's package management:
 
 * Ubuntu/Debian:
   ```bash
@@ -118,27 +118,27 @@ The simulation tool-chain requires libbz2 for compression and decompression of f
 
 ## Install the Simulation Tool-Chain
 
-Get the simulation tool-chain package from the [Build from Sources](#build-from-sources) section and unpack it, or clone the Git repository. Also, take a look at the description paper in the <tt><a href="https://github.com/dreibh/simproctc/blob/master/docs/">docs</a></tt> directory; they provide important information on what the tool-chain actually does! The tool-chain archive includes the files of the tool chain as well as a small example simulation. The files have the following purposes:
+Get the simulation tool-chain package from the [Build from Sources](#build-from-sources) section and unpack it, or clone the Git repository. Also, take a look at the description paper in the [`docs`](https://github.com/dreibh/simproctc/blob/master/docs/) directory; they provide important information on what the tool-chain actually does! The tool-chain archive includes the files of the tool chain as well as a small example simulation. The files have the following purposes:
 
-* <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/">toolchain</a></tt> directory: This directory contains the tool-chain scripts.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R">simulation.R</a></tt>: Generic simulation tool-chain code.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt>: Model-specific simulation tool-chain code.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/hashfunctions.R">hashfunctions.R</a></tt>: GNU R functions to calculate MD5 and SHA1 hashes.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plotter.R">plotter.R</a></tt>: GNU R functions for plotting.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/make-environment">make-environment</a></tt>: Shell script to collect all files to create the environment file.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs">get-libs</a></tt>: Shell script to collect all shared libraries needed by the model.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds">get-neds</a></tt>: Shell script to collect all NED files needed by the model.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt>: Example simulation script.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R">plot-test1.R</a></tt>: Plotting script for the example.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt>: Shell script to distribute runs in a computation pool.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun">ssrun</a></tt>: Shell script to perform a simulation run (on a remote pool PC).
-* <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/">toolchain/tools</a></tt> directory: This directory contains the <tt>createsummary</tt> tool for scalar file processing. For performance reasons, it is written in C++, and therefore has to be compiled.
-* <tt><a href="https://github.com/dreibh/simproctc/blob/master/example-simulation/">example-simulation</a></tt> directory:
+* [`toolchain`](https://github.com/dreibh/simproctc/blob/master/toolchain/) directory: This directory contains the tool-chain scripts.
+  - [`simulation.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R): Generic simulation tool-chain code.
+  - [`simulate-version1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R): Model-specific simulation tool-chain code.
+  - [`hashfunctions.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/hashfunctions.R): GNU R functions to calculate [MD5](https://en.wikipedia.org/wiki/MD5) and [SHA-1](https://en.wikipedia.org/wiki/SHA-1) hashes.
+  - [`plotter.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/plotter.R): GNU R functions for plotting.
+  - [`make-environment`](https://github.com/dreibh/simproctc/blob/master/toolchain/make-environment): Shell script to collect all files to create the environment file.
+  - [`get-libs`](https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs): Shell script to collect all shared libraries needed by the model.
+  - [`get-neds`](https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds): Shell script to collect all NED files needed by the model.
+  - [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R): Example simulation script.
+  - [`plot-test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R): Plotting script for the example.
+  - [`ssdistribute`](https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute): Shell script to distribute runs in a computation pool.
+  - [`ssrun`](https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun): Shell script to perform a simulation run (on a remote pool PC).
+* [`toolchain/tools`](https://github.com/dreibh/simproctc/blob/master/toolchain/tools/) directory: This directory contains the `createsummary` tool for scalar file processing. For performance reasons, it is written in C++, and therefore has to be compiled.
+* [`example-simulation`](https://github.com/dreibh/simproctc/blob/master/example-simulation/) directory:
     This directory contains the simple example model "example-simulation" for OMNeT++ 5.x/6.x.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/example-simulation/scenario.ned">scenario.ned</a></tt>: NED file.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/example-simulation/messages.msg">messages.msg</a></tt>: Messages file.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/example-simulation/implementation.cc">implementation.cc</a></tt>: Model implementation.
-  - <tt><a href="https://github.com/dreibh/simproctc/blob/master/example-simulation/omnetpp.ini">omnetpp.ini</a></tt>: Example run for testing the Qtenv/Cmdenv environments simulation.
+  - [`scenario.ned`](https://github.com/dreibh/simproctc/blob/master/example-simulation/scenario.ned): NED file.
+  - [`messages.msg`](https://github.com/dreibh/simproctc/blob/master/example-simulation/messages.msg): Messages file.
+  - [`implementation.cc`](https://github.com/dreibh/simproctc/blob/master/example-simulation/implementation.cc): Model implementation.
+  - [`omnetpp.ini`](https://github.com/dreibh/simproctc/blob/master/example-simulation/omnetpp.ini): Example run for testing the Qtenv/Cmdenv environments simulation.
 
 In order to compile tool-chain and examples, call the following commands in the SimProcTC main directory:
 
@@ -157,7 +157,7 @@ Notes:
   source <PATH_TO_OMNET++_DIRECTORY>/setenv
   ```
 
-  If <tt>opp_makemake</tt> is not found, this step is likely missing!
+  If `opp_makemake` is not found, this step is likely missing!
 
 * Make sure that everything compiles successfully. Otherwise, the tool-chain will not work properly!
 
@@ -170,7 +170,7 @@ After compilation, you can start the demo simulation by calling:
 
 # 🏃 Running the Demo Simulation
 
-The example simulation packaged with SimProcTC simply presents the effects of fragmenting large packets into cells and forwarding them: the delays will significantly reduce at the price of increased overhead. Take a look into <tt><a href="https://github.com/dreibh/simproctc/blob/master/example-simulation/scenario.ned">scenario.ned</a></tt> to see the parameters of the model:
+The example simulation packaged with SimProcTC simply presents the effects of fragmenting large packets into cells and forwarding them: the delays will significantly reduce at the price of increased overhead. Take a look into [`scenario.ned`](https://github.com/dreibh/simproctc/blob/master/example-simulation/scenario.ned) to see the parameters of the model:
 
 * _fragmenterScenario.fragmenter.cellHeaderSize_
 * _fragmenterScenario.fragmenter.cellPayloadSize_
@@ -179,19 +179,19 @@ The example simulation packaged with SimProcTC simply presents the effects of fr
 * _fragmenterScenario.sourcePayloadSize_
 * _fragmenterScenario.sourceInterarrivalTime_
 
-An example simulation for this model is defined in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt>: for each parameter of the model, the list _simulationConfigurations_ contains a list with the parameter name as first element and its value(s) as further elements. For example, ```list("sourcePayloadSize", 1000, 2500)``` means that the parameter _sourcePayloadSize_ should be used with the values 1000&nbsp;bytes and 2500&nbsp;bytes. For each parameter combination, a separate run will be created. Furthermore, the variable _simulationRuns_ specifies how many different seeds should be used. That is, for ```simulationRuns=3```, runs for each parameter combinations are created with 3&nbsp;different seeds (i.e.&nbsp;tripling the number of runs!).
+An example simulation for this model is defined in [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R): for each parameter of the model, the list _simulationConfigurations_ contains a list with the parameter name as first element and its value(s) as further elements. For example, ```list("sourcePayloadSize", 1000, 2500)``` means that the parameter _sourcePayloadSize_ should be used with the values 1000&nbsp;bytes and 2500&nbsp;bytes. For each parameter combination, a separate run will be created. Furthermore, the variable _simulationRuns_ specifies how many different seeds should be used. That is, for ```simulationRuns=3```, runs for each parameter combinations are created with 3&nbsp;different seeds (i.e.&nbsp;tripling the number of runs!).
 
-The actual output of <tt>.ini</tt> files is realized in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt>. Take a look over this file first, it should be quite self-explaining! In the function ```demoWriteParameterSection()```, the actual lines for the parameters above are written for each simulation run. _simCreatorAdditionalActiveVariables_ defines for which variables a table row should always be written. For example, if you always use ```cellHeaderSize=4```, the <tt>createsummary</tt> tool would omit this parameter in the output table, because it always has the same value. Since it may be useful for your post-processing, you can add it to _simCreatorAdditionalActiveVariables_. Note, that _simCreatorWriteParameterSection_ is set to _demoWriteParameterSection_. In the generic <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R">simulation.R</a></tt> script, always the names <em>simCreator&#42;</em> instead of <em>demo&#42;</em> are used. In order to be model-independent, it is necessary to set these variables to the actual model-dependent functions in simulate-version1.R! When you adapt the tool-chain to you own model, you only have to create your own <tt>simulation-version<em>X</em>.R</tt> script and leave the other scripts unmodified.
+The actual output of `.ini` files is realized in [`simulate-version1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R). Take a look over this file first, it should be quite self-explaining! In the function ```demoWriteParameterSection()```, the actual lines for the parameters above are written for each simulation run. _simCreatorAdditionalActiveVariables_ defines for which variables a table row should always be written. For example, if you always use ```cellHeaderSize=4```, the `createsummary` tool would omit this parameter in the output table, because it always has the same value. Since it may be useful for your post-processing, you can add it to _simCreatorAdditionalActiveVariables_. Note, that _simCreatorWriteParameterSection_ is set to _demoWriteParameterSection_. In the generic [`simulation.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R) script, always the names <em>simCreator&#42;</em> instead of <em>demo&#42;</em> are used. In order to be model-independent, it is necessary to set these variables to the actual model-dependent functions in simulate-version1.R! When you adapt the tool-chain to you own model, you only have to create your own <tt>simulation-version<em>X</em>.R</tt> script and leave the other scripts unmodified.
 
-The variables _distributionPool_ and _distributionProcs_ in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt> are used to control the request distribution. They will be explained later. For now, make sure that _distributionProcs_ is set to&nbsp;0! This setting means that all runs are processed on the local machine.
+The variables _distributionPool_ and _distributionProcs_ in [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R) are used to control the request distribution. They will be explained later. For now, make sure that _distributionProcs_ is set to&nbsp;0! This setting means that all runs are processed on the local machine.
 
-Now, in order to perform the simulation defined in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt>, simply execute <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt> using R:
+Now, in order to perform the simulation defined in [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R), simply execute [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R) using R:
 
 ```bash
 R --vanilla < test1.R
 ```
 
-The script will now create an <tt>.ini</tt> file for each run and a <tt>Makefile</tt> containing all runs. Finally, <tt>make</tt> will be called to process the created <tt>Makefile</tt>. <tt>make</tt> will already be called with the <tt>-j</tt> parameter corresponding to your number of CPUs/cores, so that it fully utilises the computation power of your machine. You can observe the progress of the simulation processing by monitoring the log file:
+The script will now create an `.ini` file for each run and a `Makefile` containing all runs. Finally, `make` will be called to process the created `Makefile`. `make` will already be called with the `-j` parameter corresponding to your number of CPUs/cores, so that it fully utilises the computation power of your machine. You can observe the progress of the simulation processing by monitoring the log file:
 
 ```bash
 tail -f test1/make.log
@@ -202,13 +202,13 @@ You can abort the simulation processing and continue later. Only the run(s) curr
 
 # 📈 Plotting the Results
 
-After processing the simulation defined by <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt>, you can plot the results using <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R">plot-test1.R</a></tt>:
+After processing the simulation defined by [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R), you can plot the results using [`plot-test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R):
 
 ```bash
 R --vanilla < plot-test1.R
 ```
 
-The results will be written to <tt>test1.pdf</tt> (the file name will be the simulation output directory + <tt>.pdf</tt>). You can view it with any PDF reader, e.g.&nbsp;[Okular](https://okular.kde.org/). The plotter settings at the head of <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R">plot-test1.R</a></tt> should be almost self-explaining. For _colorMode_, you can also use _cmBlackAndWhite_ or _cmGreyScale_. Setting _plotOwnOutput_ to TRUE results in an own output file for each plot (instead of a single PDF file). _plotConfigurations_ contains the definitions for each plot, in particular title, output file name for _plotOwnOutput_, x- and y-axis ticks, legend position and the results data for each axis given by a template. A set of model-specific templates is already defined in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt>, you can add additional ones there or to _plotVariables_ in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R">plot-test1.R</a></tt>. See also the paper for more details on templates.
+The results will be written to `test1.pdf` (the file name will be the simulation output directory + `.pdf`). You can view it with any PDF reader, e.g.&nbsp;[Okular](https://okular.kde.org/). The plotter settings at the head of [`plot-test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R) should be almost self-explaining. For _colorMode_, you can also use _cmBlackAndWhite_ or _cmGreyScale_. Setting _plotOwnOutput_ to TRUE results in an own output file for each plot (instead of a single PDF file). _plotConfigurations_ contains the definitions for each plot, in particular title, output file name for _plotOwnOutput_, x- and y-axis ticks, legend position and the results data for each axis given by a template. A set of model-specific templates is already defined in [`simulate-version1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R), you can add additional ones there or to _plotVariables_ in [`plot-test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R). See also the paper for more details on templates.
 
 
 # 🚀 Run Distribution to a Pool of PCs
@@ -236,7 +236,7 @@ export CSP_SERVER=<IP_OF_CSP_MONITOR>:2960
 export CSP_INTERVAL=333
 ```
 
-You can put these commands e.g.&nbsp;into <tt>$HOME/.bashrc</tt>, so that the variables are available in all new shell sessions!
+You can put these commands e.g.&nbsp;into `$HOME/.bashrc`, so that the variables are available in all new shell sessions!
 
 In your network, start at least one RSerPool Pool Registrar&nbsp;(PR):
 
@@ -252,7 +252,7 @@ Then, start a Scripting Service Pool Element&nbsp;(PE) in another shell.
 rspserver -scripting -policy=LeastUsed -ssmaxthreads=4
 ```
 
-The parameter <tt>-ssmaxthreads</tt> specifies the number of parallel sessions; use the number of cores/CPUs in your machine). The output of <tt>rspserver</tt> should look as follows:
+The parameter `-ssmaxthreads` specifies the number of parallel sessions; use the number of cores/CPUs in your machine). The output of `rspserver` should look as follows:
 
 <pre style="background: #5555dd22;">
 Starting service ...
@@ -290,25 +290,25 @@ In particular, take care of the "Identifier" line. This is the ID of the pool el
 
 With the environment variables above set correctly, the CSP monitor should show the PE.
 
-Take a look into the script <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt>. Ensure that the variable setting for _SIMULATION_POOLUSER_ points to the program <tt>scriptingclient</tt> of the RSPLIB package (if installed from the Ubuntu/Debian package: <tt>/usr/bin/scriptingclient</tt>).
+Take a look into the script [`ssdistribute`](https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute). Ensure that the variable setting for _SIMULATION_POOLUSER_ points to the program `scriptingclient` of the RSPLIB package (if installed from the Ubuntu/Debian package: `/usr/bin/scriptingclient`).
 
 ```bash
 SIMULATION_POOLUSER=/usr/bin/scriptingclient
 ```
 
-If <tt>scriptingclient</tt> is located else where, e.g.&nbsp;<tt>$HOME/src/rsplib-3.5.4/src</tt> in your home directory, the line should be:
+If `scriptingclient` is located else where, e.g.&nbsp;`$HOME/src/rsplib-3.5.4/src` in your home directory, the line should be:
 
 ```bash
 SIMULATION_POOLUSER=~/src/rsplib-3.5.4/src/scriptingclient
 ```
 
-In <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt>, set _distributionProcs_ to the maximum number of simultaneous sessions (at least&nbsp;1; if you later start 5&nbsp;pool elements with 2&nbsp;cores each, you should use&nbsp;10). It is safe to use&nbsp;1 for the following test. After modifying _distributionProcs_, increase _simulationRuns_ e.g.&nbsp;by&nbsp;1. Otherwise, since you have already performed the run of <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt> before, no more runs would be necessary (since their results are already there!). Now, run <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt> again:
+In [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R), set _distributionProcs_ to the maximum number of simultaneous sessions (at least&nbsp;1; if you later start 5&nbsp;pool elements with 2&nbsp;cores each, you should use&nbsp;10). It is safe to use&nbsp;1 for the following test. After modifying _distributionProcs_, increase _simulationRuns_ e.g.&nbsp;by&nbsp;1. Otherwise, since you have already performed the run of [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R) before, no more runs would be necessary (since their results are already there!). Now, run [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R) again:
 
 ```bash
 R --vanilla < test1.R
 ```
 
-Take a look at the output of <tt>rspserver</tt>: it should receive jobs and process them. Also, take a look at the log output:
+Take a look at the output of `rspserver`: it should receive jobs and process them. Also, take a look at the log output:
 
 ```bash
 tail -f test1/make.log
@@ -320,24 +320,24 @@ With the environment variables above set correctly, the CSP monitor should show 
 
 The workload distribution system works as follows:
 
-* First, the <tt>Makefile</tt> calls <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/make-environment">make-environment</a></tt> to generate Tar/BZip2 file <tt>simulation-environment.tar.bz2</tt> in the simulation directory. It contains the simulation binary, all shared libraries it needs (found out by the <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs">get-libs</a></tt> script), all <tt>.ned</tt> files it needs (found out by the <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds">get-neds</a></tt> script) and the script <tt>simulation.config-stage0</tt> which sets two environment variables: _SIMULATION_PROGRAM_ contains the name of the binary, _SIMULATION_LIBS_ contains the location of the libraries. If your simulation needs additional files, they can be specified by the variable _simulationMiscFiles_ in <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt>.
+* First, the `Makefile` calls [`make-environment`](https://github.com/dreibh/simproctc/blob/master/toolchain/make-environment) to generate Tar/BZip2 file `simulation-environment.tar.bz2` in the simulation directory. It contains the simulation binary, all shared libraries it needs (found out by the [`get-libs`](https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs) script), all `.ned` files it needs (found out by the [`get-neds`](https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds) script) and the script `simulation.config-stage0` which sets two environment variables: _SIMULATION_PROGRAM_ contains the name of the binary, _SIMULATION_LIBS_ contains the location of the libraries. If your simulation needs additional files, they can be specified by the variable _simulationMiscFiles_ in [`simulate-version1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R).
 
-* <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt> – which is called to actually distribute a run to a pool – creates the Tar/GZip file for the run. This file includes the environment file (i.e.&nbsp;usually <tt>simulation-environment.tar.bz2</tt>) specified by the variable _SIMULATION_ENVIRONMENT_ and additional configuration files like <tt>simulation.config-stage0</tt> (but named <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.config-stage1">simulation.config-stage1</a></tt>, <tt>simulation.config-stage2</tt>, ...) specified by the environment variable _SIMULATION_CONFIGS_. You have to set these two environment variables in the <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt> script. Furthermore, the Tar/GZip file of the run contains the <tt>.ini</tt> file for the run.
+* [`ssdistribute`](https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute) – which is called to actually distribute a run to a pool – creates the Tar/GZip file for the run. This file includes the environment file (i.e.&nbsp;usually `simulation-environment.tar.bz2`) specified by the variable _SIMULATION_ENVIRONMENT_ and additional configuration files like `simulation.config-stage0` (but named [`simulation.config-stage1`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.config-stage1), `simulation.config-stage2`, ...) specified by the environment variable _SIMULATION_CONFIGS_. You have to set these two environment variables in the [`ssdistribute`](https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute) script. Furthermore, the Tar/GZip file of the run contains the `.ini` file for the run.
 
-* <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun">ssrun</a></tt> performs a run on a (usually) remote node. First, it finds all <tt>simulation.config-stage*</tt> scripts and executes them in alphabetical order. That is, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.config-stage1">simulation.config-stage1</a></tt> may overwrite settings of <tt>simulation.config-stage0</tt> and so on. After that, it looks for <tt>.ini</tt> files. For each <tt>.ini</tt> file, it runs the program specified by the environment variable _SIMULATION_PROGRAM_. If the variable _SIMULATION_LIBS_ is set, does not call the binary directly but tells the shared library loader to do this and use the specified set of shared libraries.
+* [`ssrun`](https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun) performs a run on a (usually) remote node. First, it finds all `simulation.config-stage*` scripts and executes them in alphabetical order. That is, [`simulation.config-stage1`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.config-stage1) may overwrite settings of `simulation.config-stage0` and so on. After that, it looks for `.ini` files. For each `.ini` file, it runs the program specified by the environment variable _SIMULATION_PROGRAM_. If the variable _SIMULATION_LIBS_ is set, does not call the binary directly but tells the shared library loader to do this and use the specified set of shared libraries.
 If everything went well, a status file is created. The existence of this status file means that the run has been successful.
 
-* Finding out what is going wrong with the remote execution can be difficult sometimes. In such a case, only start a single instance of <tt>rspserver</tt> and use the parameter <tt>-sskeeptempdirs</tt>. This parameter results in not deleting the temporary session directory after shutdown of the session. That is, you can dissect the directory's contents for troubleshooting. The name of the directory for each session is shown in the output of <tt>rspserver</tt>.
+* Finding out what is going wrong with the remote execution can be difficult sometimes. In such a case, only start a single instance of `rspserver` and use the parameter `-sskeeptempdirs`. This parameter results in not deleting the temporary session directory after shutdown of the session. That is, you can dissect the directory's contents for troubleshooting. The name of the directory for each session is shown in the output of `rspserver`.
 
 
 # 🔧 Adapting SimProcTC to Your Own Simulation
 
 In order to use SimProcTC with your own model, perform the following tasks:
 
-* Copy the SimProcTC files to your model's directory: <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun">ssrun</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute">ssdistribute</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R">simulation.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/hashfunctions.R">hashfunctions.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plotter.R">plotter.R</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/make-environment">make-environment</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs">get-libs</a></tt>, <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds">get-neds</a></tt>.
-* Create a model-specific <tt>.ini</tt> file generation script (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R">simulate-version1.R</a></tt> of the demo simulation as a template).
-* Create a simulation definition script (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R">test1.R</a></tt> of the demo simulation as a template).
-* Create a plot script for your simulation (use <tt><a href="https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R">plot-test1.R</a></tt> of the demo simulation as a template).
+* Copy the SimProcTC files to your model's directory: [`ssrun`](https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun), [`ssdistribute`](https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute), [`simulation.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R), [`hashfunctions.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/hashfunctions.R), [`plotter.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/plotter.R), [`make-environment`](https://github.com/dreibh/simproctc/blob/master/toolchain/make-environment), [`get-libs`](https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs), [`get-neds`](https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds).
+* Create a model-specific `.ini` file generation script (use [`simulate-version1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R) of the demo simulation as a template).
+* Create a simulation definition script (use [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R) of the demo simulation as a template).
+* Create a plot script for your simulation (use [`plot-test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/plot-test1.R) of the demo simulation as a template).
 
 Before using the RSerPool-based run distribution, first test your simulation on your local machine! This makes finding problems much easier. If everything works, you can continue with run distribution.
 
