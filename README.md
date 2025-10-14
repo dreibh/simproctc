@@ -118,7 +118,7 @@ The simulation tool-chain requires libbz2 for compression and decompression of f
 
 ## Install the Simulation Tool-Chain
 
-Get the simulation tool-chain package from the [Build from Sources](#build-from-sources) section and unpack it, or clone the Git repository. Also, take a look at the description paper in the [`docs`](https://github.com/dreibh/simproctc/blob/master/docs/) directory; they provide important information on what the tool-chain actually does! The tool-chain archive includes the files of the tool chain as well as a small example simulation. The files have the following purposes:
+Get the simulation tool-chain package from the [Build from Sources](#-build-from-sources) section and unpack it, or clone the Git repository. Also, take a look at the description paper in the [`docs`](https://github.com/dreibh/simproctc/blob/master/docs/) directory; they provide important information on what the tool-chain actually does! The tool-chain archive includes the files of the tool chain as well as a small example simulation. The files have the following purposes:
 
 * [`toolchain`](https://github.com/dreibh/simproctc/blob/master/toolchain/) directory: This directory contains the tool-chain scripts.
   - [`simulation.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R): Generic simulation tool-chain code.
