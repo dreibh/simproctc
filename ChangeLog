@@ -1,3 +1,57 @@
+commit ee9ae8547241bdb69976c64c8097aae4b8269191
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Nov 11 17:19:09 2025 +0100
+
+    Parameter update for CreateSummary run.
+
+commit b10e46e98c1e402e8b2c19f9ec1aae2cd5c06bdc
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Nov 11 17:18:59 2025 +0100
+
+    Updated tools.
+
+commit aa7ab01c6adb607526052bbfedc2a34734cc6076
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Oct 14 20:31:37 2025 +0200
+
+    Fixed broken cross-reference.
+
+commit c427bbc33dc59606f1c06c21dec82e54b1af6fdf
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Oct 14 20:15:11 2025 +0200
+
+    Improved documentation.
+
+commit abd51070b403fe5c9ee52ee8ded3f50412f8f744
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Mon Oct 13 21:43:48 2025 +0200
+
+    Minor documentation update.
+
+commit fc3510581c3ff790103c2e62f8fd223a626fdcba
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Mon Oct 13 20:18:29 2025 +0200
+
+    Improved documentation.
+
+commit 0b2e24171ef684d699ed3a9fc25e69fafbba2c87
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Oct 11 14:44:03 2025 +0200
+
+    Updated and extended tests.
+
+commit 3c48fb1322db7e61943679406f9e597b5b1199b4
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sat Oct 11 14:43:22 2025 +0200
+
+    Updated tools from latest NetPerfMeter version.
+
+commit 6eb65752458cbfe17937c115a11d8442476ba236
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Sun Sep 21 16:04:05 2025 +0200
+
+    New release simproctc-2.1.0.
+
 commit 45c1940845be8ddde50ab51337c7a9825b33fd24
 Author: Thomas Dreibholz <dreibh@simula.no>
 Date:   Sun Sep 21 14:58:32 2025 +0200
