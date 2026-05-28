@@ -27,13 +27,13 @@
  * Homepage: https://www.nntb.no/~dreibh/netperfmeter/
  */
 
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
 #include <getopt.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-
 #include <iostream>
+#include <unistd.h>
 
 #include "inputfile.h"
 #include "outputfile.h"
@@ -72,8 +72,9 @@ void addDataFile(OutputFile&         outputFile,
    // ====== Open input file ================================================
    InputFile       inputFile;
    InputFileFormat inputFileFormat = IFF_Plain;
-   if( (inputFileName.rfind(".bz2") == inputFileName.size() - 4) ||
-       (inputFileName.rfind(".BZ2") == inputFileName.size() - 4) ) {
+   if( (inputFileName.size() >= 4) &&
+       ( (inputFileName.substr(inputFileName.size() - 4) == ".bz2") ||
+         (inputFileName.substr(inputFileName.size() - 4) == ".BZ2")) ) {
        inputFileFormat = IFF_BZip2;
    }
    if(inputFile.initialize(inputFileName.c_str(), inputFileFormat) == false) {
@@ -84,7 +85,7 @@ void addDataFile(OutputFile&         outputFile,
       // ====== Read line from input file ===================================
       bool          eof;
       char          buffer[4097];
-      const ssize_t bytesRead = inputFile.readLine((char*)&buffer, sizeof(buffer), eof);
+      const ssize_t bytesRead = inputFile.readLine(buffer, sizeof(buffer), eof);
       if((bytesRead < 0) || (eof)) {
          break;
       }
@@ -98,16 +99,18 @@ void addDataFile(OutputFile&         outputFile,
                   outputFile.finish();
                   exit(1);
                }
+               outputLineNumber++;
             }
          }
          else {
-            if(outputFile.printf("%06llu%s%s%s%s\n",
+            if(outputFile.printf("%llu%s%s%s%s\n",
                                  outputLineNumber, separator,
                                  varValues.c_str(), separator,
                                  buffer) == false) {
                outputFile.finish();
                exit(1);
             }
+            outputLineNumber++;
          }
       }
       else {
@@ -117,6 +120,7 @@ void addDataFile(OutputFile&         outputFile,
                   outputFile.finish();
                   exit(1);
                }
+               outputLineNumber++;
             }
          }
          else {
@@ -124,9 +128,9 @@ void addDataFile(OutputFile&         outputFile,
                outputFile.finish();
                exit(1);
             }
+            outputLineNumber++;
          }
       }
-      outputLineNumber++;
    }
 
    inputFile.finish();
@@ -150,7 +154,8 @@ void addDataFile(OutputFile&         outputFile,
          "    output_file\n"
          "    [variable_names]\n"
          "    [-c level|--compress level]\n"
-         "    [-n|--line-numbers]\n"
+         "    [-s separator|--separator separator]\n"
+         "    [-l|--line-numbers|-n|--no-line-numbers]\n"
          "    [-q|--quiet]\n"
          "* Version:\n  " << program << " [-v|--version]\n"
          "* Help:\n  "    << program << " [-h|--help]\n";
@@ -171,7 +176,8 @@ int main(int argc, char** argv)
    const static struct option long_options[] = {
       { "compress",                  required_argument, 0, 'c' },
       { "separator",                 required_argument, 0, 's' },
-      { "line-numbers",              no_argument,       0, 'n' },
+      { "line-numbers",              no_argument,       0, 'l' },
+      { "no-line-numbers",           no_argument,       0, 'n' },
       { "quiet",                     no_argument,       0, 'q' },
 
       { "help",                      no_argument,       0, 'h' },
@@ -181,7 +187,7 @@ int main(int argc, char** argv)
 
    int option;
    int longIndex;
-   while( (option = getopt_long_only(argc, argv, "c:s:nqhv", long_options, &longIndex)) != -1 ) {
+   while( (option = getopt_long_only(argc, argv, "c:s:lnqhv", long_options, &longIndex)) != -1 ) {
       switch(option) {
          case 'c':
             compressionLevel = atol(optarg);
@@ -195,8 +201,11 @@ int main(int argc, char** argv)
          case 's':
             separator = optarg;
           break;
-         case 'n':
+         case 'l':
             withLineNumbers = true;
+          break;
+         case 'n':
+            withLineNumbers = false;
           break;
          case 'q':
             quietMode = true;
@@ -204,9 +213,19 @@ int main(int argc, char** argv)
          case 'v':
             version();
           break;
+         case 'h':
+         case '?':
+            // Exit with 0 on h/help, exit with 1 on '?' (unknown option):
+            usage(argv[0], (option == 'h') ? 0 : 1);
+          break;
+         case '-':
+          break;
          default:
-            usage(argv[0], 1);
-          // break;
+            // This should not happen: wrong getopt parameters, or missing case?
+            fprintf(stderr, "INTERNAL ERROR: Unhandled option c=%c code=%x!\n",
+                    (isprint(option) ? (char)option : ' '), option);
+            return 1;
+          break;
       }
    }
    if(optind >= argc) {
@@ -230,8 +249,9 @@ int main(int argc, char** argv)
    // ====== Print information ==============================================
    if(!quietMode) {
       std::cout << "CombineSummaries " << COMBINESUMMARIES_VERSION << "\n"
-                << "* Line Numbers:      " << (withLineNumbers ? "yes" : "no") << "\n"
                 << "* Compression Level: " << compressionLevel << "\n"
+                << "* Separator:         \"" << separator << "\"\n"
+                << "* Line Numbers:      " << (withLineNumbers ? "yes" : "no") << "\n"
                 << "\n";
    }
 
@@ -239,9 +259,10 @@ int main(int argc, char** argv)
    // ====== Open output file ===============================================
    OutputFile       outputFile;
    OutputFileFormat outputFileFormat = OFF_Plain;
-   if( (outputFileName.rfind(".bz2") == outputFileName.size() - 4) ||
-       (outputFileName.rfind(".BZ2") == outputFileName.size() - 4) ) {
-      outputFileFormat = OFF_BZip2;
+   if( (outputFileName.size() >= 4) &&
+       ( (outputFileName.substr(outputFileName.size() - 4) == ".bz2") ||
+         (outputFileName.substr(outputFileName.size() - 4) == ".BZ2")) ) {
+       outputFileFormat = OFF_BZip2;
    }
    if(outputFile.initialize(outputFileName.c_str(), outputFileFormat,
                             compressionLevel)== false) {
@@ -260,19 +281,26 @@ int main(int argc, char** argv)
       std::cout << "Ready> ";
       std::cout.flush();
    }
-   while((command = fgets((char*)&commandBuffer, sizeof(commandBuffer), stdin))) {
-      command[strlen(command) - 1] = 0x00;
-      if(command[0] == 0x00) {
-         std::cout << "*** End of File ***\n";
-         break;
+   while((command = fgets(commandBuffer, sizeof(commandBuffer), stdin))) {
+      size_t length = strlen(command);
+      if( (length > 0) && (command[length - 1] == '\n') ) {
+         command[length - 1] = 0x00;
+         length--;
       }
-      if(!quietMode) {
-         std::cout << command << "\n";
+
+      if(length == 0) {
+         if(!quietMode) {
+            std::cout << "Ready> ";
+            std::cout.flush();
+         }
+         continue;
       }
 
       if(!(strncmp(command, "--values=", 9))) {
-         varValues = (const char*)&command[9];
-         if(varValues[0] == '\"') {
+         varValues = &command[9];
+         if( (varValues.size() >= 2)    &&
+             (varValues.front() == '"') &&
+             (varValues.back() == '"') ) {
             varValues = varValues.substr(1, varValues.size() - 2);
          }
          if(!checkColumns(varValues)) {
@@ -281,18 +309,21 @@ int main(int argc, char** argv)
          }
       }
       else if(!(strncmp(command, "--input=", 8))) {
-         if(varValues[0] == 0x00) {
+         if(varValues.empty()) {
             std::cerr << "ERROR: No values given (parameter --values=...)!\n";
             exit(1);
          }
          addDataFile(outputFile, withLineNumbers, outputLineNumber,
-                     varNames, varValues, std::string((const char*)&command[8]),
+                     varNames, varValues,
+                     simulationsDirectory + "/" + &command[8],
                      separator);
          varValues = "";
       }
       else if(!(strncmp(command, "--varnames=", 11))) {
-         varNames = (const char*)&command[11];
-         if(varNames[0] == '\"') {
+         varNames = &command[11];
+         if( (varNames.size() >= 2)    &&
+             (varNames.front() == '"') &&
+             (varNames.back() == '"') ) {
             varNames = varNames.substr(1, varNames.size() - 2);
          }
          if(!checkColumns(varNames)) {
@@ -301,7 +332,7 @@ int main(int argc, char** argv)
          }
       }
       else if(!(strncmp(command, "--simulationsdirectory=", 23))) {
-         simulationsDirectory = (const char*)&simulationsDirectory[23];
+         simulationsDirectory = &command[23];
       }
       else {
          std::cerr << "ERROR: Invalid command!\n";
