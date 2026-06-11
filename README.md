@@ -123,7 +123,7 @@ Get the simulation tool-chain package from the [Build from Sources](#-build-from
 * [`toolchain`](https://github.com/dreibh/simproctc/blob/master/toolchain/) directory: This directory contains the tool-chain scripts.
   - [`simulation.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R): Generic simulation tool-chain code.
   - [`simulate-version1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R): Model-specific simulation tool-chain code.
-  - [`hashfunctions.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/hashfunctions.R): GNU R functions to calculate [MD5](https://en.wikipedia.org/wiki/MD5) and [SHA-1](https://en.wikipedia.org/wiki/SHA-1) hashes.
+  - [`hashfunctions.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/hashfunctions.R): GNU R functions to calculate [MD5](https://www.rfc-editor.org/info/rfc1321/) and [SHA-1](https://www.rfc-editor.org/info/rfc3174/) hashes.
   - [`plotter.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/plotter.R): GNU R functions for plotting.
   - [`make-environment`](https://github.com/dreibh/simproctc/blob/master/toolchain/make-environment): Shell script to collect all files to create the environment file.
   - [`get-libs`](https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs): Shell script to collect all shared libraries needed by the model.
