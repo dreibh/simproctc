@@ -1,3 +1,39 @@
+commit a2e002680cea495542e9fb4da624c03598c4542d
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Fri Jun 12 18:36:57 2026 +0200
+
+    Updated tools.
+
+commit eb65d6a2075912debbaa6712b21d67191d411cb4
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Thu Jun 11 14:52:15 2026 +0200
+
+    Updated tools.
+
+commit 0d72bece4788e15dd459561a6e1f8225835fc330
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Thu Jun 11 14:43:54 2026 +0200
+
+    Improved documentation.
+
+commit fc4f41617d76e3a250ddd4400c98b313f90b71ef
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Thu May 28 16:44:59 2026 +0200
+
+    Updated tools.
+
+commit 99afa30e6af8db4b171ad747f50e04c993a94262
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Thu Mar 12 11:13:14 2026 +0100
+
+    Updated URLs.
+
+commit 735f445b101dcad9adf85dcebb06e666a2b4dd93
+Author: Thomas Dreibholz <dreibh@simula.no>
+Date:   Tue Dec 9 17:26:52 2025 +0100
+
+    New release simproctc-2.2.1.
+
 commit 03365bd627da801d3c93251fef12e5ee6d47651a
 Author: Thomas Dreibholz <dreibh@simula.no>
 Date:   Tue Dec 9 17:25:50 2025 +0100
