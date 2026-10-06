@@ -2,7 +2,7 @@
  SimProcTC<br />
  <span style="font-size: 30%">A Simulation Processing Tool-Chain for OMNeT++ Simulations</span><br />
  <a href="https://www.nntb.no/~dreibh/omnetpp/">
-  <img alt="RSPLIB Project Logo" src="logo/Logo-SimProcTC.svg" width="25%" /><br />
+  <img alt="SimProcTC Project Logo" src="logo/Logo-SimProcTC.svg" width="25%" /><br />
   <span style="font-size: 30%;">https://www.nntb.no/~dreibh/omnetpp</span>
  </a>
 </h1>
@@ -17,7 +17,7 @@ Further details about SimProcTC can be found in Appendix&nbsp;B of «[Evaluation
 
 # 💾 Build from Sources
 
-SimProcTC is released under the [GNU General Public Licence&nbsp;(GPL)](https://www.gnu.org/licenses/gpl-3.0.en.html#license-text).
+SimProcTC is released under the [GNU General Public License&nbsp;(GPL)](https://www.gnu.org/licenses/gpl-3.0.en.html#license-text).
 
 Please use the issue tracker at [https://github.com/dreibh/simproctc/issues](https://github.com/dreibh/simproctc/issues) to report bugs and issues!
 
@@ -118,7 +118,7 @@ The simulation tool-chain requires libbz2 for compression and decompression of f
 
 ## Install the Simulation Tool-Chain
 
-Get the simulation tool-chain package from the [Build from Sources](#-build-from-sources) section and unpack it, or clone the Git repository. Also, take a look at the description paper in the [`docs`](https://github.com/dreibh/simproctc/blob/master/docs/) directory; they provide important information on what the tool-chain actually does! The tool-chain archive includes the files of the tool chain as well as a small example simulation. The files have the following purposes:
+Get the simulation tool-chain package from the [Build from Sources](#-build-from-sources) section and unpack it, or clone the Git repository. Also, take a look at the description papers in the [`docs`](https://github.com/dreibh/simproctc/blob/master/docs/) directory; they provide important information on what the tool-chain actually does! The tool-chain archive includes the files of the tool chain as well as a small example simulation. The files have the following purposes:
 
 * [`toolchain`](https://github.com/dreibh/simproctc/blob/master/toolchain/) directory: This directory contains the tool-chain scripts.
   - [`simulation.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R): Generic simulation tool-chain code.
@@ -179,7 +179,7 @@ The example simulation packaged with SimProcTC simply presents the effects of fr
 * _fragmenterScenario.sourcePayloadSize_
 * _fragmenterScenario.sourceInterarrivalTime_
 
-An example simulation for this model is defined in [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R): for each parameter of the model, the list _simulationConfigurations_ contains a list with the parameter name as first element and its value(s) as further elements. For example, ```list("sourcePayloadSize", 1000, 2500)``` means that the parameter _sourcePayloadSize_ should be used with the values 1000&nbsp;bytes and 2500&nbsp;bytes. For each parameter combination, a separate run will be created. Furthermore, the variable _simulationRuns_ specifies how many different seeds should be used. That is, for ```simulationRuns=3```, runs for each parameter combinations are created with 3&nbsp;different seeds (i.e.&nbsp;tripling the number of runs!).
+An example simulation for this model is defined in [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R): for each parameter of the model, the list _simulationConfigurations_ contains a list with the parameter name as first element and its value(s) as further elements. For example, ```list("sourcePayloadSize", 1000, 2500)``` means that the parameter _sourcePayloadSize_ should be used with the values 1000&nbsp;bytes and 2500&nbsp;bytes. For each parameter combination, a separate run will be created. Furthermore, the variable _simulationRuns_ specifies how many different seeds should be used. That is, for ```simulationRuns=3```, runs for each parameter combinations are created with 3&nbsp;different seeds (i.e., tripling the number of runs!).
 
 The actual output of `.ini` files is realized in [`simulate-version1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R). Take a look over this file first, it should be quite self-explaining! In the function ```demoWriteParameterSection()```, the actual lines for the parameters above are written for each simulation run. _simCreatorAdditionalActiveVariables_ defines for which variables a table row should always be written. For example, if you always use ```cellHeaderSize=4```, the `createsummary` tool would omit this parameter in the output table, because it always has the same value. Since it may be useful for your post-processing, you can add it to _simCreatorAdditionalActiveVariables_. Note, that _simCreatorWriteParameterSection_ is set to _demoWriteParameterSection_. In the generic [`simulation.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.R) script, always the names <em>simCreator&#42;</em> instead of <em>demo&#42;</em> are used. In order to be model-independent, it is necessary to set these variables to the actual model-dependent functions in simulate-version1.R! When you adapt the tool-chain to you own model, you only have to create your own <tt>simulation-version<em>X</em>.R</tt> script and leave the other scripts unmodified.
 
@@ -296,10 +296,10 @@ Take a look into the script [`ssdistribute`](https://github.com/dreibh/simproctc
 SIMULATION_POOLUSER=/usr/bin/scriptingclient
 ```
 
-If `scriptingclient` is located else where, e.g.&nbsp;`$HOME/src/rsplib-3.5.4/src` in your home directory, the line should be:
+If `scriptingclient` is located elsewhere, e.g.&nbsp;`$HOME/src/rsplib-3.5.11/src` in your home directory, the line should be:
 
 ```bash
-SIMULATION_POOLUSER=~/src/rsplib-3.5.4/src/scriptingclient
+SIMULATION_POOLUSER=~/src/rsplib-3.5.11/src/scriptingclient
 ```
 
 In [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R), set _distributionProcs_ to the maximum number of simultaneous sessions (at least&nbsp;1; if you later start 5&nbsp;pool elements with 2&nbsp;cores each, you should use&nbsp;10). It is safe to use&nbsp;1 for the following test. After modifying _distributionProcs_, increase _simulationRuns_ e.g.&nbsp;by&nbsp;1. Otherwise, since you have already performed the run of [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R) before, no more runs would be necessary (since their results are already there!). Now, run [`test1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/test1.R) again:
@@ -322,7 +322,7 @@ The workload distribution system works as follows:
 
 * First, the `Makefile` calls [`make-environment`](https://github.com/dreibh/simproctc/blob/master/toolchain/make-environment) to generate Tar/BZip2 file `simulation-environment.tar.bz2` in the simulation directory. It contains the simulation binary, all shared libraries it needs (found out by the [`get-libs`](https://github.com/dreibh/simproctc/blob/master/toolchain/get-libs) script), all `.ned` files it needs (found out by the [`get-neds`](https://github.com/dreibh/simproctc/blob/master/toolchain/get-neds) script) and the script `simulation.config-stage0` which sets two environment variables: _SIMULATION_PROGRAM_ contains the name of the binary, _SIMULATION_LIBS_ contains the location of the libraries. If your simulation needs additional files, they can be specified by the variable _simulationMiscFiles_ in [`simulate-version1.R`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulate-version1.R).
 
-* [`ssdistribute`](https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute) – which is called to actually distribute a run to a pool – creates the Tar/GZip file for the run. This file includes the environment file (i.e.&nbsp;usually `simulation-environment.tar.bz2`) specified by the variable _SIMULATION_ENVIRONMENT_ and additional configuration files like `simulation.config-stage0` (but named [`simulation.config-stage1`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.config-stage1), `simulation.config-stage2`, ...) specified by the environment variable _SIMULATION_CONFIGS_. You have to set these two environment variables in the [`ssdistribute`](https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute) script. Furthermore, the Tar/GZip file of the run contains the `.ini` file for the run.
+* [`ssdistribute`](https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute) – which is called to actually distribute a run to a pool – creates the Tar/GZip file for the run. This file includes the environment file (i.e., usually `simulation-environment.tar.bz2`) specified by the variable _SIMULATION_ENVIRONMENT_ and additional configuration files like `simulation.config-stage0` (but named [`simulation.config-stage1`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.config-stage1), `simulation.config-stage2`, ...) specified by the environment variable _SIMULATION_CONFIGS_. You have to set these two environment variables in the [`ssdistribute`](https://github.com/dreibh/simproctc/blob/master/toolchain/ssdistribute) script. Furthermore, the Tar/GZip file of the run contains the `.ini` file for the run.
 
 * [`ssrun`](https://github.com/dreibh/simproctc/blob/master/toolchain/ssrun) performs a run on a (usually) remote node. First, it finds all `simulation.config-stage*` scripts and executes them in alphabetical order. That is, [`simulation.config-stage1`](https://github.com/dreibh/simproctc/blob/master/toolchain/simulation.config-stage1) may overwrite settings of `simulation.config-stage0` and so on. After that, it looks for `.ini` files. For each `.ini` file, it runs the program specified by the environment variable _SIMULATION_PROGRAM_. If the variable _SIMULATION_LIBS_ is set, does not call the binary directly but tells the shared library loader to do this and use the specified set of shared libraries.
 If everything went well, a status file is created. The existence of this status file means that the run has been successful.
