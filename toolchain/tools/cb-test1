@@ -1,9 +1,11 @@
 #!/bin/sh -eu
 
 make combinesummaries
-(
-  echo "--values=ALPHA" && echo "--input=input.data.bz2"
-  echo "--values=BETA"  && echo "--input=input.data"
-) | ./combinesummaries combined.data.bz2 MySceanrio
 
-# G_SLICE=always-malloc valgrind  -v --tool=memcheck --leak-check=yes --show-reachable=no --leak-resolution=high --num-callers=40 --freelist-vol=4000000 ./combinesummaries combined.data.bz2 MySceanrio
+(
+  echo "--values=ALPHA"   && echo "--input=input.data.bz2"
+  echo "--values=BETA"    && echo "--input=input.data"
+  echo "--values=GAMMA"   && echo "--input=input.data.xz"
+  echo "--values=DELTA"   && echo "--input=input.data.zst"
+  echo "--values=EPSILON" && echo "--input=input.data.gz"
+) | ./combinesummaries combined.data.bz2 MySceanrio
