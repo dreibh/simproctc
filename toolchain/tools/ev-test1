@@ -2,6 +2,8 @@
 
 make extractvectors
 
-./extractvectors test4.vec.bz2 test4-all
-./extractvectors test4.vec.bz2 test4-selected 'Throughput of Association'
-./extractvectors test4.vec.bz2 test4-selected-with-split '!Throughput of Association'
+./extractvectors test4.vec.bz2 test4-all.zst
+./extractvectors test4.vec.bz2 test4-selected.bz2           'Throughput of Association'
+./extractvectors test4.vec.bz2 test4-selected.xz            'Throughput of Association'
+./extractvectors test4.vec.bz2 test4-selected               'Throughput of Association'
+./extractvectors test4.vec.bz2 test4-selected-with-split.gz '!Throughput of Association'
