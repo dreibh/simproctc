@@ -27,17 +27,25 @@
  * Homepage: https://www.nntb.no/~dreibh/netperfmeter/
  */
 
-#ifndef NETPERFMETER_VERSION_H
-#define NETPERFMETER_VERSION_H
+#ifndef PACKAGE_VERSION_H
+#define PACKAGE_VERSION_H
 
-#define NETPERFMETER_VERSION_MAJOR "2"
-#define NETPERFMETER_VERSION_MINOR "0"
-#define NETPERFMETER_VERSION_PATCH "6"
-#define NETPERFMETER_VERSION       "2.0.6"
-#define NETPERFMETER_PACKAGE       "netperfmeter-2.0.6"
+#define PROJECT_VERSION_MAJOR    "2"
+#define PROJECT_VERSION_MINOR    "0"
+#define PROJECT_VERSION_PATCH    "13"
+#define PROJECT_VERSION          "2.0.13"
+#define PROJECT_PACKAGE          "netperfmeter-2.0.13"
 
-#define CREATESUMMARY_VERSION      NETPERFMETER_VERSION
-#define COMBINESUMMARIES_VERSION   NETPERFMETER_VERSION
-#define EXTRACTVECTORS_VERSION     NETPERFMETER_VERSION
+#define PROJECT_HOMEPAGE_URL     "https://www.nntb.no/~dreibh/netperfmeter"
+#define PROJECT_SOURCE_URL       "https://github.com/dreibh/netperfmeter"
+
+#define PROJECT_LOCALEDIR        "/usr/share/locale"
+
+
+#define CREATESUMMARY_VERSION    PROJECT_VERSION
+#define COMBINESUMMARIES_VERSION PROJECT_VERSION
+#define EXTRACTVECTORS_VERSION   PROJECT_VERSION
+#define GETABSTIME_VERSION       PROJECT_VERSION
+#define RUNTIMEESTIMATOR_VERSION PROJECT_VERSION
 
 #endif

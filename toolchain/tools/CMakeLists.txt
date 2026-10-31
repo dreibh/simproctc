@@ -134,69 +134,56 @@ ENDIF()
 
 
 #############################################################################
+#### LIBRARIES                                                           ####
+#############################################################################
+
+ADD_LIBRARY(libfileio SHARED
+   fileio.h
+   fileio.cc
+   inputfile.cc
+   inputfile.h
+   outputfile.cc
+   outputfile.h
+)
+TARGET_INCLUDE_DIRECTORIES(libfileio
+                           PRIVATE ${ZSTD_INCLUDE_DIR}
+                                   ${LZMA_INCLUDE_DIR}
+                                   ${BZ2_INCLUDE_DIR}
+                                   ${Z_INCLUDE_DIR}
+                                   ${LIBIBERTY_INCLUDE_DIR})
+TARGET_LINK_LIBRARIES(libfileio
+                      PRIVATE ${ZSTD_LIBRARY}
+                              ${LZMA_LIBRARY}
+                              ${BZ2_LIBRARY}
+                              ${Z_LIBRARY}
+                              ${LIBIBERTY_LIBRARY})
+
+
+#############################################################################
 #### PROGRAMS                                                            ####
 #############################################################################
 
 # ====== Create Summary Tool ================================================
-ADD_EXECUTABLE(createsummary
-   createsummary.cc
-   debug.h
-   inputfile.cc
-   inputfile.h
-   outputfile.cc
-   outputfile.h
-)
+ADD_EXECUTABLE(createsummary createsummary.cc debug.h)
 TARGET_INCLUDE_DIRECTORIES(createsummary
-                           PRIVATE ${ZSTD_INCLUDE_DIR}
-                                   ${LZMA_INCLUDE_DIR}
-                                   ${BZ2_INCLUDE_DIR}
-                                   ${Z_INCLUDE_DIR}
-                                   ${LIBIBERTY_INCLUDE_DIR})
+                           PRIVATE ${LIBIBERTY_INCLUDE_DIR})
 TARGET_LINK_LIBRARIES(createsummary
-                      PRIVATE ${ZSTD_LIBRARY}
-                              ${LZMA_LIBRARY}
-                              ${BZ2_LIBRARY}
-                              ${Z_LIBRARY}
+                      PRIVATE libfileio
                               ${LIBIBERTY_LIBRARY})
 
 # ====== Combine Summaries Tool =============================================
-ADD_EXECUTABLE(combinesummaries
-   combinesummaries.cc
-   inputfile.h
-   inputfile.cc
-   outputfile.h
-   outputfile.cc
-)
+ADD_EXECUTABLE(combinesummaries combinesummaries.cc)
 TARGET_INCLUDE_DIRECTORIES(combinesummaries
-                           PRIVATE ${ZSTD_INCLUDE_DIR}
-                                   ${LZMA_INCLUDE_DIR}
-                                   ${BZ2_INCLUDE_DIR}
-                                   ${Z_INCLUDE_DIR}
+                           PRIVATE libfileio
                                    ${LIBIBERTY_INCLUDE_DIR})
 TARGET_LINK_LIBRARIES(combinesummaries
-                      PRIVATE ${ZSTD_LIBRARY}
-                              ${LZMA_LIBRARY}
-                              ${BZ2_LIBRARY}
-                              ${Z_LIBRARY}
+                      PRIVATE libfileio
                               ${LIBIBERTY_LIBRARY})
 
 # ====== Extract Vectors Tool ===============================================
-ADD_EXECUTABLE(extractvectors
-   extractvectors.cc
-   inputfile.h
-   inputfile.cc
-   outputfile.h
-   outputfile.cc
-)
+ADD_EXECUTABLE(extractvectors extractvectors.cc)
 TARGET_INCLUDE_DIRECTORIES(extractvectors
-                           PRIVATE ${ZSTD_INCLUDE_DIR}
-                                   ${LZMA_INCLUDE_DIR}
-                                   ${BZ2_INCLUDE_DIR}
-                                   ${Z_INCLUDE_DIR}
-                                   ${LIBIBERTY_INCLUDE_DIR})
+                           PRIVATE ${LIBIBERTY_INCLUDE_DIR})
 TARGET_LINK_LIBRARIES(extractvectors
-                      PRIVATE ${ZSTD_LIBRARY}
-                              ${LZMA_LIBRARY}
-                              ${BZ2_LIBRARY}
-                              ${Z_LIBRARY}
+                      PRIVATE libfileio
                               ${LIBIBERTY_LIBRARY})
