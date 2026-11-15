@@ -17,9 +17,10 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http:/www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Contact: thomas.dreibholz@gmail.com
+
 
 # ====== Check parameters ===================================================
 if [ $# -lt 3 ] ; then
@@ -28,32 +29,41 @@ if [ $# -lt 3 ] ; then
    exit 1
 fi
 
-SIMULATION_DIRECTORY="$(cd "$1" && pwd -P)"   # Absolute path
-RUN_DIRECTORY="$2"                            # e.g.: test1/Simulations/Set-1234
-RUN_NUMBER="$3"                               # e.g.: 1
+if [ ! -d "$1" ] ; then
+   echo >&2 "ERROR: Simulation directory $1 does not exist!"
+   exit 1
+fi
+if [ ! -d "$2" ] ; then
+   echo >&2 "ERROR: Run directory $2 does not exist!"
+   exit 1
+fi
+
+TOOLCHAIN_DIRECTORY="$(cd -- "$(dirname -- "$0")" && pwd -P)"
+SIMULATION_DIRECTORY="$(cd -- "$1" && pwd -P)"
+RUN_DIRECTORY="$(cd -- "$2" && pwd -P)"
+RUN_NUMBER="$3"
 POOLHANDLE=""
 PU_MISCOPT=""
 if [ $# -ge 4 ] ; then
-   POOLHANDLE="$4"                            # e.g.: ScriptingPool
+   POOLHANDLE="$4"
 fi
 if [ $# -ge 5 ] ; then
-   PU_MISCOPT="$5"                            # e.g.: "-cspserver=... ..."
+   PU_MISCOPT="$5"
 fi
 
 
 RUN_PREFIX="run$RUN_NUMBER"
 STATUS_FILE="$RUN_PREFIX-status.txt"
 INI_FILE="$RUN_PREFIX-parameters.ini"
-if [ -e "scenario$RUN_NUMBER.xml" ] ; then
+if [ -e "$RUN_DIRECTORY/scenario$RUN_NUMBER.xml" ] ; then
    XML_FILE="scenario$RUN_NUMBER.xml"
 else
    XML_FILE=""
 fi
 
+
 # ====== Check whether run still has to be performed ========================
-# shellcheck disable=SC3013
-if [ "$RUN_DIRECTORY/$INI_FILE" -ot "$RUN_DIRECTORY/$STATUS_FILE" ] || \
-   [ -e "$RUN_DIRECTORY/$STATUS_FILE" ] ; then
+if [ -e "$RUN_DIRECTORY/$STATUS_FILE" ] ; then
    exit 0   # Run has already been processed
 fi
 
@@ -71,24 +81,42 @@ if [ "$POOLHANDLE" = "" ] ; then
    OUTPUT_FILE="$RUN_PREFIX-output.txt"
 
    echo "+ $(date) Cloning environment ..."
-   if [ "$RUN_DIRECTORY" != "" ] && [ "$RUN_ENVIRONMENT" != "" ] ; then
-      # shellcheck disable=SC2115
-      rm -rf "$RUN_DIRECTORY/$RUN_ENVIRONMENT"
-   fi
-   mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT"
-   find "$SIMULATION_DIRECTORY/Environment" -type d -printf "%P\n" | xargs -I{} mkdir "$RUN_DIRECTORY/$RUN_ENVIRONMENT/{}"
-   find "$SIMULATION_DIRECTORY/Environment" -type f -printf "%P\n" | xargs -I{} ln "$SIMULATION_DIRECTORY/Environment/{}" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/{}"
+   rm -rf -- "$RUN_DIRECTORY/$RUN_ENVIRONMENT"
+   mkdir -p -- "$RUN_DIRECTORY/$RUN_ENVIRONMENT"
+
+   (
+      cd -- "$SIMULATION_DIRECTORY/Environment" &&
+      find . -type d -exec sh -c '
+         dest="$1"
+         shift
+         for d do
+            mkdir -p -- "$dest/$d" || exit 1
+         done
+      ' sh "$RUN_DIRECTORY/$RUN_ENVIRONMENT" {} + &&
+      find . ! -type d -exec sh -c '
+         dest="$1"
+         shift
+         for f do
+            if [ -L "$f" ] ; then
+               cp -P -- "$f" "$dest/$f" || exit 1
+            else
+               ln -- "$f" "$dest/$f" 2>/dev/null || cp -p -- "$f" "$dest/$f" || exit 1
+            fi
+         done
+      ' sh "$RUN_DIRECTORY/$RUN_ENVIRONMENT" {} +
+   )
 
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
 
    # ====== Get configuration ===============================================
    echo "+ $(date) Loading configuration (in $SIMULATION_DIRECTORY/Environment) ..."
-   CONFIG_STAGES="$(ls "$SIMULATION_DIRECTORY"/Environment/simulation.config-stage?)"
    echo "   - Running configuration stages:"
-   for stage in $CONFIG_STAGES ; do
-      echo "      o Using $stage ..."
-      # shellcheck disable=SC1090
-      . "$stage"
+   for stage in "$SIMULATION_DIRECTORY"/Environment/simulation.config-stage? ; do
+      if [ -f "$stage" ] ; then
+         echo "      o Using $stage ..."
+         # shellcheck disable=SC1090
+         . "$stage"
+      fi
    done
 
    echo "   - Run directory: $RUN_DIRECTORY"
@@ -106,75 +134,116 @@ if [ "$POOLHANDLE" = "" ] ; then
       fi
    done
 
-   SIMULATION_ARGS="-u Cmdenv -f $INI_FILE -n $nedArgs"
+   SIMULATION_ARGS="-u Cmdenv -f $INI_FILE"
+   if [ -n "$nedArgs" ] ; then
+      SIMULATION_ARGS="$SIMULATION_ARGS -n $nedArgs"
+   fi
    echo "      o Simulation arguments:      $SIMULATION_ARGS"
 
 
    # ====== Execute binary ==================================================
    echo "+ $(date) Executing simulation run ..."
-   if [ ! -e "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$INI_FILE" ] ; then
-      ln "$RUN_DIRECTORY/$INI_FILE" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$INI_FILE"
+   EXEC_DIR="$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR"
+   mkdir -p -- "$EXEC_DIR"
+
+   if [ ! -e "$EXEC_DIR/$INI_FILE" ] ; then
+      ln -- "$RUN_DIRECTORY/$INI_FILE" "$EXEC_DIR/$INI_FILE" 2>/dev/null || \
+         cp -p -- "$RUN_DIRECTORY/$INI_FILE" "$EXEC_DIR/$INI_FILE"
    fi
-   if [ "$XML_FILE" != "" ] ; then
-      if [ ! -e "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$XML_FILE" ] ; then
-         ln "$RUN_DIRECTORY/$XML_FILE" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$XML_FILE"
-      fi
+   if [ "$XML_FILE" != "" ] && [ ! -e "$EXEC_DIR/$XML_FILE" ] ; then
+      ln -- "$RUN_DIRECTORY/$XML_FILE" "$EXEC_DIR/$XML_FILE" 2>/dev/null || \
+         cp -p -- "$RUN_DIRECTORY/$XML_FILE" "$EXEC_DIR/$XML_FILE"
    fi
-   if [ ! -e "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_PROGRAM" ] ; then
-      ln "$SIMULATION_DIRECTORY/Environment/$SIMULATION_PROGRAM" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_PROGRAM"
+   if [ ! -e "$EXEC_DIR/$SIMULATION_PROGRAM" ] ; then
+      ln -- "$SIMULATION_DIRECTORY/Environment/$SIMULATION_PROGRAM" "$EXEC_DIR/$SIMULATION_PROGRAM" 2>/dev/null || \
+         cp -p -- "$SIMULATION_DIRECTORY/Environment/$SIMULATION_PROGRAM" "$EXEC_DIR/$SIMULATION_PROGRAM"
    fi
-   if [ ! -e "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_LIBS" ] ; then
-      ln -s "$SIMULATION_DIRECTORY/Environment/$SIMULATION_LIBS" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_LIBS"
+   if [ ! -e "$EXEC_DIR/$SIMULATION_LIBS" ] ; then
+      ln -s -- "$SIMULATION_DIRECTORY/Environment/$SIMULATION_LIBS" "$EXEC_DIR/$SIMULATION_LIBS"
    fi
 
    workDirectory="$(pwd)"
+   cd -- "$EXEC_DIR"
 
-   cd "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR"
    startTime="$(date)"
-   rm -f "$RUN_DIRECTORY/$SCALAR_FILE.bz2" "$RUN_DIRECTORY/$VECTOR_FILE.bz2" "$RUN_DIRECTORY/$OUTPUT_FILE.bz2"
-   echo "   -> $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS"
+   rm -f -- "$RUN_DIRECTORY/$SCALAR_FILE.bz2" "$RUN_DIRECTORY/$VECTOR_FILE.bz2" "$RUN_DIRECTORY/$OUTPUT_FILE.bz2"
    chmod 700 "./$SIMULATION_PROGRAM"
-   # shellcheck disable=SC2086
-   "$SIMULATION_LIBS/ld-loader.so" --library-path "$SIMULATION_LIBS" "./$SIMULATION_PROGRAM" $SIMULATION_ARGS >"$OUTPUT_FILE" 2>&1
-   find . \( -name "$OUTPUT_FILE" -or -name "$VECTOR_FILE" -or -name "$SCALAR_FILE" \) -print0 | xargs -0 -r bzip2 -f
-   endTime="$(date)"
-   ( echo "Start: $startTime" && echo "End:   $endTime" ) >"$STATUS_FILE"
 
-   cd "$workDirectory"
+   SYSTEM="$(uname -s)"
+   if [ "$SYSTEM" = "Linux" ] && [ -x "$SIMULATION_LIBS/ld-loader.so" ] ; then
+      echo "   -> $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS"
+      # shellcheck disable=SC2086
+      if "$SIMULATION_LIBS/ld-loader.so" --library-path "$SIMULATION_LIBS" "./$SIMULATION_PROGRAM" $SIMULATION_ARGS >"$OUTPUT_FILE" 2>&1 ; then
+         RESULT=0
+      else
+         RESULT=$?
+      fi
+   elif [ "$SYSTEM" = "Darwin" ] ; then
+      echo "   -> DYLD_LIBRARY_PATH=$SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS"
+      # shellcheck disable=SC2086
+      if env DYLD_LIBRARY_PATH="$SIMULATION_LIBS${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}" "./$SIMULATION_PROGRAM" $SIMULATION_ARGS >"$OUTPUT_FILE" 2>&1 ; then
+         RESULT=0
+      else
+         RESULT=$?
+      fi
+   else
+      echo "   -> LD_LIBRARY_PATH=$SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS"
+      # shellcheck disable=SC2086
+      if env LD_LIBRARY_PATH="$SIMULATION_LIBS${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" "./$SIMULATION_PROGRAM" $SIMULATION_ARGS >"$OUTPUT_FILE" 2>&1 ; then
+         RESULT=0
+      else
+         RESULT=$?
+      fi
+   fi
+
+   find . \( -name "$OUTPUT_FILE" -o -name "$VECTOR_FILE" -o -name "$SCALAR_FILE" \) -exec bzip2 -f {} +
+   endTime="$(date)"
+   if [ "$RESULT" -eq 0 ] ; then
+      { echo "Start: $startTime" && echo "End:   $endTime"; } >"$STATUS_FILE"
+   fi
+
+   cd -- "$workDirectory"
 
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
 
 
    # ====== Save results and clean up =======================================
    echo "+ $(date) Cleaning up ..."
-   find "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR" \( -maxdepth 1 -type f -name "*.bz2" -or -name "*.txt" \) -print0 | xargs -0 -r -I{} mv {} "$RUN_DIRECTORY"
-   if [ "$RUN_DIRECTORY" != "" ] && [ "$RUN_ENVIRONMENT" != "" ] ; then
-      # shellcheck disable=SC2115
-      rm -rf "$RUN_DIRECTORY/$RUN_ENVIRONMENT"
-   fi
+   for f in "$EXEC_DIR"/*.bz2 "$EXEC_DIR"/*.txt ; do
+      if [ -f "$f" ] ; then
+         mv -f -- "$f" "$RUN_DIRECTORY/"
+      fi
+   done
+   rm -rf -- "$RUN_DIRECTORY/$RUN_ENVIRONMENT"
 
 
    # ====== If run has failed: print output for debugging ===================
-   if [ $RESULT -ne 0 ] ; then
-      echo ""
-      echo "----- SIMULATION RUN FAILED -----"
-      echo ""
-
-      echo "#########################################################"
-      grep "^<\!> Error " "$RUN_DIRECTORY/$OUTPUT_FILE"
-      echo "#########################################################"
-      echo ""
-
-      echo "INI file:      $RUN_DIRECTORY/$INI_FILE"
-      echo "Scenario file: $RUN_DIRECTORY/$XML_FILE"
-      echo "Output file:   $RUN_DIRECTORY/$OUTPUT_FILE"
-      echo "----- SIMULATION RUN FAILED -----"
+   if [ "$RESULT" -ne 0 ] ; then
+      {
+         echo ""
+         echo "----- SIMULATION RUN FAILED (exit code $RESULT) -----"
+         echo ""
+         echo "#########################################################"
+         if [ -f "$RUN_DIRECTORY/$OUTPUT_FILE.bz2" ] ; then
+            bzip2 -dc -- "$RUN_DIRECTORY/$OUTPUT_FILE.bz2" | grep "^<!> Error " || true
+         elif [ -f "$RUN_DIRECTORY/$OUTPUT_FILE" ] ; then
+            grep "^<!> Error " "$RUN_DIRECTORY/$OUTPUT_FILE" || true
+         fi
+         echo "#########################################################"
+         echo ""
+         echo "INI file:      $RUN_DIRECTORY/$INI_FILE"
+         if [ "$XML_FILE" != "" ] ; then
+            echo "Scenario file: $RUN_DIRECTORY/$XML_FILE"
+         fi
+         echo "Output file:   $RUN_DIRECTORY/$OUTPUT_FILE.bz2"
+         echo "----- SIMULATION RUN FAILED -----"
+      } >&2
    fi
 
-   exit $RESULT
+   exit "$RESULT"
 
 
 # ====== Distribute run into pool ===========================================
 else
-   ./ssdistribute "$1" "$2" "$INI_FILE" "$POOLHANDLE" "$PU_MISCOPT" "$XML_FILE"
+   exec "$TOOLCHAIN_DIRECTORY/ssdistribute" "$1" "$2" "$INI_FILE" "$POOLHANDLE" "$PU_MISCOPT" "$XML_FILE"
 fi
