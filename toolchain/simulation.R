@@ -89,11 +89,8 @@ execute <- function(cmd)
 # ====== Get number of CPUs by reading /proc/cpuinfo ========================
 getNumberOfCPUs <- function()
 {
-   command <- paste(sep="", "cat /proc/cpuinfo 2>/dev/null|grep \"^processor\"|wc --lines")
-   answerLine <- readLines(pc <- pipe(command))
-   close(pc)
-   cpus <- as.numeric(answerLine)
-   if(cpus < 1) {
+   cpus <- parallel::detectCores(logical = TRUE)
+   if (is.na(cpus) || cpus < 1) {
       cpus <- 1
    }
    return(cpus)
@@ -492,11 +489,11 @@ finishMakefile <- function(makefile, dependencies, summaryCommand)
    if(reportTo != "") {
       cat(sep="", "\t( echo \"Finished summary creation for simulation ", simulationDirectory, " on `hostname`.\" | sendxmpp --tls --interactive ", reportTo, " 2>/dev/null & ) && ", file=makefile)
    }
-   cat(sep="", "echo \"Start: $$startTime\" >", gSimulationsCompletedName, " && ", file=makefile)
-   cat(sep="", "echo \"End:   $$endTime\" >>", gSimulationsCompletedName, "\n", file=makefile)
+   cat(sep="", "echo \"Start: $$startTime\" >", gSummaryCompletedName, " && ", file=makefile)
+   cat(sep="", "echo \"End:   $$endTime\" >>", gSummaryCompletedName, "\n", file=makefile)
 
    # ------ Archival of results ---------------------------------------------
-   cat(sep="", gResultsArchiveName, ":\t", gSimulationsCompletedName, "\n", file=makefile)
+   cat(sep="", gResultsArchiveName, ":\t", gSummaryCompletedName, "\n", file=makefile)
    cat(sep="", "\tcd ", gSimulationDirectoryName, "/Results && tar cvf - *.data* | bzip2 >../", gSimulationDirectoryName, ".tar.bz2\n\n", file=makefile)
 
    # ------ Simulations only ------------------------------------------------
