@@ -293,7 +293,7 @@ prepareDirectory <- function(simulationDirectory)
    setGlobalVariable("gSummaryName", "summary.input")
    setGlobalVariable("gSummaryCompletedName", "summary-completed.txt")
    setGlobalVariable("gSimulationsCompletedName", "simulations-completed.txt")
-   setGlobalVariable("gResultsArchiveName", paste0(simulationDirectory, ".tar.bz2"))
+   setGlobalVariable("gResultsArchiveName", paste0(basename(simulationDirectory), ".tar.bz2"))
    setGlobalVariable("gRuntimeName", "runtime.dat")
    setGlobalVariable("gLogfileName", "make.log")
    setGlobalVariable("gErrorName",   "error.out")
@@ -429,7 +429,6 @@ finishSummary <- function(summary)
    # ------ Create summary command string -----------------------------------
    summaryCommand <- paste0("rm -rf ", gResultsDirectoryName, " && ",
                             "mkdir ", gResultsDirectoryName, " && ",
-                            "cd ", gResultsDirectoryName, "/.. && ",
                             toolchainDir, "/tools/createsummary ",
                             "\"", activeVariablesString, " SourceINI SourceVec\" ",
                             "--batch --split ",
@@ -515,19 +514,19 @@ finishMakefile <- function(makefile, dependencies, summaryCommand)
 
    # ------ Archival of results ---------------------------------------------
    cat(sep="", gResultsArchiveName, ":\t", gSummaryCompletedName, "\n", file=makefile)
-   cat(sep="", "\tcd ", gSimulationDirectoryName, "/Results && tar cvf - *.data* | bzip2 >../", gSimulationDirectoryName, ".tar.bz2\n\n", file=makefile)
+   cat(sep="", "\tcd ", gResultsDirectoryName, " && tar cvf - *.data* | bzip2 >../", gResultsArchiveName, "\n\n", file=makefile)
 
    # ------ Simulations only ------------------------------------------------
    cat(sep="", ".PHONY:\tclean-simulations-only\n", file=makefile)
    cat(sep="", "clean-simulations-only:\n", file=makefile)
-   cat(sep="", "\tfind ", gSimulationDirectoryName, "/ \\( -name \"*-output.txt*\" -o -name \"*-scalars.sca*\" -o -name \"*-vectors.vec*\" -o -name \"*-status.txt*\" \\) -exec rm -f {} +\n", file=makefile)
+   cat(sep="", "\tfind ", gSimulationsDirectoryName, "/ \\( -name \"*-output.txt*\" -o -name \"*-scalars.sca*\" -o -name \"*-vectors.vec*\" -o -name \"*-status.txt*\" \\) -exec rm -f {} +\n", file=makefile)
    cat(sep="", "\trm -f ", gLogfileName, "\n", file=makefile)
    cat(sep="", "\techo \"Simulations-only clean-up completed!\"\n\n", file=makefile)
 
    # ------ Clean-up --------------------------------------------------------
    cat(sep="", ".PHONY:\tclean-simulations-and-results\n", file=makefile)
    cat(sep="", "clean-simulations-and-results:\tclean-simulations-only\n", file=makefile)
-   cat(sep="", "\tfind ", gSimulationDirectoryName, "/Results/ -name \"*.data*\" -exec rm -f {} +\n", file=makefile)
+   cat(sep="", "\tfind ", gResultsDirectoryName, "/ -name \"*.data*\" -exec rm -f {} +\n", file=makefile)
    cat(sep="", "\trm -f ", gSimulationsCompletedName, " ", gSummaryCompletedName, " ", gRuntimeName, "\n", file=makefile)
    cat(sep="", "\techo \"Full clean-up completed!\"\n\n", file=makefile)
 
