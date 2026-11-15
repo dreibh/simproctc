@@ -17,23 +17,40 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Contact: thomas.dreibholz@gmail.com
 
 
 # ====== Check parameters ===================================================
 if [ $# -lt 4 ] ; then
-   echo >&2 "Usage: $0 [Simulation Directory] [Run Directory] [.ini File Name] [Pool Handle] {Misc Options to PU}"
+   echo >&2 "Usage: $0 [Simulation Directory] [Run Directory] [.ini File Name] [Pool Handle] {Misc Options to PU} {XML File Name}"
    exit 1
 fi
-SIM_DIRECTORY="$(pwd)/$1"        # e.g.: <path>/test1
-TMP_DIRECTORY="$(pwd)/$1/Temp"   # e.g.: <path>/test1/Temp
-RUN_DIRECTORY="$(pwd)/$2"        # e.g.: <path>/test1/Simulations/Set-XXXX
-INI_NAME="$3"                    # e.g.: run1-parameters.ini
-POOLHANDLE="$4"                  # e.g.: ScriptingPool
-PU_MISCOPT="$5"                  # e.g.: "-cspserver=... ..."
-XML_NAME="$6"
+
+if [ ! -d "$1" ] ; then
+   echo >&2 "ERROR: Simulation directory $1 does not exist!"
+   exit 1
+fi
+if [ ! -d "$2" ] ; then
+   echo >&2 "ERROR: Run directory $2 does not exist!"
+   exit 1
+fi
+
+TOOLCHAIN_DIRECTORY="$(cd -- "$(dirname -- "$0")" && pwd -P)"
+SIM_DIRECTORY="$(cd -- "$1" && pwd -P)"
+TMP_DIRECTORY="$SIM_DIRECTORY/Temp"
+RUN_DIRECTORY="$(cd -- "$2" && pwd -P)"
+INI_NAME="$3"
+POOLHANDLE="$4"
+PU_MISCOPT=""
+XML_NAME=""
+if [ $# -ge 5 ] ; then
+   PU_MISCOPT="$5"
+fi
+if [ $# -ge 6 ] ; then
+   XML_NAME="$6"
+fi
 MAX_RETRIES=10                   # After a remote-side error, retry how many times?
 
 
@@ -47,8 +64,13 @@ MAX_RETRIES=10                   # After a remote-side error, retry how many tim
 #
 SIMULATION_ENVIRONMENT="simulation-environment.tar.bz2"
 SIMULATION_CONFIGS=""   # "simulation.config-stage1"
-SIMULATION_POOLUSER=/usr/bin/scriptingclient
-# SIMULATION_POOLUSER=~/src/rsplib2/rsplib/scriptingclient
+if [ -z "${SIMULATION_POOLUSER:-}" ] ; then
+   if command -v scriptingclient >/dev/null 2>&1 ; then
+      SIMULATION_POOLUSER="$(command -v scriptingclient)"
+   else
+      SIMULATION_POOLUSER="/usr/bin/scriptingclient"
+   fi
+fi
 # ###########################################################################
 
 UNIQUE_ID="$2/$INI_NAME"
@@ -60,23 +82,49 @@ VALGRIND=
 
 
 # ====== Prepare temporary file names =======================================
-if [ ! -e "$SIMULATION_POOLUSER" ] ; then
+if [ ! -x "$SIMULATION_POOLUSER" ] ; then
    echo >&2 "==================================================="
-   echo >&2 "ERROR: Unable to find PU program at $SIMULATION_POOLUSER!"
+   echo >&2 "ERROR: Unable to find executable PU program at $SIMULATION_POOLUSER!"
    echo >&2 "==================================================="
    exit 1
 fi
-INPUT_ARCHIVE="$(mktemp -t -p "$TMP_DIRECTORY" input-XXXXXXXXXX)"
-OUTPUT_ARCHIVE="$(mktemp -t -p "$TMP_DIRECTORY" output-XXXXXXXXXX)"
+if [ ! -f "$RUN_DIRECTORY/$INI_NAME" ] ; then
+   echo >&2 "ERROR: INI file $RUN_DIRECTORY/$INI_NAME does not exist!"
+   exit 1
+fi
+if [ -n "$XML_NAME" ] && [ ! -f "$RUN_DIRECTORY/$XML_NAME" ] ; then
+   echo >&2 "ERROR: XML file $RUN_DIRECTORY/$XML_NAME does not exist!"
+   exit 1
+fi
+
+mkdir -p -- "$TMP_DIRECTORY"
+INPUT_ARCHIVE="$(mktemp "$TMP_DIRECTORY/input-XXXXXXXXXX")"
+OUTPUT_ARCHIVE="$(mktemp "$TMP_DIRECTORY/output-XXXXXXXXXX")"
+STAGE_DIR="$(mktemp -d "$TMP_DIRECTORY/stage-XXXXXXXXXX")"
+trap 'rm -rf -- "$INPUT_ARCHIVE" "$OUTPUT_ARCHIVE" "$STAGE_DIR"' EXIT
 
 
 # ====== Create input archive ===============================================
 echo "Preparing input [$UNIQUE_ID] ..."
+mkdir -p -- "$STAGE_DIR/in"
+cp -p -- "$TOOLCHAIN_DIRECTORY/ssrun" "$STAGE_DIR/in/"
+for cfg in $SIMULATION_CONFIGS ; do
+   if [ -f "$cfg" ] ; then
+      cp -p -- "$cfg" "$STAGE_DIR/in/"
+   elif [ -f "$SIM_DIRECTORY/$cfg" ] ; then
+      cp -p -- "$SIM_DIRECTORY/$cfg" "$STAGE_DIR/in/"
+   else
+      echo >&2 "ERROR: Configuration file $cfg not found!"
+      exit 1
+   fi
+done
+cp -p -- "$RUN_DIRECTORY/$INI_NAME" "$STAGE_DIR/in/"
+if [ -n "$XML_NAME" ] ; then
+   cp -p -- "$RUN_DIRECTORY/$XML_NAME" "$STAGE_DIR/in/"
+fi
+
 # Using "nice" here, since there may be many sessions ...
-# shellcheck disable=SC2086
-nice tar czhf "$INPUT_ARCHIVE" \
-   -C.                ssrun $SIMULATION_CONFIGS \
-   -C"$RUN_DIRECTORY" "$INI_NAME" $XML_NAME
+( cd -- "$STAGE_DIR/in" && nice tar chf - . | gzip >"$INPUT_ARCHIVE" )
 
 
 # ====== Start PU for job distribution ======================================
@@ -85,23 +133,25 @@ echo "Distributing and processing [$UNIQUE_ID] ..."
 # NOTE: At least rsplib 2.7.6 is required!
 RESULT=0
 # shellcheck disable=SC2086
-$VALGRIND $SIMULATION_POOLUSER \
-   -runid="$UNIQUE_ID" -quiet -maxretry=$MAX_RETRIES \
-   -environment="$SIM_DIRECTORY/$SIMULATION_ENVIRONMENT" \
-   -input="$INPUT_ARCHIVE" -output="$OUTPUT_ARCHIVE" \
-   -logfile="$PU_LOGFILE" -loglevel=$PU_LOGLEVEL \
-   -poolhandle="$POOLHANDLE" \
-   $PU_MISCOPT || RESULT=1
-# >vg$RANDOM.txt 2>&1 || RESULT=1
+if $VALGRIND "$SIMULATION_POOLUSER" \
+      -runid="$UNIQUE_ID" -quiet -maxretry="$MAX_RETRIES" \
+      -environment="$SIM_DIRECTORY/$SIMULATION_ENVIRONMENT" \
+      -input="$INPUT_ARCHIVE" -output="$OUTPUT_ARCHIVE" \
+      -logfile="$PU_LOGFILE" -loglevel="$PU_LOGLEVEL" \
+      -poolhandle="$POOLHANDLE" \
+      $PU_MISCOPT ; then
+   RESULT=0
+else
+   RESULT=$?
+fi
+
 if [ -e "$PU_LOGFILE" ] ; then
-   rm -f "$PU_LOGFILE".bz2
-   bzip2 "$PU_LOGFILE"
+   bzip2 -f -- "$PU_LOGFILE"
 fi
 
 
 # ====== Extract results archive ============================================
 echo "Extracting [$UNIQUE_ID] ..."
-cd "$RUN_DIRECTORY"
 if [ ! -s "$OUTPUT_ARCHIVE" ] ; then
    echo >&2 "==================================================="
    echo >&2 "ERROR: No results have been created in directory $RUN_DIRECTORY!"
@@ -110,26 +160,45 @@ if [ ! -s "$OUTPUT_ARCHIVE" ] ; then
 fi
 
 # Using "nice" here, since there may be many sessions ...
-nice tar xzhvf "$OUTPUT_ARCHIVE" | xargs touch   # This will also update the time stamp!
-rm -f "$INPUT_ARCHIVE" "$OUTPUT_ARCHIVE"
+mkdir -p -- "$STAGE_DIR/out"
+gzip -dc -- "$OUTPUT_ARCHIVE" | ( cd -- "$STAGE_DIR/out" && nice tar xf - )
+find "$STAGE_DIR/out" -type f -exec touch {} +
+(
+   cd -- "$STAGE_DIR/out" &&
+   find . -type d -exec sh -c '
+      dest="$1"
+      shift
+      for d do
+         mkdir -p -- "$dest/$d" || exit 1
+      done
+   ' sh "$RUN_DIRECTORY" {} + &&
+   find . ! -type d -exec sh -c '
+      dest="$1"
+      shift
+      for f do
+         mv -f -- "$f" "$dest/$f" || exit 1
+      done
+   ' sh "$RUN_DIRECTORY" {} +
+)
 
-# Print error, if run has not been completed successfully ...
-if [ $RESULT -ne 0 ] ; then
-   echo ""
-   echo "----- SIMULATION RUN FAILED -----"
-   echo ""
 
-   OUTPUT_NAME=$(echo "$INI_NAME" | sed -e "s/-parameters.ini$/-output.txt.bz2/g")
-   if [ -e "$RUN_DIRECTORY/$OUTPUT_NAME" ] ; then
-      echo "#########################################################"
-      bzgrep "^<\!> Error " "$RUN_DIRECTORY/$OUTPUT_NAME"
-      echo "#########################################################"
+# ====== Print error, if run has not been completed successfully ============
+if [ "$RESULT" -ne 0 ] ; then
+   OUTPUT_NAME="${INI_NAME%-parameters.ini}-output.txt.bz2"
+   {
       echo ""
-   fi
-
-   echo "INI file:    $RUN_DIRECTORY/$INI_NAME"
-   echo "Output file: $RUN_DIRECTORY/$OUTPUT_NAME"
-   echo "----- SIMULATION RUN FAILED -----"
+      echo "----- SIMULATION RUN FAILED (exit code $RESULT) -----"
+      echo ""
+      if [ -e "$RUN_DIRECTORY/$OUTPUT_NAME" ] ; then
+         echo "#########################################################"
+         bzip2 -dc -- "$RUN_DIRECTORY/$OUTPUT_NAME" | grep "^<!> Error " || true
+         echo "#########################################################"
+         echo ""
+      fi
+      echo "INI file:    $RUN_DIRECTORY/$INI_NAME"
+      echo "Output file: $RUN_DIRECTORY/$OUTPUT_NAME"
+      echo "----- SIMULATION RUN FAILED -----"
+   } >&2
 fi
 
-exit $RESULT
+exit "$RESULT"

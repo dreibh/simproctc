@@ -17,7 +17,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # Contact: thomas.dreibholz@gmail.com
 
@@ -27,41 +27,62 @@ if [ $# -lt 2 ] ; then
    echo >&2 "Usage: $0 [Output File Name] [Environment File Name]"
    exit 1
 fi
-OUTPUT_ARCHIVE="$1"
+
+SIMULATION_DIRECTORY="$(pwd -P)"
+RUN_DIRECTORY="$SIMULATION_DIRECTORY"
+
+case "$1" in
+   /*) OUTPUT_ARCHIVE="$1" ;;
+   *)  OUTPUT_ARCHIVE="$SIMULATION_DIRECTORY/$1" ;;
+esac
 ENVIRONMENT_FILE="$2"
 
 
 # ====== Prepare simulation environment =====================================
 echo "+ $(date) Unpacking environment ..."
 if [ -e "$ENVIRONMENT_FILE" ] ; then
-   tar xjf "$ENVIRONMENT_FILE"
+   bzip2 -dc -- "$ENVIRONMENT_FILE" | tar xf -
 fi
 
 
 # ====== Execute simulation runs ============================================
-RUN_DIRECTORY="."
-SIMULATION_DIRECTORY="$(pwd)"   # Must be absolute path!
 RUN_ENVIRONMENT="Environment"
 RESULT=0
-XML_FILES="$(find . -mindepth 1 -maxdepth 1 -name "*.xml" -printf "%P\n")"
-INI_FILES="$(find . -mindepth 1 -maxdepth 1 -name "*.ini" -printf "%P\n")"
-for INI_FILE in $INI_FILES ; do
-   OUTPUT_FILE="$(echo "$INI_FILE" | sed -e "s/-parameters.ini$/-output.txt/g")"
-   SCALAR_FILE="$(echo "$INI_FILE" | sed -e "s/-parameters.ini$/-scalars.sca/g")"
-   VECTOR_FILE="$(echo "$INI_FILE" | sed -e "s/-parameters.ini$/-vectors.vec/g")"
-   STATUS_FILE="$(echo "$INI_FILE" | sed -e "s/-parameters.ini$/-status.txt/g")"
+HAS_INI=0
+
+XML_FILES=""
+for xml in *.xml ; do
+   if [ -f "$xml" ] ; then
+      if [ "$XML_FILES" = "" ] ; then
+         XML_FILES="$xml"
+      else
+         XML_FILES="$XML_FILES $xml"
+      fi
+   fi
+done
+
+for INI_FILE in *.ini ; do
+   [ -f "$INI_FILE" ] || continue
+   HAS_INI=1
+
+   RUN_BASE="${INI_FILE%-parameters.ini}"
+   OUTPUT_FILE="$RUN_BASE-output.txt"
+   SCALAR_FILE="$RUN_BASE-scalars.sca"
+   VECTOR_FILE="$RUN_BASE-vectors.vec"
+   STATUS_FILE="$RUN_BASE-status.txt"
 
 
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
 
    # ====== Get configuration ===============================================
    echo "+ $(date) Loading configuration (in $SIMULATION_DIRECTORY/Environment) ..."
-   CONFIG_STAGES="$(ls "$SIMULATION_DIRECTORY"/Environment/simulation.config-stage?)"
    echo "   - Running configuration stages:"
-   for stage in $CONFIG_STAGES ; do
-      echo "      o Using $stage ..."
-      # shellcheck disable=SC1090
-      . "$stage"
+   for stage in "$SIMULATION_DIRECTORY"/Environment/simulation.config-stage? ; do
+      if [ -f "$stage" ] ; then
+         echo "      o Using $stage ..."
+         # shellcheck disable=SC1090
+         . "$stage"
+      fi
    done
 
    echo "   - Run directory: $RUN_DIRECTORY"
@@ -79,78 +100,132 @@ for INI_FILE in $INI_FILES ; do
       fi
    done
 
-   SIMULATION_ARGS="-u Cmdenv -f $INI_FILE -n $nedArgs"
+   SIMULATION_ARGS="-u Cmdenv -f $INI_FILE"
+   if [ -n "$nedArgs" ] ; then
+      SIMULATION_ARGS="$SIMULATION_ARGS -n $nedArgs"
+   fi
    echo "      o Simulation arguments:      $SIMULATION_ARGS"
 
 
    # ====== Execute binary ==================================================
    echo "+ $(date) Executing simulation run ..."
-   if [ ! -e "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$INI_FILE" ] ; then
-      ln "$RUN_DIRECTORY/$INI_FILE" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$INI_FILE"
+   EXEC_DIR="$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR"
+   mkdir -p -- "$EXEC_DIR"
+
+   if [ ! -e "$EXEC_DIR/$INI_FILE" ] ; then
+      ln -- "$RUN_DIRECTORY/$INI_FILE" "$EXEC_DIR/$INI_FILE" 2>/dev/null || \
+         cp -p -- "$RUN_DIRECTORY/$INI_FILE" "$EXEC_DIR/$INI_FILE"
    fi
    for XML_FILE in $XML_FILES ; do
-      if [ "$XML_FILE" != "" ] ; then
-         if [ ! -e "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$XML_FILE" ] ; then
-            ln "$RUN_DIRECTORY/$XML_FILE" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$XML_FILE"
-         fi
+      if [ "$XML_FILE" != "" ] && [ ! -e "$EXEC_DIR/$XML_FILE" ] ; then
+         ln -- "$RUN_DIRECTORY/$XML_FILE" "$EXEC_DIR/$XML_FILE" 2>/dev/null || \
+            cp -p -- "$RUN_DIRECTORY/$XML_FILE" "$EXEC_DIR/$XML_FILE"
       fi
    done
-   if [ ! -e "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_PROGRAM" ] ; then
-      ln "$SIMULATION_DIRECTORY/Environment/$SIMULATION_PROGRAM" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_PROGRAM"
+   if [ ! -e "$EXEC_DIR/$SIMULATION_PROGRAM" ] ; then
+      ln -- "$SIMULATION_DIRECTORY/Environment/$SIMULATION_PROGRAM" "$EXEC_DIR/$SIMULATION_PROGRAM" 2>/dev/null || \
+         cp -p -- "$SIMULATION_DIRECTORY/Environment/$SIMULATION_PROGRAM" "$EXEC_DIR/$SIMULATION_PROGRAM"
    fi
-   if [ ! -e "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_LIBS" ] ; then
-      ln -s "$SIMULATION_DIRECTORY/Environment/$SIMULATION_LIBS" "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR/$SIMULATION_LIBS"
+   if [ ! -e "$EXEC_DIR/$SIMULATION_LIBS" ] ; then
+      ln -s -- "$SIMULATION_DIRECTORY/Environment/$SIMULATION_LIBS" "$EXEC_DIR/$SIMULATION_LIBS"
    fi
 
    workDirectory="$(pwd)"
+   cd -- "$EXEC_DIR"
 
-   cd "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR"
    startTime="$(date)"
-   rm -f "$RUN_DIRECTORY/$SCALAR_FILE.bz2" "$RUN_DIRECTORY/$VECTOR_FILE.bz2" "$RUN_DIRECTORY/$OUTPUT_FILE.bz2"
-   echo "   -> $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS"
+   rm -f -- "$RUN_DIRECTORY/$SCALAR_FILE.bz2" "$RUN_DIRECTORY/$VECTOR_FILE.bz2" "$RUN_DIRECTORY/$OUTPUT_FILE.bz2"
    chmod 700 "./$SIMULATION_PROGRAM"
-   # shellcheck disable=SC2086
-   "$SIMULATION_LIBS/ld-loader.so" --library-path "$SIMULATION_LIBS" "./$SIMULATION_PROGRAM" $SIMULATION_ARGS >"$OUTPUT_FILE" 2>&1
-   find . \( -name "$OUTPUT_FILE" -or -name "$VECTOR_FILE" -or -name "$SCALAR_FILE" \) -print0 | xargs -0 -r bzip2 -f
-   endTime="$(date)"
-   ( echo "Start: $startTime" && echo "End:   $endTime" ) >"$STATUS_FILE"
 
-   cd "$workDirectory"
+   SYSTEM="$(uname -s)"
+   if [ "$SYSTEM" = "Linux" ] && [ -x "$SIMULATION_LIBS/ld-loader.so" ] ; then
+      echo "   -> $SIMULATION_LIBS/ld-loader.so --library-path $SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS"
+      # shellcheck disable=SC2086
+      if "$SIMULATION_LIBS/ld-loader.so" --library-path "$SIMULATION_LIBS" "./$SIMULATION_PROGRAM" $SIMULATION_ARGS >"$OUTPUT_FILE" 2>&1 ; then
+         RUN_RESULT=0
+      else
+         RUN_RESULT=$?
+      fi
+   elif [ "$SYSTEM" = "Darwin" ] ; then
+      echo "   -> DYLD_LIBRARY_PATH=$SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS"
+      # shellcheck disable=SC2086
+      if env DYLD_LIBRARY_PATH="$SIMULATION_LIBS${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}" "./$SIMULATION_PROGRAM" $SIMULATION_ARGS >"$OUTPUT_FILE" 2>&1 ; then
+         RUN_RESULT=0
+      else
+         RUN_RESULT=$?
+      fi
+   else
+      echo "   -> LD_LIBRARY_PATH=$SIMULATION_LIBS ./$SIMULATION_PROGRAM $SIMULATION_ARGS"
+      # shellcheck disable=SC2086
+      if env LD_LIBRARY_PATH="$SIMULATION_LIBS${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" "./$SIMULATION_PROGRAM" $SIMULATION_ARGS >"$OUTPUT_FILE" 2>&1 ; then
+         RUN_RESULT=0
+      else
+         RUN_RESULT=$?
+      fi
+   fi
+
+   find . \( -name "$OUTPUT_FILE" -o -name "$VECTOR_FILE" -o -name "$SCALAR_FILE" \) -exec bzip2 -f {} +
+   endTime="$(date)"
+   if [ "$RUN_RESULT" -eq 0 ] ; then
+      { echo "Start: $startTime" && echo "End:   $endTime"; } >"$STATUS_FILE"
+   fi
+
+   cd -- "$workDirectory"
 
    # %%%%%%%%%%%% Same code in perform-run and ssrun %%%%%%%%%%%%%%%%%%%%%%%%
 
 
    # ====== If run has failed: print output for debugging ===================
-   if [ $RESULT -ne 0 ] ; then
-      echo ""
-      echo "----- SIMULATION RUN FAILED -----"
-      echo ""
-      echo "Contents of directory $RUN_DIRECTORY :"
-      ls -l $RUN_DIRECTORY
-      echo "-----"
-      if [ -e "$RUN_DIRECTORY/$OUTPUT_FILE".bz2 ] ; then
-         echo "#########################################################"
-         bzcat "$RUN_DIRECTORY/$OUTPUT_FILE".bz2
-         echo "#########################################################"
-         echo "Output file: $RUN_DIRECTORY/$OUTPUT_FILE.bz2"
-         echo "INI file:    $RUN_DIRECTORY/$INI_FILE"
-         echo "XML file:    $RUN_DIRECTORY/$XML_FILES"
-         echo "----- SIMULATION RUN FAILED -----"
-      fi
+   if [ "$RUN_RESULT" -ne 0 ] ; then
+      RESULT="$RUN_RESULT"
+      {
+         echo ""
+         echo "----- SIMULATION RUN FAILED (exit code $RUN_RESULT) -----"
+         echo ""
+         echo "Contents of directory $RUN_DIRECTORY :"
+         ls -l -- "$RUN_DIRECTORY"
+         echo "-----"
+         if [ -e "$EXEC_DIR/$OUTPUT_FILE.bz2" ] ; then
+            echo "#########################################################"
+            bzip2 -dc -- "$EXEC_DIR/$OUTPUT_FILE.bz2"
+            echo "#########################################################"
+            echo "Output file: $EXEC_DIR/$OUTPUT_FILE.bz2"
+            echo "INI file:    $RUN_DIRECTORY/$INI_FILE"
+            if [ "$XML_FILES" != "" ] ; then
+               echo "XML files:   $XML_FILES"
+            fi
+            echo "----- SIMULATION RUN FAILED -----"
+         fi
+      } >&2
    fi
 done
+
+if [ "$HAS_INI" -eq 0 ] ; then
+   echo >&2 "ERROR: No .ini files found in $RUN_DIRECTORY!"
+   exit 1
+fi
 
 
 # ====== Archive results to output file =====================================
 echo "+ $(date) Archiving results ..."
 
-workDirectory="$(pwd)"
-cd "$RUN_DIRECTORY/Environment/$SIMULATION_BASEDIR"
-find . \( -name "*-output.txt" -or -name "*.sca" -or -name "*.vec"  \) -print0 | xargs -0 -r bzip2 -f
-find . \( -name "*-status.txt" -or -name "*.txt.bz2" -or -name "*-scalars.sca.bz2" -or -name "*-vectors.vec.bz2" -or -name "core*" \) -print0 | xargs -0 -r tar czf output.tar.gz
-cd "$workDirectory"
+STAGE_DIR="$(mktemp -d "${TMPDIR:-/tmp}/ssrun-out.XXXXXXXXXX")"
+trap 'rm -rf -- "$STAGE_DIR"' EXIT
 
-mv "$RUN_DIRECTORY/Environment/$SIMULATION_BASEDIR/output.tar.gz" "$OUTPUT_ARCHIVE"
+(
+   cd -- "$RUN_DIRECTORY/$RUN_ENVIRONMENT/$SIMULATION_BASEDIR" &&
+   find . \( -name "*-output.txt" -o -name "*.sca" -o -name "*.vec" \) -exec bzip2 -f {} + &&
+   find . \( -name "*-status.txt" -o -name "*.txt.bz2" -o -name "*-scalars.sca.bz2" -o -name "*-vectors.vec.bz2" -o -name "core*" \) -exec sh -c '
+      dest="$1"
+      shift
+      for f do
+         d=$(dirname -- "$dest/$f")
+         mkdir -p -- "$d" && { ln -- "$f" "$dest/$f" 2>/dev/null || cp -p -- "$f" "$dest/$f"; } || exit 1
+      done
+   ' sh "$STAGE_DIR" {} + &&
+   cd -- "$STAGE_DIR" &&
+   tar cf - . | gzip >"$OUTPUT_ARCHIVE"
+)
 
 
-exit $RESULT
+exit "$RESULT"
