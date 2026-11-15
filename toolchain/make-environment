@@ -26,7 +26,7 @@
 collectFiles() {
    if [ ! -e "$SOURCES_DIRECTORY/$2" ] ; then
       echo >&2 "==================================================="
-      echo >&2 "ERROR: $SOURCES_DIRECTORY/$2 does not exit!"
+      echo >&2 "ERROR: $SOURCES_DIRECTORY/$2 does not exist!"
       echo >&2 "==================================================="
       exit 1
    fi
@@ -34,22 +34,28 @@ collectFiles() {
    # ------ Add single file -------------------------------------------------
    if [ -f "$SOURCES_DIRECTORY/$2" ] ; then
       echo "   -> Adding $2 ..."
-      FULL="$2"
-      FILE=$(find "$SOURCES_DIRECTORY" -wholename "$SOURCES_DIRECTORY/$2" -printf "%f\n" | grep --invert-match "tdtoolchain/")
-      DIR=$(echo "$FULL" | sed -e "s/\/$FILE\$//g")
-      mkdir -p "$DIR" && cp "$SOURCES_DIRECTORY/$2" "$DIR"
+      DIR=$(dirname -- "$2")
+      mkdir -p -- "$DIR" && cp -p -- "$SOURCES_DIRECTORY/$2" "$DIR/"
       if [ "$3" != "" ] ; then
          echo "$DIR" >>"$3"
       fi
    # ------ Recursive lookup ------------------------------------------------
    else
       echo "   -> Collecting $1 in $2 recursively ..."
-      rm -f collect.tar
-      find "$SOURCES_DIRECTORY/$2" -name "$1" -printf "%P\n" | grep --invert-match "tdtoolchain/" | tar cf collect.tar -C "$SOURCES_DIRECTORY/$2" -T -
-      mkdir -p "$2"
-      printf "      Files: "
-      tar xvf collect.tar -C "$2" | wc --lines
-      rm -f collect.tar
+      mkdir -p -- "$2"
+      FILE_COUNT=$(
+         cd "$SOURCES_DIRECTORY/$2" &&
+         find . -name tdtoolchain -prune -o -type f -name "$1" -exec sh -c '
+            dest="$1"
+            shift
+            for f do
+               d=$(dirname -- "$dest/$f")
+               mkdir -p -- "$d" && cp -p -- "$f" "$d/" || exit 1
+               printf "x\n"
+            done
+         ' sh "$OLDPWD/$2" {} + | wc -l | tr -d ' '
+      )
+      printf '      Files: %s\n' "$FILE_COUNT"
       if [ "$3" != "" ] ; then
          echo "$2" >>"$3"
       fi
@@ -73,11 +79,26 @@ SIMULATION_BINARY="$3"
 SIMULATION_BASEDIR="$4"
 shift 4
 
-TOOLCHAIN_DIRECTORY="$(dirname "$0")"
-SIMULATION_DIRECTORY="$(cd "$SIMULATION_DIRECTORY" && pwd -P)"   # Absolute path
+TOOLCHAIN_DIRECTORY="$(cd "$(dirname "$0")" && pwd -P)"
 
 
 # ====== Check configuration ================================================
+if [ ! -d "$SIMULATION_DIRECTORY" ] ; then
+   echo >&2 "==================================================="
+   echo >&2 "ERROR: Simulation directory $SIMULATION_DIRECTORY not found!"
+   echo >&2 "==================================================="
+   exit 1
+fi
+if [ ! -d "$SOURCES_DIRECTORY" ] ; then
+   echo >&2 "==================================================="
+   echo >&2 "ERROR: Sources base directory $SOURCES_DIRECTORY not found!"
+   echo >&2 "==================================================="
+   exit 1
+fi
+
+SIMULATION_DIRECTORY="$(cd "$SIMULATION_DIRECTORY" && pwd -P)"
+SOURCES_DIRECTORY="$(cd "$SOURCES_DIRECTORY" && pwd -P)"
+
 echo "Creating simulation environment:"
 echo "Configuration:"
 echo "   - Simulation Directory      = $SIMULATION_DIRECTORY"
@@ -85,18 +106,6 @@ echo "   - Sources Directory         = $SOURCES_DIRECTORY"
 echo "   - Simulation Binary         = $SIMULATION_BINARY (in $SOURCES_DIRECTORY)"
 echo "   - Simulation Base Directory = $SIMULATION_BASEDIR (in $SOURCES_DIRECTORY)"
 
-if [ ! -e "$SIMULATION_DIRECTORY" ] ; then
-   echo >&2 "==================================================="
-   echo >&2 "ERROR: Simulation directory $SIMULATION_DIRECTORY not found!"
-   echo >&2 "==================================================="
-   exit 1
-fi
-if [ ! -e "$SOURCES_DIRECTORY" ] ; then
-   echo >&2 "==================================================="
-   echo >&2 "ERROR: Sources base directory $SOURCES_DIRECTORY not found!"
-   echo >&2 "==================================================="
-   exit 1
-fi
 if [ ! -e "$SOURCES_DIRECTORY/$SIMULATION_BASEDIR" ] ; then
    echo >&2 "==================================================="
    echo >&2 "ERROR: Sources base directory $SOURCES_DIRECTORY/$SIMULATION_BASEDIR not found!"
@@ -107,27 +116,31 @@ fi
 
 # ====== Create environment directory =======================================
 echo "+ $(date) Environment directory"
-if [ -e "$SIMULATION_DIRECTORY"/Environment ] ; then
-   rm -rf "$SIMULATION_DIRECTORY"/Environment
+if [ -e "$SIMULATION_DIRECTORY/Environment" ] ; then
+   rm -rf "$SIMULATION_DIRECTORY/Environment"
 fi
 mkdir "$SIMULATION_DIRECTORY/Environment"
-cd "$SIMULATION_DIRECTORY/Environment" >/dev/null
+cd "$SIMULATION_DIRECTORY/Environment"
 
 
 # ====== Copy simulation binary =============================================
 echo "+ $(date) Copying simulation binary $SOURCES_DIRECTORY/$SIMULATION_BINARY ..."
-cp "$SOURCES_DIRECTORY/$SIMULATION_BINARY" simulation-binary || exit 1
-chrpath -d simulation-binary || {
-   echo >&2 "==================================================="
-   echo >&2 "ERROR: chrpath not found -- please install chrpath!"
-   echo >&2 "==================================================="
-   exit 1
-}
+cp -p "$SOURCES_DIRECTORY/$SIMULATION_BINARY" simulation-binary || exit 1
+if [ "$(uname -s)" != "Darwin" ] ; then
+   if command -v chrpath >/dev/null 2>&1 ; then
+      chrpath -d simulation-binary
+   else
+      echo >&2 "==================================================="
+      echo >&2 "ERROR: chrpath not found -- please install chrpath!"
+      echo >&2 "==================================================="
+      exit 1
+   fi
+fi
 
 
 # ====== Collect libraries for simulation binary ============================
 echo "+ $(date) Collecting libraries ..."
-"$TOOLCHAIN_DIRECTORY"/get-libs "$SOURCES_DIRECTORY/$SIMULATION_BINARY" lib || exit 1
+"$TOOLCHAIN_DIRECTORY/get-libs" "$SOURCES_DIRECTORY/$SIMULATION_BINARY" lib || exit 1
 
 
 # ====== Copy other files ===================================================
@@ -135,30 +148,35 @@ NED_PATHS=""
 while [ $# -gt 0 ] ; do
    # ====== Collect NED files ===============================================
    if [ "$1" = "-n" ] ; then
+      if [ $# -lt 2 ] ; then
+         echo >&2 "ERROR: Missing argument for -n."
+         exit 1
+      fi
       echo "+ $(date) Collecting NED files in $SOURCES_DIRECTORY/$2 ..."
       collectFiles "*.ned" "$2" "nedpaths.lst" || exit 1
       if [ -d "$SOURCES_DIRECTORY/$2" ] ; then
-         if [ "$NED_PATHS" != "" ] ; then
-            NED_PATHS="$NED_PATHS $2"
-         else
-            NED_PATHS="$2"
-         fi
+         ADD_PATH="$2"
       else
-         if [ "$NED_PATHS" != "" ] ; then
-            NED_PATHS="$NED_PATHS $DIR"
-         else
-            NED_PATHS="$DIR"
-         fi
+         ADD_PATH="$DIR"
       fi
-      shift ; shift
+      if [ "$NED_PATHS" != "" ] ; then
+         NED_PATHS="$NED_PATHS $ADD_PATH"
+      else
+         NED_PATHS="$ADD_PATH"
+      fi
+      shift 2
 
-   # ====== Collect NED files ===============================================
+   # ====== Collect misc files ==============================================
    elif [ "$1" = "-misc" ] ; then
+      if [ $# -lt 3 ] ; then
+         echo >&2 "ERROR: Missing arguments for -misc."
+         exit 1
+      fi
       echo "+ $(date) Collecting misc files (pattern $2) in $SOURCES_DIRECTORY/$3 ..."
       collectFiles "$2" "$3" "" || exit 1
-      shift ; shift ; shift
+      shift 3
 
-   # ====== Collect NED files ===============================================
+   # ====== Unknown parameter ===============================================
    else
       echo >&2 "==================================================="
       echo >&2 "ERROR: Bad parameter $1."
@@ -172,18 +190,27 @@ done
 # We need relative paths from the view of the directory the simulation binary
 # is executed in!
 echo "+ $(date) Getting relative NED paths for simulation execution ..."
-OLD_NED_PATHS=$(xargs echo < nedpaths.lst)
+if [ -s nedpaths.lst ] ; then
+   OLD_NED_PATHS=$(cat nedpaths.lst)
+else
+   OLD_NED_PATHS=""
+fi
 NEW_NED_PATHS=""
-echo "   -> Absolute paths: $OLD_NED_PATHS"
+echo "   -> Base NED paths: $OLD_NED_PATHS"
 
 for n in $OLD_NED_PATHS ; do
-   echo "      + $TOOLCHAIN_DIRECTORY/tools/getrelativepath ./Environment/$SIMULATION_BASEDIR ./Environment/$n"
-   nnew=$("$TOOLCHAIN_DIRECTORY"/tools/getrelativepath "./Environment/$SIMULATION_BASEDIR" "./Environment/$n")
-   if [ "$NEW_NED_PATHS" = "" ] ; then
-      NEW_NED_PATHS="$nnew"
-   else
-      NEW_NED_PATHS="$NEW_NED_PATHS $nnew"
-   fi
+   echo "      + $TOOLCHAIN_DIRECTORY/tools/getrelativepath ./$SIMULATION_BASEDIR ./$n"
+   nnew=$("$TOOLCHAIN_DIRECTORY/tools/getrelativepath" "./$SIMULATION_BASEDIR" "./$n")
+   case " $NEW_NED_PATHS " in
+      *" $nnew "*) ;;
+      *)
+         if [ "$NEW_NED_PATHS" = "" ] ; then
+            NEW_NED_PATHS="$nnew"
+         else
+            NEW_NED_PATHS="$NEW_NED_PATHS $nnew"
+         fi
+         ;;
+   esac
 done
 echo "   -> Relative paths: $NEW_NED_PATHS"
 
@@ -206,6 +233,5 @@ cd "$SIMULATION_DIRECTORY"
 # ====== Archive environment ================================================
 echo "+ $(date) Archiving environment ..."
 echo "   -> simulation-environment.tar.bz2"
-tar chjf simulation-environment.tar.bz2 Environment || exit 1
-printf "      "
-wc --bytes simulation-environment.tar.bz2
+tar chf - Environment | bzip2 >simulation-environment.tar.bz2 || exit 1
+printf '      %s\n' "$(wc -c < simulation-environment.tar.bz2 | tr -d ' ')"
