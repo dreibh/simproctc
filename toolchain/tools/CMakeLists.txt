@@ -137,6 +137,17 @@ ENDIF()
 #### LIBRARIES                                                           ####
 #############################################################################
 
+# ====== libpropertyformatter ===============================================
+ADD_LIBRARY(libpropertyformatter STATIC
+            displaywidth.cc
+            propertyformatter.cc)
+TARGET_INCLUDE_DIRECTORIES(libpropertyformatter
+                           PRIVATE ${Intl_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES(libpropertyformatter PRIVATE
+                      ${Intl_LIBRARIES})
+
+
+# ====== libfileio ==========================================================
 ADD_LIBRARY(libfileio SHARED
    fileio.h
    fileio.cc
@@ -168,7 +179,8 @@ ADD_EXECUTABLE(createsummary createsummary.cc debug.h)
 TARGET_INCLUDE_DIRECTORIES(createsummary
                            PRIVATE ${LIBIBERTY_INCLUDE_DIR})
 TARGET_LINK_LIBRARIES(createsummary
-                      PRIVATE libfileio
+                      PRIVATE libpropertyformatter
+                              libfileio
                               ${LIBIBERTY_LIBRARY})
 
 # ====== Combine Summaries Tool =============================================
@@ -177,7 +189,8 @@ TARGET_INCLUDE_DIRECTORIES(combinesummaries
                            PRIVATE libfileio
                                    ${LIBIBERTY_INCLUDE_DIR})
 TARGET_LINK_LIBRARIES(combinesummaries
-                      PRIVATE libfileio
+                      PRIVATE libpropertyformatter
+                              libfileio
                               ${LIBIBERTY_LIBRARY})
 
 # ====== Extract Vectors Tool ===============================================
@@ -185,5 +198,22 @@ ADD_EXECUTABLE(extractvectors extractvectors.cc)
 TARGET_INCLUDE_DIRECTORIES(extractvectors
                            PRIVATE ${LIBIBERTY_INCLUDE_DIR})
 TARGET_LINK_LIBRARIES(extractvectors
-                      PRIVATE libfileio
+                      PRIVATE libpropertyformatter
+                              libfileio
+                              ${LIBIBERTY_LIBRARY})
+
+# ====== Runtime Estimator ==================================================
+ADD_EXECUTABLE(runtimeestimator runtimeestimator.cc)
+TARGET_INCLUDE_DIRECTORIES(runtimeestimator
+                           PRIVATE ${LIBIBERTY_INCLUDE_DIR})
+TARGET_LINK_LIBRARIES(runtimeestimator
+                      PRIVATE libpropertyformatter
+                              ${LIBIBERTY_LIBRARY})
+
+# ====== getrelativepath ====================================================
+ADD_EXECUTABLE(getrelativepath getrelativepath.cc)
+TARGET_INCLUDE_DIRECTORIES(getrelativepath
+                           PRIVATE ${LIBIBERTY_INCLUDE_DIR})
+TARGET_LINK_LIBRARIES(getrelativepath
+                      PRIVATE libpropertyformatter
                               ${LIBIBERTY_LIBRARY})
