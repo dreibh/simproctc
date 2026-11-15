@@ -21,8 +21,27 @@
 # Contact: thomas.dreibholz@gmail.com
 
 
-source("hashfunctions.R")
-source("plotter.R")
+library(digest)
+
+
+# ====== Resolve toolchain directory ========================================
+getToolchainDirectory <- function()
+{
+   for(frame in rev(sys.frames())) {
+      if(!is.null(frame$ofile)) {
+         return(dirname(normalizePath(frame$ofile)))
+      }
+   }
+   args <- commandArgs(trailingOnly=FALSE)
+   fileArg <- grep("^--file=", args, value=TRUE)
+   if(length(fileArg) > 0) {
+      return(dirname(normalizePath(sub("^--file=", "", fileArg[1]))))
+   }
+   return(getwd())
+}
+
+toolchainDir <- getToolchainDirectory()
+source(paste0(toolchainDir, "/plotter.R"))
 
 
 simulationDirectory <- "GiveAUsefulName"
@@ -61,10 +80,10 @@ simCreatorMiscFiles <- list()
 simCreatorSimulationNetwork <- "giveANetworkName"
 
 distributionPool  <- "ScriptingPool"
-distributionProcs <- 0   # Set to 0 for to disable distribution!
+distributionProcs <- 0   # Set to 0 to disable distribution!
 distributionPUOpt <- ""
 
-reportTo <- ""   # Jabber addess to report simulation startup/completion to
+reportTo <- ""   # Jabber address to report simulation startup/completion to
                  # NOTE: sendxmpp is needed to send Jabber messages!
 
 # IMPORTANT NOTICE:
@@ -86,11 +105,11 @@ execute <- function(cmd)
 }
 
 
-# ====== Get number of CPUs by reading /proc/cpuinfo ========================
+# ====== Get number of CPUs =================================================
 getNumberOfCPUs <- function()
 {
-   cpus <- parallel::detectCores(logical = TRUE)
-   if (is.na(cpus) || cpus < 1) {
+   cpus <- parallel::detectCores(logical=TRUE)
+   if(is.na(cpus) || (cpus < 1)) {
       cpus <- 1
    }
    return(cpus)
@@ -168,7 +187,7 @@ getActiveVariables <- function(simulationConfigurations, type, duration=0)
    }
 
    # ------ Get a parameter configuration -----------------------------------
-   for(i in 1:length(simulationConfigurations)) {
+   for(i in seq_along(simulationConfigurations)) {
       parameterConfiguration <- unlist(simulationConfigurations[i], recursive=FALSE)
 
       parameterName <- as.character(parameterConfiguration[1])
@@ -200,9 +219,9 @@ getActiveVariables <- function(simulationConfigurations, type, duration=0)
    if(type == GAVType_Hash) {
       string <- ""
       for(item in resultSet) {
-         string <- paste(sep="", string, "-", item)
+         string <- paste0(string, "-", item)
       }
-      return(getSHA1SumOfString(string))
+      return(digest(string, algo="sha1", serialize=FALSE))
    }
 
    return(resultSet)
@@ -216,7 +235,7 @@ CVT_Passive <- 2
 CVT_Auto    <- 3
 checkVariableType <- function(simulationConfigurations, variable, type)
 {
-   for(i in 1:length(simulationConfigurations)) {
+   for(i in seq_along(simulationConfigurations)) {
       parameterConfiguration <- unlist(simulationConfigurations[i], recursive=FALSE)
 
       parameterName <- parameterConfiguration[1]
@@ -233,7 +252,7 @@ checkVariableType <- function(simulationConfigurations, variable, type)
             }
          }
          else if(type == CVT_Passive) {
-            if(parameters == 0) {
+            if(parameters == 1) {
                return(TRUE)
             }
          }
@@ -261,20 +280,20 @@ prepareDirectory <- function(simulationDirectory)
    dir.create(simulationDirectory, showWarnings=FALSE)
 
    setGlobalVariable("gResultsDirectoryName", "Results")
-   dir.create(paste(sep="", simulationDirectory, "/", gResultsDirectoryName), showWarnings=FALSE)
+   dir.create(paste0(simulationDirectory, "/", gResultsDirectoryName), showWarnings=FALSE)
 
    setGlobalVariable("gTempDirectoryName", "Temp")
-   dir.create(paste(sep="", simulationDirectory, "/", gTempDirectoryName), showWarnings=FALSE)
+   dir.create(paste0(simulationDirectory, "/", gTempDirectoryName), showWarnings=FALSE)
 
    setGlobalVariable("gSimulationsDirectoryName", "Simulations")
-   dir.create(paste(sep="", simulationDirectory, "/", gSimulationsDirectoryName), showWarnings=FALSE)
+   dir.create(paste0(simulationDirectory, "/", gSimulationsDirectoryName), showWarnings=FALSE)
 
    setGlobalVariable("gMakefileName", "Makefile")
    setGlobalVariable("gDependenciesName", "dependencies.list")
    setGlobalVariable("gSummaryName", "summary.input")
    setGlobalVariable("gSummaryCompletedName", "summary-completed.txt")
    setGlobalVariable("gSimulationsCompletedName", "simulations-completed.txt")
-   setGlobalVariable("gResultsArchiveName", paste(sep="", simulationDirectory, ".tar.bz2"))
+   setGlobalVariable("gResultsArchiveName", paste0(simulationDirectory, ".tar.bz2"))
    setGlobalVariable("gRuntimeName", "runtime.dat")
    setGlobalVariable("gLogfileName", "make.log")
    setGlobalVariable("gErrorName",   "error.out")
@@ -284,7 +303,7 @@ prepareDirectory <- function(simulationDirectory)
 # ====== Start creating makefile ============================================
 beginMakefile <- function()
 {
-   makefile <- file(paste(sep="", simulationDirectory, "/", gMakefileName), "w")
+   makefile <- file(paste0(simulationDirectory, "/", gMakefileName), "w")
 
    cat(sep="", ".PHONY:\tall\n", file=makefile)
    cat(sep="", "all:\t", gSummaryCompletedName, "\n\n", file=makefile)
@@ -300,7 +319,7 @@ beginMakefile <- function()
 # ====== Start creating status file dependencies ============================
 beginDependencies <- function()
 {
-   dependencies <- file(paste(sep="", simulationDirectory, "/", gDependenciesName), "w")
+   dependencies <- file(paste0(simulationDirectory, "/", gDependenciesName), "w")
    return(dependencies)
 }
 
@@ -315,12 +334,12 @@ addRunToMakefile <- function(makefile, runNumber, runNumberInTotalRuns, totalRun
    cat(sep="", "# Shortcut:   ", shortcutLink, " -> ", runDirectoryName, "\n", file=makefile)
    cat(sep="", statusName, ":\t", "simulation-environment.tar.bz2 ", gRuntimeName, "\n", file=makefile)
    if(distributionProcs < 1) {
-      cat(sep="", "\t", getwd(), "/perform-run . ", runDirectoryName, " ", runNumber, "\n", file=makefile)
+      cat(sep="", "\t", toolchainDir, "/perform-run . ", runDirectoryName, " ", runNumber, "\n", file=makefile)
    }
    else {
-      cat(sep="", "\t./perform-run . ", runDirectoryName, " ", runNumber, " \"", distributionPool, "\" \"", distributionPUOpt, "\"\n", file=makefile)
+      cat(sep="", "\t", toolchainDir, "/perform-run . ", runDirectoryName, " ", runNumber, " \"", distributionPool, "\" \"", distributionPUOpt, "\"\n", file=makefile)
    }
-   cat(sep="", "\t", getwd(), "/tools/runtimeestimator ", gRuntimeName, " ", totalRunLevels, " ", runNumberInTotalRuns, "\n", file=makefile)
+   cat(sep="", "\t", toolchainDir, "/tools/runtimeestimator ", gRuntimeName, " ", totalRunLevels, " ", runNumberInTotalRuns, "\n", file=makefile)
    cat(sep="", "\n", file=makefile)
 }
 
@@ -328,7 +347,7 @@ addRunToMakefile <- function(makefile, runNumber, runNumberInTotalRuns, totalRun
 # ====== Add status file dependency to Makefile =============================
 addDependency <- function(dependencies, filePrefix)
 {
-   cat(sep="", filePrefix ,"\n", file=dependencies)
+   cat(sep="", filePrefix, "\n", file=dependencies)
 }
 
 
@@ -339,20 +358,20 @@ extractDependencies <- function(dependencies)
 
    # Name Example: test1/Simulations/Set-2d4e51640b4524220cc2117face782770cbc9d59/run10-status.txt
    #  -> Sort by run number first, then set name
-   r <- readLines(pc <- pipe(paste(sep="", "sort -t / -k 4.4n -k 2 ",
-                                   paste(sep="", simulationDirectory, "/", gDependenciesName))))
+   r <- readLines(pc <- pipe(paste0("sort -t / -k 4.4n -k 2 ",
+                                    simulationDirectory, "/", gDependenciesName)))
    close(pc)
 
-   return(paste(sep="", r, "-status.txt "))
+   return(paste0(r, "-status.txt "))
 }
 
 
 # ====== Start creation of summary file =====================================
 beginSummary <- function()
 {
-   summary <- file(paste(sep="", simulationDirectory, "/", gSummaryName), "w")
+   summary <- file(paste0(simulationDirectory, "/", gSummaryName), "w")
    cat(sep="", "--simulationsdirectory=", ".", "\n", file=summary)
-   cat(sep="", "--resultsdirectory=", ".", "\n", file=summary)
+   cat(sep="", "--resultsdirectory=", gResultsDirectoryName, "\n", file=summary)
    for(skipEntry in simulationSummarySkipList) {
       cat(sep="", "--skip=", skipEntry, "\n", file=summary)
    }
@@ -366,17 +385,17 @@ addRunToSummary <- function(summary, scalarName, vectorName, iniName, logName, s
    varValuesString <- ""
    for(value in varValues) {
       # ------ Encapsulate arguments containing spaces ----------------------
-      valueString <- paste(sep="", value)
-      if( (length(grep(" ", valueString)) > 0) ||
-          (length(grep("\"", valueString)) > 0) ) {
-         valueString <- paste(sep="", "'", valueString , "'")
+      valueString <- paste0(value)
+      if((length(grep(" ", valueString)) > 0) ||
+         (length(grep("\"", valueString)) > 0)) {
+         valueString <- paste0("'", valueString, "'")
       }
       else if(valueString == "") {
          valueString <- "\"\""   # empty string
       }
       # ------ Write output string ------------------------------------------
       if(varValuesString != "") {
-         varValuesString <- paste(sep="", varValuesString, " ", valueString)
+         varValuesString <- paste0(varValuesString, " ", valueString)
       }
       else {
          varValuesString <- valueString
@@ -400,7 +419,7 @@ finishSummary <- function(summary)
    activeVariables       <- gActiveVariables
    for(variable in activeVariables) {
       if(activeVariablesString != "") {
-         activeVariablesString <- paste(sep="", activeVariablesString, " ", variable)
+         activeVariablesString <- paste0(activeVariablesString, " ", variable)
       }
       else {
          activeVariablesString <- variable
@@ -408,15 +427,14 @@ finishSummary <- function(summary)
    }
 
    # ------ Create summary command string -----------------------------------
-   summaryCommand <- paste(sep="",
-                           "rm -rf ", gResultsDirectoryName, " && ",
-                           "mkdir ", gResultsDirectoryName, " && ",
-                           "cd  ", gResultsDirectoryName, "/.. && ",
-                           getwd(), "/tools/createsummary ",
-                           "\"", activeVariablesString, " SourceINI SourceVec\" ",
-                           "--batch --split ",
-                           "--compress ", simulationSummaryCompressionLevel, " ",
-                           "<", gSummaryName)
+   summaryCommand <- paste0("rm -rf ", gResultsDirectoryName, " && ",
+                            "mkdir ", gResultsDirectoryName, " && ",
+                            "cd ", gResultsDirectoryName, "/.. && ",
+                            toolchainDir, "/tools/createsummary ",
+                            "\"", activeVariablesString, " SourceINI SourceVec\" ",
+                            "--batch --split ",
+                            "--compress ", simulationSummaryCompressionLevel, " ",
+                            "<", gSummaryName)
    return(summaryCommand)
 }
 
@@ -426,71 +444,74 @@ finishMakefile <- function(makefile, dependencies, summaryCommand)
 {
    cat(sep="", "# ===========================================================================\n\n", file=makefile)
 
+   # ------ CMake configuration for tools (serialized under make -j) --------
+   cat(sep="", toolchainDir, "/tools/Makefile:\t", toolchainDir, "/tools/CMakeLists.txt\n", file=makefile)
+   cat(sep="", "\tcd ", toolchainDir, "/tools && cmake .\n\n", file=makefile)
+
    # ------ createsummary ---------------------------------------------------
-   cat(sep="", getwd(), "/tools/createsummary:\t", getwd(), "/tools/createsummary.cc\n", file=makefile)
-   cat(sep="", "\tcd ", getwd(), "/tools && cmake . && $(MAKE) createsummary\n\n", file=makefile)
+   cat(sep="", toolchainDir, "/tools/createsummary:\t", toolchainDir, "/tools/createsummary.cc ", toolchainDir, "/tools/Makefile\n", file=makefile)
+   cat(sep="", "\tcd ", toolchainDir, "/tools && $(MAKE) createsummary\n\n", file=makefile)
 
    # ------ runtimeestimator ------------------------------------------------
-   cat(sep="", getwd(), "/tools/runtimeestimator:\t", getwd(), "/tools/runtimeestimator.cc\n", file=makefile)
-   cat(sep="", "\tcd ", getwd(), "/tools && cmake . && $(MAKE) runtimeestimator\n\n", file=makefile)
+   cat(sep="", toolchainDir, "/tools/runtimeestimator:\t", toolchainDir, "/tools/runtimeestimator.cc ", toolchainDir, "/tools/Makefile\n", file=makefile)
+   cat(sep="", "\tcd ", toolchainDir, "/tools && $(MAKE) runtimeestimator\n\n", file=makefile)
 
    # ------ getrelativepath -------------------------------------------------
-   cat(sep="", getwd(), "/tools/getrelativepath:\t", getwd(), "/tools/getrelativepath.cc\n", file=makefile)
-   cat(sep="", "\tcd ", getwd(), "/tools && cmake . && $(MAKE) getrelativepath\n\n", file=makefile)
+   cat(sep="", toolchainDir, "/tools/getrelativepath:\t", toolchainDir, "/tools/getrelativepath.cc ", toolchainDir, "/tools/Makefile\n", file=makefile)
+   cat(sep="", "\tcd ", toolchainDir, "/tools && $(MAKE) getrelativepath\n\n", file=makefile)
 
-   # ------ Simulation environment archive ----------------------------------
+   # ------ Simulation binary -----------------------------------------------
    cat(sep="", "simulation-binary:\n", file=makefile)
    cat(sep="", "\trm -rf ", gTempDirectoryName, "/*\n", file=makefile)
    if(reportTo != "") {
       poolingInfo <- " "
       if(distributionProcs > 0) {
-         poolingInfo <- paste(sep="", ", distributing ", distributionProcs, " processes to pool \"", distributionPool, "\"")
+         poolingInfo <- paste0(", distributing ", distributionProcs, " processes to pool \"", distributionPool, "\"")
       }
-      cat(sep="", "\t( echo \"Starting simulation ", simulationDirectory, " on `hostname`", poolingInfo, " ...\" | sendxmpp --tls --interactive ", reportTo, " || true )\n", file=makefile)
+      cat(sep="", "\t( echo \"Starting simulation ", simulationDirectory, " on $(hostname)", poolingInfo, " ...\" | sendxmpp --tls --interactive ", reportTo, " || true )\n", file=makefile)
    }
    cat(sep="", "\t( cd ", simCreatorSourcesDirectory, " && $(MAKE) )\n", file=makefile)
    cat(sep="", "\tif [ ! -e ", simCreatorSourcesDirectory, "/", simCreatorSimulationBinary, " ] ; then echo \"###### Did not find binary ", simCreatorSourcesDirectory, "/", simCreatorSimulationBinary, " -- Check your Makefile configuration (remove --make-so)! ######\" ; false ; fi\n\n", file=makefile)
 
    # ------ Simulation environment archive ----------------------------------
-   cat(sep="", "simulation-environment.tar.bz2:\tsimulation-binary ", getwd(), "/tools/getrelativepath\n", file=makefile)
+   cat(sep="", "simulation-environment.tar.bz2:\tsimulation-binary ", toolchainDir, "/tools/getrelativepath\n", file=makefile)
 
    makeEnvParams <- ""
    for(n in simCreatorNEDFiles) {
-      makeEnvParams <- paste(sep="", makeEnvParams, " -n ", n)
+      makeEnvParams <- paste0(makeEnvParams, " -n ", n)
    }
    for(m in simCreatorMiscFiles) {
-      makeEnvParams <- paste(sep="", makeEnvParams, " -misc \"", m[1], "\" ", m[2])
+      makeEnvParams <- paste0(makeEnvParams, " -misc \"", m[1], "\" ", m[2])
    }
 
-   cat(sep="","\t", getwd(), "/make-environment . ", simCreatorSourcesDirectory, " ", simCreatorSimulationBinary, " ", simCreatorSimulationBaseDir, " ", makeEnvParams, "\n", file=makefile)
-   cat(sep="","\n", file=makefile)
+   cat(sep="", "\t", toolchainDir, "/make-environment . ", simCreatorSourcesDirectory, " ", simCreatorSimulationBinary, " ", simCreatorSimulationBaseDir, " ", makeEnvParams, "\n\n", file=makefile)
 
    # ------ First run of runtimeestimator -----------------------------------
-   cat(sep="", gRuntimeName, ":\t", getwd(), "/tools/runtimeestimator\n", file=makefile)
-   cat(sep="", "\t", getwd(), "/tools/runtimeestimator ",
+   cat(sep="", gRuntimeName, ":\t", toolchainDir, "/tools/runtimeestimator\n", file=makefile)
+   cat(sep="", "\t", toolchainDir, "/tools/runtimeestimator ",
                gRuntimeName, " ",
                gTotalSimulationRunLevels * gTotalSimulationRunsPerLevel,
                " 0\n\n", file=makefile)
 
    # ------ Completion of simulation runs -----------------------------------
-   cat(sep="", gSimulationsCompletedName, ":\tsimulation-binary simulation-environment.tar.bz2 ", getwd(), "/tools/runtimeestimator ", getwd(), "/tools/getrelativepath ", gRuntimeName, "   ", extractDependencies(dependencies), "\n", file=makefile)
+   cat(sep="", gSimulationsCompletedName, ":\tsimulation-binary simulation-environment.tar.bz2 ", toolchainDir, "/tools/runtimeestimator ", toolchainDir, "/tools/getrelativepath ", gRuntimeName, "   ", extractDependencies(dependencies), "\n", file=makefile)
    cat(sep="", "\trm -rf ", gTempDirectoryName, "/*\n", file=makefile)
    cat(sep="", "\tdate >", gSimulationsCompletedName, "\n", file=makefile)
    if(reportTo != "") {
-      cat(sep="", "\t( echo \"Finished processing of runs for simulation ", simulationDirectory, " on `hostname`.\" | sendxmpp --tls --interactive ", reportTo, " || true )\n", file=makefile)
+      cat(sep="", "\t( echo \"Finished processing of runs for simulation ", simulationDirectory, " on $(hostname).\" | sendxmpp --tls --interactive ", reportTo, " || true )\n", file=makefile)
    }
    cat(sep="", "\techo \"Simulation completed!\"\n\n", file=makefile)
 
    # ------ Summary creation ------------------------------------------------
-   cat(sep="", gSummaryCompletedName, ":\t", getwd(), "/tools/createsummary ", gSimulationsCompletedName, "\n", file=makefile)
-   cat(sep="", "\tstartTime=`date`      &&      ", file=makefile)
+   cat(sep="", gSummaryCompletedName, ":\t", toolchainDir, "/tools/createsummary ", gSimulationsCompletedName, "\n", file=makefile)
+   cat(sep="", "\tstartTime=$$(date)      &&      ", file=makefile)
    cat(sep="", summaryCommand, "      &&      ", file=makefile)
-   cat(sep="", "endTime=`date`      &&      ", file=makefile)
+   cat(sep="", "endTime=$$(date)      &&      ", file=makefile)
    if(reportTo != "") {
-      cat(sep="", "\t( echo \"Finished summary creation for simulation ", simulationDirectory, " on `hostname`.\" | sendxmpp --tls --interactive ", reportTo, " 2>/dev/null & ) && ", file=makefile)
+      cat(sep="", "\t( echo \"Finished summary creation for simulation ", simulationDirectory, " on $(hostname).\" | sendxmpp --tls --interactive ", reportTo, " 2>/dev/null & ) && ", file=makefile)
    }
    cat(sep="", "echo \"Start: $$startTime\" >", gSummaryCompletedName, " && ", file=makefile)
-   cat(sep="", "echo \"End:   $$endTime\" >>", gSummaryCompletedName, "\n", file=makefile)
+   cat(sep="", "echo \"End:   $$endTime\" >>", gSummaryCompletedName, "\n\n", file=makefile)
 
    # ------ Archival of results ---------------------------------------------
    cat(sep="", gResultsArchiveName, ":\t", gSummaryCompletedName, "\n", file=makefile)
@@ -499,14 +520,14 @@ finishMakefile <- function(makefile, dependencies, summaryCommand)
    # ------ Simulations only ------------------------------------------------
    cat(sep="", ".PHONY:\tclean-simulations-only\n", file=makefile)
    cat(sep="", "clean-simulations-only:\n", file=makefile)
-   cat(sep="", "\tfind ", gSimulationDirectoryName,"/ -name \"*-output.txt*\" -or -name \"*-scalars.sca*\" -or -name \"*-vectors.vec*\" -or -name \"*-status.txt*\" | xargs -n64 rm -f\n", file=makefile)
+   cat(sep="", "\tfind ", gSimulationDirectoryName, "/ \\( -name \"*-output.txt*\" -o -name \"*-scalars.sca*\" -o -name \"*-vectors.vec*\" -o -name \"*-status.txt*\" \\) -exec rm -f {} +\n", file=makefile)
    cat(sep="", "\trm -f ", gLogfileName, "\n", file=makefile)
    cat(sep="", "\techo \"Simulations-only clean-up completed!\"\n\n", file=makefile)
 
    # ------ Clean-up --------------------------------------------------------
    cat(sep="", ".PHONY:\tclean-simulations-and-results\n", file=makefile)
    cat(sep="", "clean-simulations-and-results:\tclean-simulations-only\n", file=makefile)
-   cat(sep="", "\tfind ", gSimulationDirectoryName,"/Results/ -name \"*.data*\" | xargs -n64 rm -f\n", file=makefile)
+   cat(sep="", "\tfind ", gSimulationDirectoryName, "/Results/ -name \"*.data*\" -exec rm -f {} +\n", file=makefile)
    cat(sep="", "\trm -f ", gSimulationsCompletedName, " ", gSummaryCompletedName, " ", gRuntimeName, "\n", file=makefile)
    cat(sep="", "\techo \"Full clean-up completed!\"\n\n", file=makefile)
 
@@ -518,8 +539,8 @@ finishMakefile <- function(makefile, dependencies, summaryCommand)
    close(makefile)
 
 
-   # ------ Removal of old output files -------------------------------------
-   cmd <- paste(sep="", "find ", gSimulationDirectoryName, "/Simulations/ -name \"*.txt\" | xargs -n64 touch >/dev/null 2>/dev/null")
+   # ------ Touch old output files ------------------------------------------
+   cmd <- paste0("find ", gSimulationDirectoryName, "/Simulations/ -name \"*.txt\" -exec touch {} + >/dev/null 2>/dev/null")
    r <- readLines(pc <- pipe(cmd))
    close(pc)
 }
@@ -537,43 +558,49 @@ executeMake <- function()
    }
 
    if(simulationScriptOutputVerbosity > 0) {
-      cat(sep="", "* Step #4: Running make ...\n")
+      cat("* Step #4: Running make ...\n")
       if(exists("distributionPool") && (distributionPool != "") &&
          exists("distributionProcs") && (distributionProcs > 0)) {
-         cat(sep="", "   - Distribution to pool \"", distributionPool, "\", ", CPUs , " processes\n")
+         cat(sep="", "   - Distribution to pool \"", distributionPool, "\", ", CPUs, " processes\n")
       }
-      cat(sep="", "   - To start make:   make -j" , CPUs, " -f ", gMakefileName, "\n")
+      cat(sep="", "   - To start make:   make -j", CPUs, " -f ", gMakefileName, "\n")
       cat(sep="", "   - To view logfile: tail -f ", gLogfileName, "\n")
-      cat(paste(sep="", "   - Sim. Start = ", startTime, "\n"))
+      cat(paste0("   - Sim. Start = ", startTime, "\n"))
    }
+
+   errorFile <- paste0(simulationDirectory, "/", gErrorName)
 
    # The output of "make" goes into the log file.
    # In case of error, the last 20 lines of the log file are copied into the error file.
    # The error file can later be used to write these lines to Jabber.
-   cmd <- paste(sep="", " rm -f ", gErrorName, " && if [ -e Makefile ] ; then make MODE=release ", simCreatorSimulationBinary, " ; fi && cd ", simulationDirectory, " && ( make -k -j" ,
-                CPUs,
-                " -f ", gMakefileName,
-                " all >", gLogfileName , " 2>&1 || tail -n20 ", gLogfileName, " | tee ", gErrorName, " )")
+   cmd <- paste0("rm -f ", errorFile,
+                 " && if [ -e Makefile ] ; then make MODE=release ", simCreatorSimulationBinary,
+                 " ; fi && cd ", simulationDirectory,
+                 " && ( make -k -j", CPUs,
+                 " -f ", gMakefileName,
+                 " all >", gLogfileName, " 2>&1 || tail -n20 ", gLogfileName, " | tee ", gErrorName, " )")
 
    # ------ Execute make ----------------------------------------------------
-   # cat("\n\n",cmd,"\n\n")
    r <- readLines(pc <- pipe(cmd))
    close(pc)
    stopTime <- Sys.time()
 
    if(simulationScriptOutputVerbosity > 0) {
-      cat(paste(sep="", "   - Sim. Stop  = ", stopTime, "\n"))
+      cat(paste0("   - Sim. Stop  = ", stopTime, "\n"))
       cat(sep="", "   - Runtime    = ",
-          signif(as.double(difftime(stopTime, startTime, units="min")),2), "min\n")
+          signif(as.double(difftime(stopTime, startTime, units="min")), 2), "min\n")
    }
    writeLines(r)
 
    if(reportTo != "") {
-      cmd <- paste(sep="", "( ( echo \"Finished ", simulationDirectory, ".\" ; if [ -e ", gErrorName, " ] ; then echo \"Simulation processing has FAILED:\" ; echo \"----- Last Lines in Log -----\" ; cat ", gErrorName, " ; echo \"----- End of Log -----\" ; fi ) | sendxmpp --tls --interactive ", reportTo, " 2>/dev/null & )")
-
-      # cat("\n\n",cmd,"\n\n")
+      cmd <- paste0("( ( echo \"Finished ", simulationDirectory, ".\" ; if [ -e ", errorFile, " ] ; then echo \"Simulation processing has FAILED:\" ; echo \"----- Last Lines in Log -----\" ; cat ", errorFile, " ; echo \"----- End of Log -----\" ; fi ) | sendxmpp --tls --interactive ", reportTo, " 2>/dev/null & )")
       r <- readLines(pc <- pipe(cmd))
       close(pc)
+   }
+
+   if(file.exists(errorFile)) {
+      stop(paste0("ERROR: make failed! Check ", simulationDirectory, "/", gLogfileName,
+                  " and ", errorFile, " for details."))
    }
 }
 
@@ -621,8 +648,8 @@ createAllSimulationRuns <- function(simulationConfigurations,
                         1 + gRunNumberInLevel * gTotalSimulationRunLevels - 1,
                         gTotalSimulationRunLevels * gTotalSimulationRunsPerLevel))
          }
-         for(i in seq(1, length(setup)-1, 2)) {
-            setGlobalVariable(setup[i], setup[i+1])
+         for(i in seq(1, length(setup) - 1, 2)) {
+            setGlobalVariable(setup[i], setup[i + 1])
          }
 
          # ------ Obtain duration (may be a function) -----------------------
@@ -638,43 +665,43 @@ createAllSimulationRuns <- function(simulationConfigurations,
          origVarValues <- getActiveVariables(originalSimulationConfigurations, GAVType_VariableValues, duration)
 
          # ------ Compute auto-parameters -----------------------------------
-         if(simCreatorAutoParameters(originalSimulationConfigurations) & simulationIncludeOrSkip(originalSimulationConfigurations) ) {
+         if(simCreatorAutoParameters(originalSimulationConfigurations) && simulationIncludeOrSkip(originalSimulationConfigurations)) {
 
             # ------ Get *updated* values and hash --------------------------
             varValues <- getActiveVariables(originalSimulationConfigurations, GAVType_VariableValues, duration)
             setupHash <- getActiveVariables(originalSimulationConfigurations, GAVType_Hash, duration)
-            for(i in 1:length(varNames)) {
+            for(i in seq_along(varNames)) {
                variable <- varNames[i]
                value    <- varValues[i]
                if(is.na(value)) {
                   cat("\n")
-                  stop(paste(sep="", "ERROR: Auto-Variable ", variable, " is not set!\n",
-                           "               Check simulation configuration and auto-parameter function!"))
+                  stop(paste0("ERROR: Auto-Variable ", variable, " is not set!\n",
+                              "               Check simulation configuration and auto-parameter function!"))
                }
             }
 
-            # ------ Debug output ----------------------------------------------
+            # ------ Debug output -------------------------------------------
             parameterString <- ""
             if(simulationScriptOutputVerbosity > 4) {
-               for(i in 1:length(varNames)) {
+               for(i in seq_along(varNames)) {
                   variable  <- varNames[i]
                   value     <- varValues[i]
                   origValue <- origVarValues[i]
-                  parameterString <- paste(sep="", parameterString, variable, "=")
+                  parameterString <- paste0(parameterString, variable, "=")
                   if((!is.na(origValue)) && (value == origValue)) {
-                     parameterString <- paste(sep="", parameterString, value)
+                     parameterString <- paste0(parameterString, value)
                   }
                   else {
-                     parameterString <- paste(sep="", parameterString, value, "(", origValue, ")")
+                     parameterString <- paste0(parameterString, value, "(", origValue, ")")
                   }
-                  parameterString <- paste(sep="", parameterString, "\t")
+                  parameterString <- paste0(parameterString, "\t")
                }
                cat(parameterString, "\n")
             }
 
             # ------ Create runs --------------------------------------------
-            runDirectoryName <- paste(sep="", gSimulationsDirectoryName, "/Set-", setupHash)
-            dir.create(paste(sep="", simulationDirectory, "/", runDirectoryName),
+            runDirectoryName <- paste0(gSimulationsDirectoryName, "/Set-", setupHash)
+            dir.create(paste0(simulationDirectory, "/", runDirectoryName),
                        showWarnings=FALSE)
 
             if(is.list(simulationRuns)) {
@@ -685,25 +712,25 @@ createAllSimulationRuns <- function(simulationConfigurations,
             }
 
             # ====== Create shortcut link ===================================
-            shortcutLink <- paste(sep="", "Shortcut-", sprintf("%06d", gRunNumberInLevel))
-            oldWorkingDirectory <- setwd(paste(sep="", simulationDirectory, "/", gSimulationsDirectoryName))
+            shortcutLink <- paste0("Shortcut-", sprintf("%06d", gRunNumberInLevel))
+            oldWorkingDirectory <- setwd(paste0(simulationDirectory, "/", gSimulationsDirectoryName))
             if(file.exists(shortcutLink)) {
                file.remove(shortcutLink)
             }
-            file.symlink(paste(sep="", "Set-", setupHash), shortcutLink)
+            file.symlink(paste0("Set-", setupHash), shortcutLink)
             setwd(oldWorkingDirectory)
 
             # ====== Create runs in level ===================================
             level <- 0
             for(simulationRun in levelsSet) {
-               filePrefix <- paste(sep="", runDirectoryName, "/run", simulationRun)
-               outputName <- paste(sep="", filePrefix, "-output.txt")
-               iniName    <- paste(sep="", filePrefix, "-parameters.ini")
-               scalarName <- paste(sep="", filePrefix, "-scalars.sca")
-               vectorName <- paste(sep="", filePrefix, "-vectors.vec")
-               statusName <- paste(sep="", filePrefix, "-status.txt")
+               filePrefix <- paste0(runDirectoryName, "/run", simulationRun)
+               outputName <- paste0(filePrefix, "-output.txt")
+               iniName    <- paste0(filePrefix, "-parameters.ini")
+               scalarName <- paste0(filePrefix, "-scalars.sca")
+               vectorName <- paste0(filePrefix, "-vectors.vec")
+               statusName <- paste0(filePrefix, "-status.txt")
 
-               ini <- file(paste(sep="", simulationDirectory, "/", iniName), "w")
+               ini <- file(paste0(simulationDirectory, "/", iniName), "w")
                cat(sep="", "# ###### Created on ", date(), " ######\n", file=ini)
                simCreatorWriteHeader(ini, simulationRun, scalarName, vectorName, duration)
                simCreatorWriteParameterSection(filePrefix, ini, simulationRun, duration)
@@ -725,15 +752,7 @@ createAllSimulationRuns <- function(simulationConfigurations,
          }
          else {
             if(simulationScriptOutputVerbosity > 4) {
-               cat(sep="","SKIPPING!\n")
-               if(is.list(simulationRuns)) {
-                  levelsSet <- unique(unlist(simulationRuns))
-               }
-               else {
-                  levelsSet <- seq(1, simulationRuns)
-               }
-               for(simulationRun in levelsSet) {
-               }
+               cat("SKIPPING!\n")
             }
          }
 
@@ -743,20 +762,20 @@ createAllSimulationRuns <- function(simulationConfigurations,
 }
 
 
-# ====== Reronciliate configuration and default settings ====================
+# ====== Reconciliate configuration and default settings ====================
 makeSimulations <- function(configuration, defaults)
 {
    results <- list()
 
    # ====== Replace all defaults by new configurations ======================
-   for(i in 1:length(defaults)) {
+   for(i in seq_along(defaults)) {
       defaultConfigItem <- unlist(defaults[i], recursive=FALSE)
       override <- FALSE
-      for(j in 1:length(configuration)) {
+      for(j in seq_along(configuration)) {
          configItem <- unlist(configuration[j], recursive=FALSE)
          # ====== Replace default setting ===================================
          if(as.character(configItem[1]) == as.character(defaultConfigItem[1])) {
-            # cat("Override default: ",as.character(defaultConfigItem[1]),"\n")
+            # cat("Override default: ", as.character(defaultConfigItem[1]), "\n")
             results <- append(results, configuration[j])
             override <- TRUE
             break
@@ -769,10 +788,10 @@ makeSimulations <- function(configuration, defaults)
    }
 
    # ====== Cross-check: for each value, there should be a default value ====
-   for(j in 1:length(configuration)) {
+   for(j in seq_along(configuration)) {
       configItem <- unlist(configuration[j], recursive=FALSE)
       found <- FALSE
-      for(i in 1:length(defaults)) {
+      for(i in seq_along(defaults)) {
          defaultConfigItem <- unlist(defaults[i], recursive=FALSE)
          if(as.character(configItem[1]) == as.character(defaultConfigItem[1])) {
             found <- TRUE
@@ -780,25 +799,24 @@ makeSimulations <- function(configuration, defaults)
          }
       }
       if(!found) {
-         stop(paste(sep="", "ERROR: There is no default setting for parameter ",
-                    as.character(configItem[1]), "!\n         ",
-                    "This is either a typo or the simulation generator script has to be updated!"))
+         stop(paste0("ERROR: There is no default setting for parameter ",
+                     as.character(configItem[1]), "!\n         ",
+                     "This is either a typo or the simulation generator script has to be updated!"))
       }
    }
 
    # ====== Cross-check: each config item may exist only once ===============
    configItemSet <- c()
-   for(j in 1:length(configuration)) {
+   for(j in seq_along(configuration)) {
       configItem <- unlist(configuration[j], recursive=FALSE)
       configItemSet <- append(configItemSet, as.character(configItem[1]))
    }
    duplicates <- duplicated(configItemSet)
-   for(j in 1:length(configItemSet)) {
+   for(j in seq_along(configItemSet)) {
       if(duplicates[j]) {
-         # print(duplicates)
          print(configItemSet)
-         stop(cat(sep="", "ERROR: Parameter ", as.character(configItemSet[j]),
-                          " has been specified twice!\n"))
+         stop(paste0("ERROR: Parameter ", as.character(configItemSet[j]),
+                     " has been specified twice!\n"))
       }
    }
    return(results)
@@ -832,7 +850,7 @@ createSimulation <- function(simulationDirectory, simulationConfigurations, simu
    if(simulationScriptOutputVerbosity > 0) {
       cat(sep="", "* Step #2: Creating input files for ",
                   gTotalSimulationRunLevels * gTotalSimulationRunsPerLevel, " runs ...\n")
-      cat(sep="",   " + Active variables:\n")
+      cat(" + Active variables:\n")
       for(varName in gActiveVariables) {
          cat(sep="", "  @ ", varName, "\n")
       }
@@ -840,18 +858,19 @@ createSimulation <- function(simulationDirectory, simulationConfigurations, simu
    createAllSimulationRuns(simulationConfigurations, simulationConfigurations, makefile, summary, dependencies)
 
    # ------ Finish summary and makefile -------------------------------------
-   cat(sep="", "* Step #3: Writing summary script and makefile ...\n")
+   cat("* Step #3: Writing summary script and makefile ...\n")
    summaryCommand <- finishSummary(summary)
    finishMakefile(makefile, dependencies, summaryCommand)
    if(simulationExecuteMake) {
-     executeMake()
+      executeMake()
    }
-   cat(sep="", "* Script completed!\n")
+   cat("* Script completed!\n")
 }
 
 
 # ====== Check whether argument is a numeric value ==========================
-isNumericValue <- function(value) {
+isNumericValue <- function(value)
+{
    suppressWarnings(result <- as.numeric(value))
    return(!is.na(result))
 }
