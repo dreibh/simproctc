@@ -562,8 +562,8 @@ executeMake <- function()
          exists("distributionProcs") && (distributionProcs > 0)) {
          cat(sep="", "   - Distribution to pool \"", distributionPool, "\", ", CPUs, " processes\n")
       }
-      cat(sep="", "   - To start make:   make -j", CPUs, " -f ", gMakefileName, "\n")
-      cat(sep="", "   - To view logfile: tail -f ", gLogfileName, "\n")
+      cat(sep="", "   - To start make:   make -j", CPUs, " -C ", simulationDirectory, "\n")
+      cat(sep="", "   - To view logfile: tail -f ", simulationDirectory, "/", gLogfileName, "\n")
       cat(paste0("   - Sim. Start = ", startTime, "\n"))
    }
 
