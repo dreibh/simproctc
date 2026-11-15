@@ -21,9 +21,56 @@
 #
 # Contact: thomas.dreibholz@gmail.com
 
+
+# ====== Rename file using git mv if tracked, otherwise plain mv ============
+moveFile() {
+   src="$1"
+   dst="$2"
+   if git rev-parse --is-inside-work-tree >/dev/null 2>&1 &&
+      git ls-files --error-unmatch -- "$src" >/dev/null 2>&1 ; then
+      git mv -- "$src" "$dst"
+   else
+      mv -- "$src" "$dst"
+   fi
+}
+
+
 # ====== Check parameters ===================================================
-if [ $# -lt 2 ] ; then
+if [ $# -ne 2 ] || [ -z "$1" ] || [ -z "$2" ] ; then
    echo >&2 "Usage: $0 [Old Simulation] [New Simulation]"
    exit 1
 fi
-git mv "$1".R "$2".R && git mv plot-"$1".R plot-"$2".R && mv "$1" "$2"
+
+OLD_SIM="${1%/}"
+NEW_SIM="${2%/}"
+
+if [ "$OLD_SIM" = "$NEW_SIM" ] ; then
+   echo >&2 "ERROR: Old and new simulation names are identical ($OLD_SIM)!"
+   exit 1
+fi
+
+
+# ====== Pre-flight checks ==================================================
+if [ ! -f "$OLD_SIM.R" ] ; then
+   echo >&2 "ERROR: Simulation script $OLD_SIM.R does not exist!"
+   exit 1
+fi
+
+for target in "$NEW_SIM.R" "plot-$NEW_SIM.R" "$NEW_SIM" ; do
+   if [ -e "$target" ] ; then
+      echo >&2 "ERROR: Target $target already exists!"
+      exit 1
+   fi
+done
+
+
+# ====== Rename files and simulation directory ==============================
+moveFile "$OLD_SIM.R" "$NEW_SIM.R"
+
+if [ -f "plot-$OLD_SIM.R" ] ; then
+   moveFile "plot-$OLD_SIM.R" "plot-$NEW_SIM.R"
+fi
+
+if [ -e "$OLD_SIM" ] ; then
+   mv -- "$OLD_SIM" "$NEW_SIM"
+fi

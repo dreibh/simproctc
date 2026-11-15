@@ -21,42 +21,67 @@
 #
 # Contact: thomas.dreibholz@gmail.com
 
+
 # ====== Check parameters ===================================================
-if [ $# -lt 1 ] ; then
+if [ $# -lt 1 ] || [ -z "$1" ] ; then
    echo >&2 "Usage: $0 [Simulation]"
    exit 1
 fi
+
 SIMULATION="$1"
-if [ ! -e "$SIMULATION" ] ; then
-   echo "ERROR: Directory $SIMULATION does not exist!"
-   exit
+if [ ! -d "$SIMULATION" ] ; then
+   echo >&2 "ERROR: Directory $SIMULATION does not exist!"
+   exit 1
 fi
-if [ ! -e "$SIMULATION/dependencies.list" ] ; then
-   echo "ERROR: $SIMULATION/dependencies.list does not exist!"
-   exit
+if [ ! -f "$SIMULATION/dependencies.list" ] ; then
+   echo >&2 "ERROR: $SIMULATION/dependencies.list does not exist!"
+   exit 1
 fi
 
+cd -- "$SIMULATION"
 
+
+# ====== Find obsolete runs =================================================
 echo "Finding obsolete runs ..."
+purgeList="$(mktemp "${TMPDIR:-/tmp}/purge.XXXXXXXXXX")"
+trap 'rm -f -- "$purgeList"' EXIT
 
-# Generate an SED script to remove in-use file prefixes from file prefix list ...
-xargs -r -I{} echo "s|^{}-.*$||g" < "$SIMULATION/dependencies.list" >"$SIMULATION/purge.sed"
-# cat "$SIMULATION/purge.sed"
+if [ -d "Simulations" ] ; then
+   find Simulations -type f -name "run[0-9]*-*" | awk '
+      NR == FNR {
+         if (NF > 0) {
+            keep[$0] = 1
+         }
+         next
+      }
+      {
+         if (match($0, /\/run[0-9]+-/)) {
+            prefix = substr($0, 1, RSTART + RLENGTH - 2)
+            if (!(prefix in keep)) {
+               print $0
+            }
+         }
+      }
+   ' dependencies.list - >"$purgeList"
+fi
 
-# Get list of obsolete file prefixes
-rm -f "$SIMULATION/purge.list"
-find "$SIMULATION/Simulations/" -type f -and -name "run[0-9]*-*" | \
-   sed -f "$SIMULATION/purge.sed" -e '/^$/ d' \
-      >"$SIMULATION/purge.list"
-# cat "$SIMULATION/purge.list"
 
-
+# ====== Remove obsolete runs ===============================================
 echo "Removing obsolete runs ..."
+while IFS= read -r obsoleteFile ; do
+   [ -n "$obsoleteFile" ] && rm -f -- "$obsoleteFile"
+done <"$purgeList"
 
-xargs -r -I{} rm -f "{}" <"$SIMULATION/purge.list"
-find "$SIMULATION/Simulations/" -mindepth 1 -maxdepth 1 -and -type d -print0 | xargs -0 -r -I{} rmdir --ignore-fail-on-non-empty "{}"
-find "$SIMULATION/Simulations/" -name "Shortcut-*" -print0 | xargs -0 -r -I{} rm -f "{}"
-rm -f "$SIMULATION/purge.list" "$SIMULATION/purge.sed" "$SIMULATION/make.log"
+if [ -d "Simulations" ] ; then
+   for dir in Simulations/* ; do
+      if [ -d "$dir" ] ; then
+         rmdir -- "$dir" 2>/dev/null || true
+      fi
+   done
+   find Simulations -name "Shortcut-*" -exec rm -f {} +
+fi
+
+rm -f -- purge.list purge.sed make.log
 
 
 echo "Done!"
