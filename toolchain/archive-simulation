@@ -21,32 +21,51 @@
 #
 # Contact: thomas.dreibholz@gmail.com
 
+
 # ====== Check parameters ===================================================
-if [ $# -lt 1 ] ; then
-   echo >&2 "Usage: $0 [Simulation]"
+if [ $# -lt 1 ] || [ $# -gt 2 ] || [ -z "$1" ] ; then
+   echo >&2 "Usage: $0 [Simulation] [Destination Directory]"
    exit 1
 fi
-if [ ! -e "$1".R ] ; then
-   echo "ERROR: $1.R does not exist!"
-   exit
-fi
-if [ ! -e plot-"$1".R ] ; then
-   echo "ERROR: plot-$1.R does not exist!"
-   exit
-fi
-if [ ! -e "$1" ] ; then
-   echo "ERROR: $1 directory does not exist!"
-   exit
-fi
 
+SIMULATION="${1%/}"
+case "$SIMULATION" in
+   ""|-*)
+      echo >&2 "ERROR: Invalid simulation name $1!"
+      exit 1
+      ;;
+esac
 
 if [ $# -gt 1 ] ; then
-   DESTINATION="$2"
+   DESTINATION="${2%/}"
+   [ -z "$DESTINATION" ] && DESTINATION="/"
 else
    DESTINATION="."
 fi
 
+if [ ! -f "$SIMULATION.R" ] ; then
+   echo >&2 "ERROR: $SIMULATION.R does not exist!"
+   exit 1
+fi
+if [ ! -f "plot-$SIMULATION.R" ] ; then
+   echo >&2 "ERROR: plot-$SIMULATION.R does not exist!"
+   exit 1
+fi
+if [ ! -d "$SIMULATION" ] ; then
+   echo >&2 "ERROR: $SIMULATION directory does not exist!"
+   exit 1
+fi
+if [ ! -d "$SIMULATION/Results" ] ; then
+   echo >&2 "ERROR: $SIMULATION/Results directory does not exist!"
+   exit 1
+fi
+if [ ! -d "$DESTINATION" ] ; then
+   echo >&2 "ERROR: Destination directory $DESTINATION does not exist!"
+   exit 1
+fi
 
-echo "Archiving to $DESTINATION/$1.tar.bz2 ..." && \
-R --vanilla <plot-"$1".R && \
-tar cjf "$DESTINATION"/"$1".tar.bz2 "$1".R plot-"$1".R "$1".pdf "$1"/Results
+
+# ====== Plot and archive results ===========================================
+echo "Archiving to $DESTINATION/$SIMULATION.tar.bz2 ..."
+R --vanilla <"plot-$SIMULATION.R"
+tar cf - "$SIMULATION.R" "plot-$SIMULATION.R" "$SIMULATION.pdf" "$SIMULATION/Results" | bzip2 >"$DESTINATION/$SIMULATION.tar.bz2"

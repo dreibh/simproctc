@@ -21,34 +21,29 @@
 #
 # Contact: thomas.dreibholz@gmail.com
 
+
 # ====== Check parameters ===================================================
-if [ $# -lt 1 ] ; then
-   echo >&2 "Usage: $0 [Simulation]"
+if [ $# -lt 1 ] || [ $# -gt 2 ] || [ -z "$1" ] ; then
+   echo >&2 "Usage: $0 [Simulation] [Destination Directory]"
    exit 1
 fi
-if [ ! -e "$1".R ] ; then
-   echo "ERROR: $1.R does not exist!"
-   exit
-fi
-if [ ! -e plot-"$1".R ] ; then
-   echo "ERROR: plot-$1.R does not exist!"
-   exit
-fi
-if [ ! -e "$1" ] ; then
-   echo "ERROR: $1 directory does not exist!"
-   exit
-fi
 
+TOOLCHAIN_DIRECTORY="$(cd "$(dirname "$0")" && pwd -P)"
 
+SIMULATION="${1%/}"
 if [ $# -gt 1 ] ; then
-   DESTINATION="$2"
+   DESTINATION="${2%/}"
+   [ -z "$DESTINATION" ] && DESTINATION="/"
 else
    DESTINATION="."
 fi
 
 
-R --vanilla <plot-"$1".R && \
-echo "Step 1: Archiving results only to $DESTINATION/$1.tar.bz2 ..." && \
-tar cjf "$DESTINATION"/"$1".tar.bz2 "$1".R plot-"$1".R "$1".pdf "$1"/Results && \
-echo "Step 2: Archiving everything to $DESTINATION/$1-complete.tar.bz2 ..." && \
-tar cjf "$DESTINATION"/"$1"-complete.tar.bz2 "$1".R plot-"$1".R "$1".pdf "$1"
+# ====== Step 1: Plot and archive results only ==============================
+echo "Step 1: Archiving results only to $DESTINATION/$SIMULATION.tar.bz2 ..."
+"$TOOLCHAIN_DIRECTORY/archive-simulation" "$SIMULATION" "$DESTINATION"
+
+
+# ====== Step 2: Archive everything =========================================
+echo "Step 2: Archiving everything to $DESTINATION/$SIMULATION-complete.tar.bz2 ..."
+tar cf - "$SIMULATION.R" "plot-$SIMULATION.R" "$SIMULATION.pdf" "$SIMULATION" | bzip2 >"$DESTINATION/$SIMULATION-complete.tar.bz2"
