@@ -21,38 +21,51 @@
 #
 # Contact: thomas.dreibholz@gmail.com
 
+
 # ====== Check parameters ===================================================
-if [ $# -lt 1 ] ; then
+if [ $# -lt 1 ] || [ -z "$1" ] ; then
    echo >&2 "Usage: get-neds [NED Directory] {NED file or directory} ..."
    exit 1
 fi
 
-NEDDIR=$1
+NEDDIR="$1"
 shift
 
 
 # ====== Prepare NED directory ==============================================
 if [ -e "$NEDDIR" ] ; then
-   rm -rf "$NEDDIR"
+   rm -rf -- "$NEDDIR"
 fi
-mkdir "$NEDDIR" || exit 1
+mkdir -p -- "$NEDDIR" || exit 1
+DEST_DIR="$(cd -- "$NEDDIR" && pwd -P)"
 
 
 # ====== Copy NED files =====================================================
-# Create list of NEDs first; otherwise, "find" would also find newly copied
-# files in the output directory!
 while [ $# -gt 0 ] ; do
-   NED=$1
+   NED="$1"
    shift
 
    if [ -d "$NED" ] ; then
-      rm -f "$NEDDIR/out.tar"
-      find "$NED" -name "*.ned" -printf "%P\n" | grep --invert-match "tdtoolchain/" | tar cf "$NEDDIR/out.tar" -C "$NED" -T -
-      if [ -e "$NEDDIR/out.tar" ] ; then
-         ( cd "$NEDDIR" && tar xf out.tar )
-      fi
-      rm -f "$NEDDIR/out.tar"
+      (
+         cd -- "$NED" &&
+         SRC_ROOT="$(pwd -P)" &&
+         find . -name tdtoolchain -prune -o \( -type f -o -type l \) -name "*.ned" -exec sh -c '
+            src_root="$1"
+            dest="$2"
+            shift 2
+            for f do
+               case "$src_root/${f#./}" in
+                  "$dest"/*) continue ;;
+               esac
+               d=$(dirname -- "$dest/$f")
+               mkdir -p -- "$d" && cp -p -- "$f" "$d/" || exit 1
+            done
+         ' sh "$SRC_ROOT" "$DEST_DIR" {} +
+      )
+   elif [ -f "$NED" ] ; then
+      cp -p -- "$NED" "$DEST_DIR/"
    else
-      cp "$NED" "$NEDDIR"
+      echo >&2 "ERROR: $NED does not exist!"
+      exit 1
    fi
 done

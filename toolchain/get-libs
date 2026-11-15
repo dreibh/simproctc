@@ -21,6 +21,16 @@
 #
 # Contact: thomas.dreibholz@gmail.com
 
+# ====== Count non-empty lines in $1 ========================================
+countLines() {
+   if [ -z "$1" ] ; then
+      printf '0\n'
+   else
+      printf '%s\n' "$1" | awk 'NF > 0 { n++ } END { print n + 0 }'
+   fi
+}
+
+
 # ====== Check parameters ===================================================
 if [ $# -lt 1 ] ; then
    echo >&2 "Usage: get-libs [Program] [Libs Directory]"
@@ -28,62 +38,181 @@ if [ $# -lt 1 ] ; then
 fi
 
 PROGRAM="$1"
+if [ ! -f "$PROGRAM" ] ; then
+   echo >&2 "ERROR: Program $PROGRAM not found!"
+   exit 1
+fi
+
 if [ $# -gt 1 ] ; then
    LIBSDIR="$2"
 else
-   LIBSDIR="lib.$PROGRAM"
+   LIBSDIR="lib.$(basename -- "$PROGRAM")"
 fi
 
 
 # ====== Get library names ==================================================
-lddFile="$(mktemp -t get-libs.XXXXXXXXXX)"
-trap 'rm -f $lddFile' EXIT
-env LANG=C ldd "$PROGRAM" >"$lddFile" || exit 1
+lddFile="$(mktemp "${TMPDIR:-/tmp}/get-libs.XXXXXXXXXX")"
+trap 'rm -f -- "$lddFile"' EXIT
 
-LIBS_NOT_FOUND=$(awk -F " " '{ if( ($3 == "not") && ($4 == "found")) { print $1 } }' <"$lddFile")
-LIBS=$(awk -F " " '{ if(length($3)>length($1)) { print $3 } }' <"$lddFile")
-LOADER=$(awk -F " " '{ if(length($3)==0) { print $1 } }' <"$lddFile" | grep -v linux-vdso.so)
+SYSTEM="$(uname -s)"
+LIBS_NOT_FOUND=""
+LIBS=""
+LOADER=""
 
-if [ "$LIBS_NOT_FOUND" != "" ] ; then
-   echo >&2 "ERROR: Some shared libraries have not been found:"
-   echo >&2 "$LIBS_NOT_FOUND"
-   exit 1
-fi
+case "$SYSTEM" in
+   Linux)
+      env LC_ALL=C ldd "$PROGRAM" >"$lddFile" || exit 1
 
-NUM_ENTRIES=$(grep -cv linux-vdso.so "$lddFile")
-NUM_LIBS=$(echo "$LIBS" | xargs -n1 | wc --lines)
-NUM_LOADER=$(echo "$LOADER" | xargs -n1 | wc --lines)
+      LIBS_NOT_FOUND=$(awk '$2 == "=>" && $3 == "not" && $4 == "found" { print $1 }' <"$lddFile")
+      LIBS=$(awk '$2 == "=>" && $3 ~ /^\// { print $3 }' <"$lddFile")
+      LOADER=$(awk '$1 ~ /^\// && NF == 2 { print $1 }' <"$lddFile")
 
-USED_ENTRIES=$((NUM_LIBS + NUM_LOADER))
+      if [ -n "$LIBS_NOT_FOUND" ] ; then
+         echo >&2 "ERROR: Some shared libraries have not been found:"
+         echo >&2 "$LIBS_NOT_FOUND"
+         exit 1
+      fi
 
-if [ "$NUM_LOADER" -ne 1 ] || [ $USED_ENTRIES -ne "$NUM_ENTRIES" ] ; then
-   (
-      echo "ERROR: Something went wrong with shared library collection! Got unexpected ldd output!"
-      echo "-----"
-      cat "$lddFile"
-      echo "NUM_LOADER=$NUM_LOADER"
-      echo "NUM_LIBS=$NUM_LIBS"
-      echo "-----"
-   ) >&2
-   exit 1
-fi
+      NUM_ENTRIES=$(awk 'NF > 0 && $0 !~ /linux-(vdso|gate)\.so/ && $0 !~ /statically linked/ { n++ } END { print n + 0 }' <"$lddFile")
+      NUM_LIBS=$(countLines "$LIBS")
+      NUM_LOADER=$(countLines "$LOADER")
+      USED_ENTRIES=$((NUM_LIBS + NUM_LOADER))
+
+      if [ "$NUM_LOADER" -ne 1 ] || [ "$USED_ENTRIES" -ne "$NUM_ENTRIES" ] ; then
+         {
+            echo "ERROR: Something went wrong with shared library collection! Got unexpected ldd output!"
+            echo "-----"
+            cat "$lddFile"
+            echo "NUM_LOADER=$NUM_LOADER"
+            echo "NUM_LIBS=$NUM_LIBS"
+            echo "-----"
+         } >&2
+         exit 1
+      fi
+      ;;
+
+   FreeBSD|NetBSD)
+      env LC_ALL=C ldd "$PROGRAM" >"$lddFile" || exit 1
+
+      LIBS_NOT_FOUND=$(awk '$2 == "=>" && $3 == "not" && $4 == "found" { print $1 }' <"$lddFile")
+      LIBS=$(awk '$2 == "=>" && $3 ~ /^\// { print $3 }' <"$lddFile")
+
+      if [ -n "$LIBS_NOT_FOUND" ] ; then
+         echo >&2 "ERROR: Some shared libraries have not been found:"
+         echo >&2 "$LIBS_NOT_FOUND"
+         exit 1
+      fi
+
+      NUM_ENTRIES=$(awk 'NF > 0 && !(NR == 1 && $0 ~ /:$/) { n++ } END { print n + 0 }' <"$lddFile")
+      NUM_LIBS=$(countLines "$LIBS")
+
+      if [ "$NUM_LIBS" -ne "$NUM_ENTRIES" ] ; then
+         {
+            echo "ERROR: Something went wrong with shared library collection! Got unexpected ldd output!"
+            echo "-----"
+            cat "$lddFile"
+            echo "NUM_LIBS=$NUM_LIBS"
+            echo "-----"
+         } >&2
+         exit 1
+      fi
+
+      if command -v readelf >/dev/null 2>&1 ; then
+         LOADER=$(env LC_ALL=C readelf -l "$PROGRAM" 2>/dev/null | awk -F': ' '/Requesting program interpreter:/ { gsub(/\]/, "", $2); print $2; exit }')
+      fi
+      ;;
+
+   OpenBSD)
+      env LC_ALL=C ldd "$PROGRAM" >"$lddFile" || exit 1
+
+      LIBS=$(awk '$3 == "rlib" { print $7 }' <"$lddFile")
+      LOADER=$(awk '$3 == "ld.so" { print $7 }' <"$lddFile")
+
+      NUM_ENTRIES=$(awk '$3 == "rlib" || $3 == "ld.so" { n++ } END { print n + 0 }' <"$lddFile")
+      NUM_LIBS=$(countLines "$LIBS")
+      NUM_LOADER=$(countLines "$LOADER")
+      USED_ENTRIES=$((NUM_LIBS + NUM_LOADER))
+
+      if [ "$NUM_LOADER" -ne 1 ] || [ "$USED_ENTRIES" -ne "$NUM_ENTRIES" ] ; then
+         {
+            echo "ERROR: Something went wrong with shared library collection! Got unexpected ldd output!"
+            echo "-----"
+            cat "$lddFile"
+            echo "NUM_LOADER=$NUM_LOADER"
+            echo "NUM_LIBS=$NUM_LIBS"
+            echo "-----"
+         } >&2
+         exit 1
+      fi
+      ;;
+
+   SunOS)
+      env LC_ALL=C ldd "$PROGRAM" >"$lddFile" || exit 1
+
+      LIBS_NOT_FOUND=$(awk '$2 == "=>" && index($0, "not found") > 0 { print $1 }' <"$lddFile")
+      LIBS=$(awk '$2 == "=>" && $3 ~ /^\// { print $3 }' <"$lddFile")
+
+      if [ -n "$LIBS_NOT_FOUND" ] ; then
+         echo >&2 "ERROR: Some shared libraries have not been found:"
+         echo >&2 "$LIBS_NOT_FOUND"
+         exit 1
+      fi
+
+      NUM_ENTRIES=$(awk 'NF > 0 { n++ } END { print n + 0 }' <"$lddFile")
+      NUM_LIBS=$(countLines "$LIBS")
+
+      if [ "$NUM_LIBS" -ne "$NUM_ENTRIES" ] ; then
+         {
+            echo "ERROR: Something went wrong with shared library collection! Got unexpected ldd output!"
+            echo "-----"
+            cat "$lddFile"
+            echo "NUM_LIBS=$NUM_LIBS"
+            echo "-----"
+         } >&2
+         exit 1
+      fi
+
+      if command -v elfdump >/dev/null 2>&1 ; then
+         LOADER=$(env LC_ALL=C elfdump -i "$PROGRAM" 2>/dev/null | awk '$1 ~ /^\// { print $1; exit }')
+      elif command -v readelf >/dev/null 2>&1 ; then
+         LOADER=$(env LC_ALL=C readelf -l "$PROGRAM" 2>/dev/null | awk -F': ' '/Requesting program interpreter:/ { gsub(/\]/, "", $2); print $2; exit }')
+      fi
+      ;;
+
+   Darwin)
+      env LC_ALL=C otool -L "$PROGRAM" >"$lddFile" || exit 1
+
+      LIBS=$(awk 'NR > 1 && $1 ~ /^\// { print $1 }' <"$lddFile")
+      ;;
+
+   *)
+      echo >&2 "ERROR: Unsupported operating system $SYSTEM!"
+      exit 1
+      ;;
+esac
 
 
 # ====== Prepare library directory ==========================================
 if [ -e "$LIBSDIR" ] ; then
-   rm -rf "$LIBSDIR"
+   rm -rf -- "$LIBSDIR"
 fi
-mkdir "$LIBSDIR" || exit 1
+mkdir -p -- "$LIBSDIR" || exit 1
 
 
 # ====== Copy libraries =====================================================
 for LIB in $LIBS ; do
    if [ -e "$LIB" ] ; then
-      echo "   - $(wc -c "$LIB")"
-      cp "$LIB" "$LIBSDIR" || exit 1
+      BYTES=$(wc -c <"$LIB" | tr -d ' ')
+      printf '   - %s %s\n' "$BYTES" "$LIB"
+      cp -pL -- "$LIB" "$LIBSDIR/" || exit 1
+   elif [ "$SYSTEM" != "Darwin" ] ; then
+      echo >&2 "ERROR: Shared library $LIB not found on disk!"
+      exit 1
    fi
 done
-if [ -e "$LOADER" ] ; then
-   cp "$LOADER" "$LIBSDIR"/ld-loader.so || exit 1
-   echo "   - $(wc -c "$LOADER") (loader)"
+
+if [ -n "$LOADER" ] && [ -e "$LOADER" ] ; then
+   cp -pL -- "$LOADER" "$LIBSDIR/ld-loader.so" || exit 1
+   BYTES=$(wc -c <"$LOADER" | tr -d ' ')
+   printf '   - %s %s (loader)\n' "$BYTES" "$LOADER"
 fi
