@@ -22,7 +22,7 @@
 # Contact: thomas.dreibholz@gmail.com
 
 
-# ====== Recursively collect files in $2 matching pattern given in $1 =======
+# ###### Recursively collect files in $2 matching pattern given in $1 #######
 collectFiles() {
    if [ ! -e "$SOURCES_DIRECTORY/$2" ] ; then
       echo >&2 "==================================================="
@@ -67,13 +67,14 @@ if [ $# -lt 4 ] ; then
    exit 1
 fi
 
-SIMULATION_DIRECTORY=$1
-SOURCES_DIRECTORY=$2
-SIMULATION_BINARY=$3
-SIMULATION_BASEDIR=$4
+SIMULATION_DIRECTORY="$1"
+SOURCES_DIRECTORY="$2"
+SIMULATION_BINARY="$3"
+SIMULATION_BASEDIR="$4"
 shift 4
 
-TOOLCHAINDIR="$(pwd)"
+TOOLCHAIN_DIRECTORY="$(dirname "$0")"
+SIMULATION_DIRECTORY="$(cd "$SIMULATION_DIRECTORY" && pwd -P)"   # Absolute path
 
 
 # ====== Check configuration ================================================
@@ -109,8 +110,8 @@ echo "+ $(date) Environment directory"
 if [ -e "$SIMULATION_DIRECTORY"/Environment ] ; then
    rm -rf "$SIMULATION_DIRECTORY"/Environment
 fi
-mkdir "$SIMULATION_DIRECTORY"/Environment || exit 1
-cd "$SIMULATION_DIRECTORY"/Environment || exit 1
+mkdir "$SIMULATION_DIRECTORY/Environment"
+cd "$SIMULATION_DIRECTORY/Environment" >/dev/null
 
 
 # ====== Copy simulation binary =============================================
@@ -126,7 +127,7 @@ chrpath -d simulation-binary || {
 
 # ====== Collect libraries for simulation binary ============================
 echo "+ $(date) Collecting libraries ..."
-"$TOOLCHAINDIR"/get-libs "$SOURCES_DIRECTORY/$SIMULATION_BINARY" lib || exit 1
+"$TOOLCHAIN_DIRECTORY"/get-libs "$SOURCES_DIRECTORY/$SIMULATION_BINARY" lib || exit 1
 
 
 # ====== Copy other files ===================================================
@@ -176,8 +177,8 @@ NEW_NED_PATHS=""
 echo "   -> Absolute paths: $OLD_NED_PATHS"
 
 for n in $OLD_NED_PATHS ; do
-   echo "      + $TOOLCHAINDIR/tools/getrelativepath ./Environment/$SIMULATION_BASEDIR ./Environment/$n"
-   nnew=$("$TOOLCHAINDIR"/tools/getrelativepath ./Environment/"$SIMULATION_BASEDIR" ./Environment/"$n")
+   echo "      + $TOOLCHAIN_DIRECTORY/tools/getrelativepath ./Environment/$SIMULATION_BASEDIR ./Environment/$n"
+   nnew=$("$TOOLCHAIN_DIRECTORY"/tools/getrelativepath "./Environment/$SIMULATION_BASEDIR" "./Environment/$n")
    if [ "$NEW_NED_PATHS" = "" ] ; then
       NEW_NED_PATHS="$nnew"
    else
@@ -199,11 +200,12 @@ echo "+ $(date) Writing configuration ..."
    echo "SIMULATION_MACHINE=\"$(uname -m)\""
 ) >simulation.config-stage0
 
+cd "$SIMULATION_DIRECTORY"
+
 
 # ====== Archive environment ================================================
 echo "+ $(date) Archiving environment ..."
-cd "$TOOLCHAINDIR/$SIMULATION_DIRECTORY" || exit
-echo "   -> $TOOLCHAINDIR/$SIMULATION_DIRECTORY/simulation-environment.tar.bz2"
+echo "   -> simulation-environment.tar.bz2"
 tar chjf simulation-environment.tar.bz2 Environment || exit 1
 printf "      "
 wc --bytes simulation-environment.tar.bz2

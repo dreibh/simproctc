@@ -28,16 +28,16 @@ if [ $# -lt 3 ] ; then
    exit 1
 fi
 
-SIMULATION_DIRECTORY="$(pwd)/$1"   # e.g.: `pwd`/test1
-RUN_DIRECTORY=$2                   # e.g.: test1/Simulations/Set-1234
-RUN_NUMBER=$3                      # e.g.: 1
+SIMULATION_DIRECTORY="$(cd "$1" && pwd -P)"   # Absolute path
+RUN_DIRECTORY="$2"                            # e.g.: test1/Simulations/Set-1234
+RUN_NUMBER="$3"                               # e.g.: 1
 POOLHANDLE=""
 PU_MISCOPT=""
 if [ $# -ge 4 ] ; then
-   POOLHANDLE="$4"                 # e.g.: ScriptingPool
+   POOLHANDLE="$4"                            # e.g.: ScriptingPool
 fi
 if [ $# -ge 5 ] ; then
-   PU_MISCOPT="$5"                 # e.g.: "-cspserver=... ..."
+   PU_MISCOPT="$5"                            # e.g.: "-cspserver=... ..."
 fi
 
 
